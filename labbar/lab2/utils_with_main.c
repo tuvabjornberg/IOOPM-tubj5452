@@ -38,7 +38,7 @@ int read_string(char *buf, int buf_siz) {
     return counter;
 }
 
-char ask_question_string(char *question, char *buf, int buf_siz) {
+char *ask_question_string(char *question, char *buf, int buf_siz) {
     int conversions = 0; 
     int result = 0; 
 
@@ -52,8 +52,7 @@ char ask_question_string(char *question, char *buf, int buf_siz) {
     } 
     while (conversions < 1); 
 
-
-    return result; 
+    return buf; 
 }
 
 int main(void) {
@@ -61,19 +60,19 @@ int main(void) {
 
     //number = ask_question_int("First number: "); 
     //printf("You wrote '%d'\n", number); 
-
+//
     //number = ask_question_int("Second number: "); 
     //printf("You wrote '%d'\n", number); 
      
     int buf_siz = 25; 
-    int read = 0; 
+    //int read = 0; 
     char buf[buf_siz]; 
 
-    read = ask_question_string("Write a string: ", buf, buf_siz); 
-    printf("You wrote: '%s' (%d tecken)\n", buf, read); 
+    char *str = ask_question_string("Write a string: ", buf, buf_siz); 
+    printf("You wrote: '%s' (%zu tecken)\n", buf, strlen(str)); 
 
-    read = ask_question_string("Write another string: ", buf, buf_siz); 
-    printf("You wrote: '%s' (%d tecken)\n", buf, read); 
+    str = ask_question_string("Write another string: ", buf, buf_siz); 
+    printf("You wrote: '%s' (%zu tecken)\n", buf, strlen(str)); 
 
     return 0; 
 }

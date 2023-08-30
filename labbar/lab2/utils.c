@@ -38,7 +38,7 @@ int read_string(char *buf, int buf_siz) {
     return counter;
 }
 
-char ask_question_string(char *question, char *buf, int buf_siz) {
+char *ask_question_string(char *question, char *buf, int buf_siz) {
     int conversions = 0; 
     int result = 0; 
 
@@ -48,9 +48,9 @@ char ask_question_string(char *question, char *buf, int buf_siz) {
         if (result != 0) { 
             conversions = 1;
         }
-        fflush(stdin);  //clears/flushes the input buffer
+        fflush(stdin);
     } 
     while (conversions < 1); 
 
-    return result; 
+    return buf; 
 }
