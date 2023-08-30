@@ -28,20 +28,31 @@ int ask_question_int(char *question) {
 //}
 
 int read_string(char *buf, int buf_siz) {
-    int real_size = 0; 
-    int x = 0; 
+    //int real_size = 0; 
+    //int x = 0; 
+//
+    //do {
+    //    //printf("%s\n", buf); 
+    //    x = scanf("%d", &real_size); 
+    //    //clear_input_buffer(); 
+    //} 
+    //while (x < 1); 
+//
+    //for (int i = 0; i < strlen(buf); i++) {
+    //    real_size = i; 
+    //}
+    //return buf_siz - real_size; 
 
-    do {
-        //printf("%s\n", buf); 
-        x = scanf("%d", &real_size); 
-        //clear_input_buffer(); 
-    } 
-    while (x < 1); 
+    int count = 0;
+    char c; 
 
-    for (int i = 0; i < strlen(buf); i++) {
-        real_size = i; 
+    while (count < buf_siz - 1 && (c = getchar()) != '\n') {
+        buf[count] = c;
+        count++;
     }
-    return buf_siz - real_size; 
+
+    buf[count] = '\0';
+    return count;
 }
 
 int main(void) {
