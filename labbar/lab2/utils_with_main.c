@@ -55,3 +55,25 @@ char ask_question_string(char *question, char *buf, int buf_siz) {
 
     return result; 
 }
+
+int main(void) {
+    //int number; 
+
+    //number = ask_question_int("First number: "); 
+    //printf("You wrote '%d'\n", number); 
+
+    //number = ask_question_int("Second number: "); 
+    //printf("You wrote '%d'\n", number); 
+     
+    int buf_siz = 25; 
+    int read = 0; 
+    char buf[buf_siz]; 
+
+    read = ask_question_string("Write a string: ", buf, buf_siz); 
+    printf("You wrote: '%s' (%d tecken)\n", buf, read); 
+
+    read = ask_question_string("Write another string: ", buf, buf_siz); 
+    printf("You wrote: '%s' (%d tecken)\n", buf, read); 
+
+    return 0; 
+}
