@@ -2,7 +2,6 @@
 # include <string.h>
 # include "utils.h"
 
-
 void clear_input_buffer() {
     int c; 
     do {
@@ -22,6 +21,7 @@ int ask_question_int(char *question) {
         clear_input_buffer(); 
     } 
     while (conversions < 1); 
+
     return result; 
 }
 
@@ -48,10 +48,9 @@ char ask_question_string(char *question, char *buf, int buf_siz) {
         if (result != 0) { 
             conversions = 1;
         }
-        fflush(stdin);
+        fflush(stdin);  //clears/flushes the input buffer
     } 
     while (conversions < 1); 
-
 
     return result; 
 }
