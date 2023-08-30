@@ -23,36 +23,34 @@ int ask_question_int(char *question) {
     return result; 
 }
 
-//char ask_question_string(char *question) {
-//
-//}
-
 int read_string(char *buf, int buf_siz) {
-    //int real_size = 0; 
-    //int x = 0; 
-//
-    //do {
-    //    //printf("%s\n", buf); 
-    //    x = scanf("%d", &real_size); 
-    //    //clear_input_buffer(); 
-    //} 
-    //while (x < 1); 
-//
-    //for (int i = 0; i < strlen(buf); i++) {
-    //    real_size = i; 
-    //}
-    //return buf_siz - real_size; 
-
-    int count = 0;
+    int counter = 0;
     char c; 
 
-    while (count < buf_siz - 1 && (c = getchar()) != '\n') {
-        buf[count] = c;
-        count++;
+    while (counter < buf_siz - 1 && (c = getchar()) != '\n') {
+        buf[counter] = c;
+        counter++;
     }
 
-    buf[count] = '\0';
-    return count;
+    buf[counter] = '\0';
+    return counter;
+}
+
+char ask_question_string(char *question, char *buf, int buf_siz) {
+    int conversions = 0; 
+    int result = 0; 
+
+    do {
+        printf("%s\n", question);
+        result = read_string(buf, buf_siz); 
+        if (result != 0) { 
+            conversions = 1;
+        }
+        clear_input_buffer(); 
+    } 
+    while (conversions < 1); 
+
+    return result; 
 }
 
 int main(void) {
@@ -68,13 +66,15 @@ int main(void) {
     int read = 0; 
     char buf[buf_siz]; 
 
-    puts("Läs in en sträng: "); 
-    read = read_string(buf, buf_siz); 
-    printf("'%s' (%d tecken)\n", buf, read); 
+    //puts("Write a string: "); 
+    //read = read_string(buf, buf_siz); 
+    read = ask_question_string("Write a string: ", buf, buf_siz); 
+    printf("You wrote: '%s' (%d tecken)\n", buf, read); 
 
-    puts("Läs in en sträng till: "); 
-    read = read_string(buf, buf_siz); 
-    printf("'%s' (%d tecken)\n", buf, read); 
+    //puts("Write another string: "); 
+    //read = read_string(buf, buf_siz); 
+    read = ask_question_string("Write another string: ", buf, buf_siz); 
+    printf("You wrote: '%s' (%d tecken)\n", buf, read); 
 
     return 0; 
 }
