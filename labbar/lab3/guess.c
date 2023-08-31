@@ -7,12 +7,9 @@
 int main(void) {
     srand(time(NULL));
     int T = rand() % 100 + 1; 
-
-    int buf_siz = 255; 
-    char buf[buf_siz]; 
     int guess = 0; 
 
-    char *name = ask_question_string("Skriv in ditt namn: ", buf, buf_siz); 
+    char *name = ask_question_string("Skriv in ditt namn: "); 
     printf("Du '%s', jag tänkter på ett tal ... ", name);
     guess = ask_question_int("kan du gissa vilket?"); 
 
