@@ -54,3 +54,14 @@ char *ask_question_string(char *question, char *buf, int buf_siz) {
 
     return buf; 
 }
+
+void print(char *str) {
+    for (int i = 0; i < strlen(str); i++) {
+        putchar(str[i]); 
+    }
+}
+
+void println(char *str) {
+    print(str); 
+    putchar('\n'); 
+}
