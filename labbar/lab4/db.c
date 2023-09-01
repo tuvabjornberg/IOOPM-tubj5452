@@ -50,8 +50,23 @@ item_t input_item(void) {
     return (item_t) {.name = name, .description = description, .price = price, .shelf = shelf}; 
 }
 
-char magick(char *array1, char *array2, char *array3) {
+char *magick(char *array1[], char *array2[], char *array3[], int size ) {
     char buf[255]; 
+    int i = 0; 
+
+    int rand_index1 = rand() % size; 
+    int rand_index2 = rand() % size; 
+    int rand_index3 = rand() % size; 
+
+    buf[i] = *array1[rand_index1]; 
+    buf[i++] = '-'; 
+    buf[i++] = *array2[rand_index2]; 
+    buf[i++] = ' '; 
+    buf[i++] = *array3[rand_index3]; 
+    buf[i++] = '\0'; 
+
+    return strdup(buf); 
+
 }
 
 int main(int argc, char *argv[]) {
@@ -90,8 +105,8 @@ int main(int argc, char *argv[]) {
     }
 
     for (int i = db_siz; i < 16; ++i) {
-        char *name = magick(array1, array2, array3); // TODO: Lägg till storlek
-        char *desc = magick(array1, array2, array3); // TODO: Lägg till storlek
+        char *name = magick(array1, array2, array3, 3); // TODO: Lägg till storlek
+        char *desc = magick(array1, array2, array3, 3); // TODO: Lägg till storlek
         int price = rand() % 200000;
         char shelf[] = { rand() % ('Z'-'A') + 'A',
                          rand() % 10 + '0',
