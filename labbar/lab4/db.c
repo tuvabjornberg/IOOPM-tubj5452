@@ -4,6 +4,7 @@
 # include "utils.h"
 # include <string.h>
 # include <ctype.h>
+# include <time.h>
 
 typedef struct item {
     char *name; 
@@ -18,11 +19,11 @@ void print_item(item_t *item) {
 }
 
 item_t make_item(char *name, char *description, int price, char *shelf) {
-    return (item_t) {.name = name, .description = description, .price = price, .shelf = shelf}; 
+    return (item_t) {name, description, price, shelf}; 
 }
 
-bool check_shelf(char* shelf) {
-    if(isalpha(shelf[0]) && is_number(++shelf) && strlen(shelf) >= 2) {
+bool check_shelf(char *shelf) {
+    if (isalpha(shelf[0]) && !islower(shelf[0]) && (strlen(shelf) > 1) && is_number(++shelf)) {
         return true; 
     }
     else {
@@ -30,8 +31,8 @@ bool check_shelf(char* shelf) {
     }
 }
 
-char* ask_question_shelf(char* question) {
-    char* shelf;
+char *ask_question_shelf(char *question) {
+    char *shelf;
 
     do {
         shelf = ask_question_string(question);
@@ -45,32 +46,44 @@ item_t input_item(void) {
     char *name = ask_question_string("Skriv in varans namn: "); 
     char *description = ask_question_string("Skriv in en kort beskrivning: "); 
     int price = ask_question_int("Skriv in varans pris i ören: "); 
-    char *shelf = ask_question_shelf("Skriv in hyllan: "); 
+    char *shelf = ask_question_shelf("Skriv in hyllan: (På formatet 'A10')"); 
 
-    return (item_t) {.name = name, .description = description, .price = price, .shelf = shelf}; 
+    return (item_t) {name, description, price, shelf}; 
 }
 
-char *magick(char *array1[], char *array2[], char *array3[], int size ) {
+char *magick(char **array1, char **array2, char **array3, int size) {
     char buf[255]; 
-    int i = 0; 
+    int j = 0; 
 
     int rand_index1 = rand() % size; 
     int rand_index2 = rand() % size; 
     int rand_index3 = rand() % size; 
 
-    buf[i] = *array1[rand_index1]; 
-    buf[i++] = '-'; 
-    buf[i++] = *array2[rand_index2]; 
-    buf[i++] = ' '; 
-    buf[i++] = *array3[rand_index3]; 
-    buf[i++] = '\0'; 
+
+    for(char *i = array1[rand_index1]; *i != '\0'; i++) {
+        buf[j++] = *i; 
+    }
+
+    buf[j++] = '-'; 
+
+    for(char *i = array2[rand_index2]; *i != '\0'; i++) {
+        buf[j++] = *i; 
+    }
+
+    buf[j++] = ' '; 
+
+    for(char *i = array3[rand_index3]; *i != '\0'; i++) {
+        buf[j++] = *i; 
+    }
+    
+    buf[j++] = '\0'; 
 
     return strdup(buf); 
 
 }
 
 int main(int argc, char *argv[]) {
-
+    srand(time(NULL));
     //item_t ex = { .name = "Hammare", .description = "För att slå", .price = 40, .shelf = "A25"}; 
     //print_item(&ex); 
     //input_item(); 
@@ -112,11 +125,25 @@ int main(int argc, char *argv[]) {
                          rand() % 10 + '0',
                          rand() % 10 + '0',
                          '\0' };
+                         printf("\n%s\n", shelf); 
         item_t item = make_item(name, desc, price, shelf);
+                                 printf("\n%s\n", shelf); 
+
 
         db[db_siz] = item;
+                printf("before ++: %d\n", db_siz); 
+                printf("db[db_siz].shelf: %s\n", db[0].shelf); 
+                 printf("db[db_siz].shelf: %s\n", db[1].shelf); 
+                 printf("db[db_siz].shelf: %s\n", db[1].shelf); 
+
+                 printf("db[db_siz].shelf: %s\n", db[db_siz].shelf); 
+               
+
         ++db_siz;
+        printf("after ++; %d\n", db_siz); 
     }
+                     printf("db[db_siz].shelf: %s\n", db[db_siz-2].shelf); 
+
 
      // Skriv ut innehållet
     for (int i = 0; i < db_siz; ++i)
