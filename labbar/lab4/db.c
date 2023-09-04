@@ -15,7 +15,7 @@ typedef struct item {
 
 void print_item(item_t *item) {
     printf("Name: %s\nDesc: %s\nPrice: %d\nShelf: %s\n", 
-        item->name, item->description, (item->price) % 100, item->shelf);
+        item->name, item->description, item->price, item->shelf);
 }
 
 item_t make_item(char *name, char *description, int price, char *shelf) {
@@ -48,7 +48,8 @@ item_t input_item(void) {
     int price = ask_question_int("Skriv in varans pris i ören: "); 
     char *shelf = ask_question_shelf("Skriv in hyllan: (På formatet 'A10')"); 
 
-    return (item_t) {name, description, price, shelf}; 
+    return make_item(name, description, price, shelf); 
+    //return (item_t) {name, description, price, shelf}; 
 }
 
 char *magick(char **array1, char **array2, char **array3, int size) {
@@ -79,20 +80,36 @@ char *magick(char **array1, char **array2, char **array3, int size) {
     buf[j++] = '\0'; 
 
     return strdup(buf); 
+}
+
+void list_db(item_t *items, int no_items) {
+    for (int i = 0; i < no_items; i++) {
+        printf("%d. %s\n", i + 1, items[i].name); 
+    }
+}
+
+void edit_db(item_t *items, int max_size) {
+    int change = ask_question_int("Skriv indexet på den varan du vill ändra\n");
+    
+    while (change >= max_size && change > 0) {
+        change = ask_question_int("Felaktig input\n");
+    }
+    change--; 
+    
+    print_item(&items[change]); 
+
+    printf("Var god skriv in dina ändringar: \n"); 
+    item_t updated_item = input_item(); 
+    items[change] = updated_item; 
 
 }
 
 int main(int argc, char *argv[]) {
     srand(time(NULL));
-    //item_t ex = { .name = "Hammare", .description = "För att slå", .price = 40, .shelf = "A25"}; 
-    //print_item(&ex); 
-    //input_item(); 
 
-    char *array1[] = { "Laser", "Polka", "Extra" }; // TODO: Lägg till!
-    char *array2[] = { "Förnicklad", "Smakande", "Ordinär" }; // TODO: Lägg till!
-    char *array3[] = { "Skruvdragare", "Kola", "Uppgift" }; // TODO: Lägg till!
-    //char *array4[] = { "Småspik", "Hammare", "Tejp"}; 
-    //char *array5[] = { "Tumstock", "Träplanka", "Kruka"}; 
+    char *array1[] = { "Laser", "Polka", "Extra" }; 
+    char *array2[] = { "Förnicklad", "Smakande", "Ordinär" };
+    char *array3[] = { "Skruvdragare", "Kola", "Uppgift" }; 
 
     if (argc < 2) {
         printf("Usage: %s number\n", argv[0]);
@@ -104,52 +121,55 @@ int main(int argc, char *argv[]) {
         int items = atoi(argv[1]); // Antalet varor som skall skapas
 
         if (items > 0 && items <= 16) {
-            for (int i = 0; i < items; ++i)
-        {
-        // Läs in en vara, lägg till den i arrayen, öka storleksräknaren
-        item_t item = input_item();
-        db[db_siz] = item;
-        ++db_siz;
+            for (int i = 0; i < items; ++i) {
+                // Läs in en vara, lägg till den i arrayen, öka storleksräknaren
+                item_t item = input_item();
+                db[db_siz] = item;
+                ++db_siz;
+            }
         }
-    }
-    else {
-        puts("Sorry, must have [1-16] items in database.");
-        return 1; // Avslutar programmet!
-    }
+        else {
+            puts("Sorry, must have [1-16] items in database.");
+            return 1; // Avslutar programmet!
+        }
+        for (int i = db_siz; i < 16; ++i) {
+            char *name = magick(array1, array2, array3, 3); 
+            char *desc = magick(array1, array2, array3, 3);
+            int price = rand() % 100;
+            char shelf[] = { rand() % ('Z'-'A') + 'A',
+                             rand() % 10 + '0',
+                             rand() % 10 + '0',
+                             '\0' };
+            item_t item = make_item(name, desc, price, shelf);
 
-    for (int i = db_siz; i < 16; ++i) {
-        char *name = magick(array1, array2, array3, 3); // TODO: Lägg till storlek
-        char *desc = magick(array1, array2, array3, 3); // TODO: Lägg till storlek
-        int price = rand() % 200000;
-        char shelf[] = { rand() % ('Z'-'A') + 'A',
-                         rand() % 10 + '0',
-                         rand() % 10 + '0',
-                         '\0' };
-                         printf("\n%s\n", shelf); 
-        item_t item = make_item(name, desc, price, shelf);
-                                 printf("\n%s\n", shelf); 
+            db[db_siz] = item;  
+            ++db_siz;
 
+            printf("%d, db[db_siz].shelf: %s, item_value: %s\n", i,  (db+db_siz)->shelf, item.shelf); 
+        } 
 
-        db[db_siz] = item;
-                printf("before ++: %d\n", db_siz); 
-                printf("db[db_siz].shelf: %s\n", db[0].shelf); 
-                 printf("db[db_siz].shelf: %s\n", db[1].shelf); 
-                 printf("db[db_siz].shelf: %s\n", db[1].shelf); 
+        printf("db[db_siz].shelf aaaaaaaa: %s\n", db[0].shelf); 
+        printf("db[db_siz].shelf aaaaaaaa: %s\n", db[1].shelf); 
+        printf("db[db_siz].shelf aaaaaaaa: %s\n", db[2].shelf); 
+        printf("db[db_siz].shelf aaaaaaaa: %s\n", db[3].shelf); 
+        printf("db[db_siz].shelf aaaaaaaa: %s\n", db[4].shelf); 
+        printf("db[db_siz].shelf aaaaaaaa: %s\n", db[5].shelf); 
 
-                 printf("db[db_siz].shelf: %s\n", db[db_siz].shelf); 
-               
+        for (int i = 0; i < db_siz; ++i) {
+            printf("db[db_siz].shelf: %s\n", db[i].shelf); 
+        }
 
-        ++db_siz;
-        printf("after ++; %d\n", db_siz); 
-    }
-                     printf("db[db_siz].shelf: %s\n", db[db_siz-2].shelf); 
+        // Skriv ut innehållet
+        for (int i = 0; i < db_siz; ++i) {
+            print_item(&db[i]);
+        }
 
+        list_db(db, db_siz); 
+        edit_db(db, db_siz); 
 
-     // Skriv ut innehållet
-    for (int i = 0; i < db_siz; ++i)
-    {
-        print_item(&db[i]);
-    }
+        for (int i = 0; i < db_siz; ++i) {
+            print_item(&db[i]);
+        }
     }
     return 0;
 }
