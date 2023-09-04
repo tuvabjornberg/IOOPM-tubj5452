@@ -11,6 +11,7 @@ int main(void) {
 
     char *name = ask_question_string("Skriv in ditt namn: "); 
     printf("Du '%s', jag tänkter på ett tal ... ", name);
+    clear_input_buffer(); 
     guess = ask_question_int("kan du gissa vilket?"); 
 
     for (int i = 1; i <= 16; i++) {

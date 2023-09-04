@@ -21,5 +21,6 @@ int ask_question_int(char *question);
 char *ask_question_string(char * question);
 void print(char *str); 
 void printIn(char *str); 
+void clear_input_buffer(); 
 
 #endif
