@@ -140,24 +140,11 @@ int main(int argc, char *argv[]) {
                              rand() % 10 + '0',
                              rand() % 10 + '0',
                              '\0' };
-            item_t item = make_item(name, desc, price, shelf);
+            item_t item = make_item(name, desc, price, strdup(shelf));
 
             db[db_siz] = item;  
             ++db_siz;
-
-            printf("%d, db[db_siz].shelf: %s, item_value: %s\n", i,  (db+db_siz)->shelf, item.shelf); 
         } 
-
-        printf("db[db_siz].shelf aaaaaaaa: %s\n", db[0].shelf); 
-        printf("db[db_siz].shelf aaaaaaaa: %s\n", db[1].shelf); 
-        printf("db[db_siz].shelf aaaaaaaa: %s\n", db[2].shelf); 
-        printf("db[db_siz].shelf aaaaaaaa: %s\n", db[3].shelf); 
-        printf("db[db_siz].shelf aaaaaaaa: %s\n", db[4].shelf); 
-        printf("db[db_siz].shelf aaaaaaaa: %s\n", db[5].shelf); 
-
-        for (int i = 0; i < db_siz; ++i) {
-            printf("db[db_siz].shelf: %s\n", db[i].shelf); 
-        }
 
         // Skriv ut innehållet
         for (int i = 0; i < db_siz; ++i) {
