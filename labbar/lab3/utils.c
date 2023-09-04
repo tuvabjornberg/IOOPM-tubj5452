@@ -53,11 +53,11 @@ answer_t ask_question(char *question, check_func check, convert_func convert) {
     do {
         char_length = read_string(buf, buf_siz); 
         check_format = check(buf); 
-        if (check(buf) == false) {
+        if (check_format == false) {
             printf("Felaktig input, försök igen med ett tal\n"); 
         }
     } 
-    while (check_format == false || char_length < 1); 
+    while (check_format == false || char_length < 1);
 
     return convert(buf); 
 }
