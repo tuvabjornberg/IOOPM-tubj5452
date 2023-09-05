@@ -14,8 +14,8 @@ typedef struct item {
 } item_t;
 
 void print_item(item_t *item) {
-    printf("Name: %s\nDesc: %s\nPrice: %d\nShelf: %s\n", 
-        item->name, item->description, item->price, item->shelf);
+    printf("Name: %s\nDesc: %s\nPrice: %d.%d\nShelf: %s\n", 
+        item->name, item->description, item->price / 100, item->price % 100 , item->shelf);
 }
 
 item_t make_item(char *name, char *description, int price, char *shelf) {
@@ -49,7 +49,6 @@ item_t input_item(void) {
     char *shelf = ask_question_shelf("Skriv in hyllan: (På formatet 'A10')"); 
 
     return make_item(name, description, price, shelf); 
-    //return (item_t) {name, description, price, shelf}; 
 }
 
 char *magick(char **array1, char **array2, char **array3, int size) {
@@ -135,7 +134,7 @@ int main(int argc, char *argv[]) {
         for (int i = db_siz; i < 16; ++i) {
             char *name = magick(array1, array2, array3, 3); 
             char *desc = magick(array1, array2, array3, 3);
-            int price = rand() % 100;
+            int price = rand() % 10000;
             char shelf[] = { rand() % ('Z'-'A') + 'A',
                              rand() % 10 + '0',
                              rand() % 10 + '0',
