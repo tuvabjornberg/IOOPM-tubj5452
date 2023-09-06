@@ -196,16 +196,15 @@ void event_loop(item_t *items, int index) {
             default:
                 break;
         }
-        if (index = 3) {
+        if (index == 16) {
             printf("Du har lagt till max antal varor (16 st), fortsätter du att lägga till varor skrivs det över dina tidigare varor\n"); 
             index = 0; 
         }
     } while (running); 
 }
 
-
 int main() { 
-    item_t db[3]; // Array med plats för 16 varor
+    item_t db[16]; // Array med plats för 16 varor
     int db_siz = 0; // Antalet varor i arrayen just nu
     event_loop(db, db_siz); 
     return 0;
