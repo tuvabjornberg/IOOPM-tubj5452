@@ -82,7 +82,7 @@ char *magick(char **array1, char **array2, char **array3, int size) {
 }
 
 void print_menu(void) {
-    printf("[L]ägga till en vara\n[T]a bort en vara\n[R]edigera en vara\nÅn[g]ra senaste ändringen\nLista [h]ela varukatalogen\n[A]vsluta\n"); 
+    printf("\n[L]ägga till en vara\n[T]a bort en vara\n[R]edigera en vara\nÅn[g]ra senaste ändringen\nLista [h]ela varukatalogen\n[A]vsluta\n"); 
 
 }
 
@@ -120,7 +120,7 @@ void edit_db(item_t *items, int max_size) {
     list_db(items, max_size); 
     int change = ask_question_int("Du har valt Redigera en vara, skriv indexet på den varan du vill ändra\n");
     
-    while (change >= max_size || change < 0) {
+    while (change > max_size || change < 0) {
         change = ask_question_int("Felaktig input\n");
     }
     change--; 
@@ -144,7 +144,7 @@ int remove_item_from_db(item_t *items, int max_size) {
     list_db(items, max_size); 
     int change = ask_question_int("Du har valt Ta bort en vara, skriv indexet på den varan du vill ta bort\n");
     
-    while (change >= max_size || change < 0) {
+    while (change > max_size || change < 0) {
         change = ask_question_int("Felaktig input\n");
     }
     change--; 
@@ -168,11 +168,21 @@ void event_loop(item_t *items, int index) {
                 index++; 
                 break;
             case 'T':
-                index = remove_item_from_db(items, index);
-                index --; 
+                if (index == 0) {
+                    printf("Du måste skriva in varor innan du kan ta bort varor\n"); 
+                }
+                else {
+                    index = remove_item_from_db(items, index);
+                    index --; 
+                }
                 break; 
             case 'R':
-                edit_db(items, index); 
+                if (index == 0) {
+                    printf("Du måste skriva in varor innan du kan redigera\n"); 
+                }
+                else {
+                    edit_db(items, index); 
+                }
                 break;
             case 'G':
                 printf("Not yet implemented!\n"); 
@@ -186,46 +196,17 @@ void event_loop(item_t *items, int index) {
             default:
                 break;
         }
-        if (index > 16) {
-            printf("Du har lagt till max antal varor (16 st)\n"); 
+        if (index = 3) {
+            printf("Du har lagt till max antal varor (16 st), fortsätter du att lägga till varor skrivs det över dina tidigare varor\n"); 
+            index = 0; 
         }
     } while (running); 
 }
 
 
 int main() { 
-        item_t db[16]; // Array med plats för 16 varor
-        int db_siz = 0; // Antalet varor i arrayen just nu
-
-        //int items = atoi(argv[1]); // Antalet varor som skall skapas
-
-        //if (items > 0 && items <= 16) {
-        //    for (int i = 0; i < items; ++i) {
-        //        // Läs in en vara, lägg till den i arrayen, öka storleksräknaren
-        //        item_t item = input_item();
-        //        db[db_siz] = item;
-        //        ++db_siz;
-        //    }
-        //}
-        //else {
-            //puts("Sorry, must have [1-16] items in database.");
-            //return 1; // Avslutar programmet!
-        //}
-        //for (int i = db_siz; i < 16; ++i) {
-        //    char *name = magick(array1, array2, array3, 3); 
-        //    char *desc = magick(array1, array2, array3, 3);
-        //    int price = rand() % 10000;
-        //    char shelf[] = { rand() % ('Z'-'A') + 'A',
-        //                     rand() % 10 + '0',
-        //                     rand() % 10 + '0',
-        //                     '\0' };
-        //    item_t item = make_item(name, desc, price, strdup(shelf));
-//
-        //    db[db_siz] = item;  
-        //    ++db_siz;
-        //} 
-
-        event_loop(db, db_siz); 
-    //}
+    item_t db[3]; // Array med plats för 16 varor
+    int db_siz = 0; // Antalet varor i arrayen just nu
+    event_loop(db, db_siz); 
     return 0;
 }
