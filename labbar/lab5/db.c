@@ -22,26 +22,6 @@ item_t make_item(char *name, char *description, int price, char *shelf) {
     return (item_t) {name, description, price, shelf}; 
 }
 
-bool check_shelf(char *shelf) {
-    if (isalpha(shelf[0]) && !islower(shelf[0]) && (strlen(shelf) > 1) && is_number(++shelf)) {
-        return true; 
-    }
-    else {
-        return false;
-    }
-}
-
-char *ask_question_shelf(char *question) {
-    char *shelf;
-
-    do {
-        shelf = ask_question_string(question);
-    }
-    while (!check_shelf(shelf)); 
-
-    return shelf;
-}
-
 item_t input_item(void) {
     char *name = ask_question_string("Skriv in varans namn: "); 
     char *description = ask_question_string("Skriv in en kort beskrivning: "); 

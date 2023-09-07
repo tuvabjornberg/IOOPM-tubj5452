@@ -10,7 +10,7 @@ bool is_number(char *str) {
         start = 1; 
     }
     for (int i = start; i < strlen(str); i++) { 
-        if (!isdigit(str[i])) {
+        if (!isdigit(str[i]) || (str[0] == '-' && str[1] == '0')) {
             return false; 
         }
     }
@@ -19,6 +19,15 @@ bool is_number(char *str) {
 
 bool not_empty(char *str) {
     return strlen(str) > 0; 
+}
+
+bool check_shelf(char *shelf) {
+    if (isalpha(shelf[0]) && !islower(shelf[0]) && (strlen(shelf) > 1) && is_number(++shelf)) {
+        return true; 
+    }
+    else {
+        return false;
+    }
 }
 
 void clear_input_buffer() {
@@ -34,7 +43,7 @@ int read_string(char *buf, int buf_siz) {
     int counter = 0;
     char c; 
 
-    while (counter < buf_siz - 1 && (c = getchar()) != '\n') {
+    while (counter < buf_siz - 1 && ((c = getchar()) != '\n')) {
         buf[counter] = c;
         counter++;
     }
@@ -54,7 +63,7 @@ answer_t ask_question(char *question, check_func check, convert_func convert) {
         char_length = read_string(buf, buf_siz); 
         check_format = check(buf); 
         if (check(buf) == false) {
-            printf("Felaktig input, försök igen med ett tal\n"); 
+            printf("Felaktig input\n"); 
         }
     } 
     while (check_format == false || char_length < 1); 
@@ -62,14 +71,16 @@ answer_t ask_question(char *question, check_func check, convert_func convert) {
     return convert(buf); 
 }
 
-int ask_question_int(char *question)
-{
+int ask_question_int(char *question) {
     return ask_question(question, is_number, (convert_func) atoi).int_value;
 }
 
-char *ask_question_string(char *question)
-{
+char *ask_question_string(char *question) {
     return ask_question(question, not_empty, (convert_func) strdup).string_value;
+}
+
+char *ask_question_shelf(char *question) {
+    return ask_question(question, check_shelf, (convert_func) strdup).string_value; 
 }
 
 void print(char *str) {
