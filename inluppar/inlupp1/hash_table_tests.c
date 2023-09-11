@@ -22,6 +22,24 @@ void test_create_destroy()
    ioopm_hash_table_destroy(ht);
 }
 
+
+void test_insert_once()
+{
+    ioopm_hash_table_t *ht = ioopm_hash_table_create();
+    int key = 1;
+    int invalid_key = -1;
+    CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, key));
+    ioopm_hash_table_insert(ht, key, "Hej");
+    //Test fresh_key
+    CU_ASSERT_EQUAL("Hej", ioopm_hash_table_lookup(ht, key));
+
+    ioopm_hash_table_insert(ht, key, "Då");
+    CU_ASSERT_EQUAL("Hej", ioopm_hash_table_lookup(ht, key));   
+    //Test invalid_key
+    CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, invalid_key));
+    ioopm_hash_table_destroy(ht);
+}
+
 int main() {
     // First we try to set up CUnit, and exit if we fail
     if (CU_initialize_registry() != CUE_SUCCESS)
@@ -42,7 +60,8 @@ int main() {
     // the test in question. If you want to add another test, just
     // copy a line below and change the information
     if (
-        (CU_add_test(my_test_suite, "A simple is_number test", test_create_destroy) == NULL)
+        (CU_add_test(my_test_suite, "A simple create_destroy test", test_create_destroy) == NULL ||
+        CU_add_test(my_test_suite, "A simple insert_lookup test", test_insert_once) == NULL)
     )
         {
         // If adding any of the tests fails, we tear down CUnit and exit
