@@ -1,6 +1,8 @@
 a.out: hash_table.c
 	gcc -o a.out -g -Wall hash_table.c 
 
+
+#Prep for better Makefile, seems to have issue with CUnit library
 #main: myprog
 #
 #C_COMPILER     = gcc

@@ -29,21 +29,34 @@ void ioopm_hash_table_destroy(ioopm_hash_table_t *ht) {
   free(ht);
 }
 
-entry_t *find_previous_entry_for_key(entry_t *bucket, int key) {
-    entry_t dummy;
+static entry_t *find_previous_entry_for_key(entry_t *bucket, int key) {
+    entry_t dummy; 
     dummy.key = -1;
     dummy.next = bucket;
 
     entry_t *prev = &dummy;
     entry_t *current = bucket;
 
-    while (current != NULL && current -> key != key)
+    while (current != NULL && current->key != key)
     {
         prev = current;
-        current = current -> next;
+        current = current->next;
     }
 
     return prev;
+}
+
+// Creates a new entry with a given key, value and next pointer
+static entry_t *entry_create(int key, char *value, entry_t *next) {
+  entry_t *new_entry = calloc(1, sizeof(entry_t));
+
+  if (new_entry != NULL) {
+    new_entry->key = key;
+    new_entry->value = value;
+    new_entry->next = next;
+  } 
+  
+  return new_entry; 
 }
 
 void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
