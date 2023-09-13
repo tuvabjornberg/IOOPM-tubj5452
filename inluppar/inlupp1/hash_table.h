@@ -1,5 +1,3 @@
-#ifndef __HASH_TABLE_H_
-#define __HASH_TABLE_H_
 #pragma once
 
 /**
@@ -42,5 +40,3 @@ char *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key);
 /// @param key key to remove
 /// @return the value mapped to by key (FIXME: incomplete)
 char *ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key);
-
-#endif
