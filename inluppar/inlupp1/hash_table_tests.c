@@ -30,11 +30,14 @@ void test_insert_once()
     int invalid_key = -1;
     CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, key));
     ioopm_hash_table_insert(ht, key, "Hej");
+    
     //Test fresh_key
     CU_ASSERT_EQUAL("Hej", ioopm_hash_table_lookup(ht, key));
 
+    //Test existing key
     ioopm_hash_table_insert(ht, key, "Då");
     CU_ASSERT_EQUAL("Hej", ioopm_hash_table_lookup(ht, key));   
+    
     //Test invalid_key
     CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, invalid_key));
     ioopm_hash_table_destroy(ht);

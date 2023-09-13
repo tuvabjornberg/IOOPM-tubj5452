@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include "hash_table.h"
+#include <stdio.h>
 
 /// the types from above
 typedef struct entry entry_t;
@@ -25,7 +26,28 @@ ioopm_hash_table_t *ioopm_hash_table_create()
   return result;
 }
 
+static void entry_destroy(entry_t *entry) {
+  if (entry->next != NULL) { 
+    entry_destroy(entry->next); 
+    }
+  else {
+    free(entry); 
+  }
+}
+
 void ioopm_hash_table_destroy(ioopm_hash_table_t *ht) {
+  //1. Iterate over the buckets in the buckets array
+  // 1.1 For each bucket, iterate over its entries and deallocate them.
+  //2. Deallocate the hash table data structure using free().
+
+  //for (int i = 0; ht != NULL; i++, ht++) {  //TODO: adjust bounds
+  //  entry_destroy(&ht->buckets[i]); 
+  //}
+
+  for (int i = 0; &ht->buckets[i] != NULL; i++) {  //TODO: adjust bounds
+    entry_destroy(&ht->buckets[i]); //&(*ht).buckets[i]
+  }
+
   free(ht);
 }
 
@@ -63,7 +85,7 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
 {
   /// Calculate the bucket for this entry
   int bucket = key % 17;
-  /// Search for an existing entry for a key
+  /// Search for an existing entry for a key //&()
   entry_t *entry = find_previous_entry_for_key(&ht->buckets[bucket], key);
   entry_t *next = entry->next;
 
