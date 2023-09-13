@@ -49,13 +49,10 @@ static entry_t *find_previous_entry_for_key(entry_t *bucket, int key) {
 // Creates a new entry with a given key, value and next pointer
 static entry_t *entry_create(int key, char *value, entry_t *next) {
   entry_t *new_entry = calloc(1, sizeof(entry_t));
+  new_entry->key = key;
+  new_entry->value = value;
+  new_entry->next = next;
 
-  if (new_entry != NULL) {
-    new_entry->key = key;
-    new_entry->value = value;
-    new_entry->next = next;
-  } 
-  
   return new_entry; 
 }
 
