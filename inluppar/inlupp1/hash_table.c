@@ -27,25 +27,15 @@ ioopm_hash_table_t *ioopm_hash_table_create()
 }
 
 static void entry_destroy(entry_t *entry) {
-  if (entry->next != NULL) { 
+  if (entry != NULL) { 
     entry_destroy(entry->next); 
-    }
-  else {
     free(entry); 
   }
 }
 
 void ioopm_hash_table_destroy(ioopm_hash_table_t *ht) {
-  //1. Iterate over the buckets in the buckets array
-  // 1.1 For each bucket, iterate over its entries and deallocate them.
-  //2. Deallocate the hash table data structure using free().
-
-  //for (int i = 0; ht != NULL; i++, ht++) {  //TODO: adjust bounds
-  //  entry_destroy(&ht->buckets[i]); 
-  //}
-
-  for (int i = 0; &ht->buckets[i] != NULL; i++) {  //TODO: adjust bounds
-    entry_destroy(&ht->buckets[i]); //&(*ht).buckets[i]
+  for (int i = 0; i < 17; i++) {// CHEAT/TODO: hardcoded, implement something general //ht != NULL
+    entry_destroy((&ht->buckets[i])->next); 
   }
 
   free(ht);
