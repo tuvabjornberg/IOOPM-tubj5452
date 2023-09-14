@@ -1,10 +1,17 @@
 #include <stdlib.h>
 #include "hash_table.h"
 #include <stdio.h>
+#include <stdbool.h>
+
+#define Success(v) (option_t){.success = true, .value = v};
+#define Failure() (option_t){.success = false};
+#define Successful(o) (o->success == true)
+#define Unsuccessful(o) (o->success == false)
 
 /// the types from above
 typedef struct entry entry_t;
 typedef struct hash_table ioopm_hash_table_t;
+typedef struct option option_t;
 
 struct entry
 {
@@ -18,6 +25,12 @@ struct hash_table
   entry_t buckets[17];
 };
 
+struct option
+{
+  bool success;
+  char *value;
+};
+
 ioopm_hash_table_t *ioopm_hash_table_create()
 {
   /// Allocate space for a ioopm_hash_table_t = 17 pointers to
@@ -26,46 +39,51 @@ ioopm_hash_table_t *ioopm_hash_table_create()
   return result;
 }
 
-static void entry_destroy(entry_t *entry) {
-  if (entry != NULL) { 
-    entry_destroy(entry->next); 
-    free(entry); 
+static void entry_destroy(entry_t *entry)
+{
+  if (entry != NULL)
+  {
+    entry_destroy(entry->next);
+    free(entry);
   }
 }
 
-void ioopm_hash_table_destroy(ioopm_hash_table_t *ht) {
-  for (int i = 0; i < 17; i++) {// CHEAT/TODO: hardcoded, implement something general //ht != NULL
-    entry_destroy((&ht->buckets[i])->next); 
+void ioopm_hash_table_destroy(ioopm_hash_table_t *ht)
+{
+  for (int i = 0; i < 17; i++) // CHEAT/TODO: hardcoded, implement something general //ht != NULL
+  { 
+    entry_destroy((&ht->buckets[i])->next);
   }
-
   free(ht);
 }
 
-static entry_t *find_previous_entry_for_key(entry_t *bucket, int key) {
-    entry_t dummy; 
-    dummy.key = -1;
-    dummy.next = bucket;
+static entry_t *find_previous_entry_for_key(entry_t *bucket, int key)
+{
+  entry_t sentinel;
+  sentinel.key = -1;
+  sentinel.next = bucket;
 
-    entry_t *prev = &dummy;
-    entry_t *current = bucket;
+  entry_t *prev = &sentinel;
+  entry_t *current = bucket;
 
-    while (current != NULL && current->key != key)
-    {
-        prev = current;
-        current = current->next;
-    }
+  while (current != NULL && current->key != key)
+  {
+    prev = current;
+    current = current->next;
+  }
 
-    return prev;
+  return prev;
 }
 
 // Creates a new entry with a given key, value and next pointer
-static entry_t *entry_create(int key, char *value, entry_t *next) {
+static entry_t *entry_create(int key, char *value, entry_t *next)
+{
   entry_t *new_entry = calloc(1, sizeof(entry_t));
   new_entry->key = key;
   new_entry->value = value;
   new_entry->next = next;
 
-  return new_entry; 
+  return new_entry;
 }
 
 void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
@@ -78,16 +96,40 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
 
   /// Check if the next entry should be updated or not
   if (next != NULL && next->key == key)
-    {
-      next->value = value;
-    }
+  {
+    next->value = value;
+  }
   else
-    {
-      entry->next = entry_create(key, value, next);
-    }
+  {
+    entry->next = entry_create(key, value, next);
+  }
 }
 
-char *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key) {
-  return NULL; 
+//void destroy_option(option_t o) {
+//  free(o); 
+//}
+
+option_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key)
+{
+  int bucket = key % 17; 
+
+  //option_t *result = {NULL};  //, NULL};
+  entry_t *tmp = find_previous_entry_for_key(&ht->buckets[bucket], key);
+  entry_t *next = tmp->next;
+  //option_t result = calloc(1, sizeof(option_t)); 
+
+  if (next && next->key == key)
+  {
+    *result = Success(next->value); //seg fault here
+  }
+  else
+  {
+    *result = Failure(); 
+  }
+
+  return result;
 }
+
+
+
 

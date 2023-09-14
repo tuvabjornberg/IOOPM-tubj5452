@@ -22,24 +22,48 @@ void test_create_destroy()
    ioopm_hash_table_destroy(ht);
 }
 
-
 void test_insert_once()
 {
     ioopm_hash_table_t *ht = ioopm_hash_table_create();
     int key = 1;
     int invalid_key = -1;
-    CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, key));
-    ioopm_hash_table_insert(ht, key, "Hej");
-    
-    //Test fresh_key
-    CU_ASSERT_EQUAL("Hej", ioopm_hash_table_lookup(ht, key));
 
-    //Test existing key
-    ioopm_hash_table_insert(ht, key, "Då");
-    CU_ASSERT_EQUAL("Hej", ioopm_hash_table_lookup(ht, key));   
+    int key1 = 1; 
+    int key2 = 2; 
+    int key3 = 3; 
+
+    ioopm_hash_table_insert(ht, key1, "value1");
+    ioopm_hash_table_insert(ht, key2, "value2");
+    ioopm_hash_table_insert(ht, key3, "value3");
+
+    // Test key1
+    option_t *result = ioopm_hash_table_lookup(ht, key1);
+    CU_ASSERT_TRUE(Successful(result));
+    CU_ASSERT_STRING_EQUAL("value1", result->value);
+
+
+    // Test existing key
+    result = ioopm_hash_table_lookup(ht, key2);
+    CU_ASSERT_TRUE(Successful(result));
+    CU_ASSERT_STRING_EQUAL("value2", result->value);
+
+    // Test invalid_key
+    result = ioopm_hash_table_lookup(ht, invalid_key);
+    CU_ASSERT_TRUE(Unsuccessful(result));
     
-    //Test invalid_key
-    CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, invalid_key));
+    ioopm_hash_table_destroy(ht);
+}
+
+void test_lookup_empty()
+{
+    ioopm_hash_table_t *ht = ioopm_hash_table_create();
+    for (int i = 0; i < 18; ++i) /// 18 is a bit magical and should be changed depending on buckets
+    {
+        option_t *result = ioopm_hash_table_lookup(ht, i); 
+        CU_ASSERT_PTR_NULL(result);
+    }
+    option_t *result = ioopm_hash_table_lookup(ht, -1); 
+    CU_ASSERT_PTR_NULL(result);
     ioopm_hash_table_destroy(ht);
 }
 
@@ -64,7 +88,8 @@ int main() {
     // copy a line below and change the information
     if (
         (CU_add_test(my_test_suite, "A simple create_destroy test", test_create_destroy) == NULL ||
-        CU_add_test(my_test_suite, "A simple insert_lookup test", test_insert_once) == NULL)
+        CU_add_test(my_test_suite, "A simple insert_lookup test", test_insert_once) == NULL ||
+	    CU_add_test(my_test_suite, "Empty lookup", test_lookup_empty) == NULL)
     )
         {
         // If adding any of the tests fails, we tear down CUnit and exit
