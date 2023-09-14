@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdbool.h>
+
 #define Successful(o) (o.success == true)
 #define Unsuccessful(o) (o.success == false)
 
@@ -26,11 +27,11 @@ struct option
   char *value;
 };
 
-/// @brief Create a new hash table
-/// @return A new empty hash table
+/// @brief create a new hash table
+/// @return a new empty hash table
 ioopm_hash_table_t *ioopm_hash_table_create(void);
 
-/// @brief Delete a hash table and free its memory
+/// @brief delete a hash table and free its memory
 /// @param ht a hash table to be deleted
 void ioopm_hash_table_destroy(ioopm_hash_table_t *ht);
 
@@ -43,7 +44,7 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value);
 /// @brief lookup value for key in hash table ht
 /// @param ht hash table operated upon
 /// @param key key to lookup
-/// @return the value mapped to by key (FIXME: incomplete)
+/// @return an option with an is found bool and a value
 option_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key);
 
 /// @brief remove any mapping from key to a value
@@ -52,8 +53,6 @@ option_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key);
 /// @return the value mapped to by key (FIXME: incomplete)
 char *ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key);
 
-/// @brief 
-/// @param 
-/// @param 
-/// @return 
-void ioopm_destroy_option(option_t *o); 
+/// @brief delete an option and free its memory
+/// @param option option with success and value 
+void ioopm_destroy_option(option_t *option_found); 

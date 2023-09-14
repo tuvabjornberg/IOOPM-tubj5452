@@ -35,24 +35,22 @@ void test_insert_once()
     ioopm_hash_table_insert(ht, key2, "value2");
     ioopm_hash_table_insert(ht, key3, "value3");
 
-
-    // Test key1
+    // Test existing key1
     option_t *result = ioopm_hash_table_lookup(ht, key1);
 
-    CU_ASSERT_TRUE(Successful((*result)));
+    CU_ASSERT(Successful((*result)));
     CU_ASSERT_STRING_EQUAL("value1", result->value);
     ioopm_destroy_option(result); 
 
-
-    // Test existing key
+    // Test existing key2
     result = ioopm_hash_table_lookup(ht, key2);
-    CU_ASSERT_TRUE(Successful((*result)));
+    CU_ASSERT(Successful((*result)));
     CU_ASSERT_STRING_EQUAL("value2", result->value);
     ioopm_destroy_option(result); 
 
-    // Test invalid_key
+    // Test invalid_key 
     result = ioopm_hash_table_lookup(ht, invalid_key);
-    CU_ASSERT_FALSE(Unsuccessful((*result)));
+    CU_ASSERT(Unsuccessful((*result)));
     ioopm_destroy_option(result); 
 
     ioopm_hash_table_destroy(ht);
@@ -64,11 +62,11 @@ void test_lookup_empty()
     for (int i = 0; i < 18; ++i) /// 18 is a bit magical and should be changed depending on buckets
     {
         option_t *result = ioopm_hash_table_lookup(ht, i); 
-        CU_ASSERT_PTR_NULL(result);
+        CU_ASSERT_PTR_NOT_NULL(result);
         ioopm_destroy_option(result); 
     }
     option_t *result = ioopm_hash_table_lookup(ht, -1); 
-    CU_ASSERT_PTR_NULL(result);
+    CU_ASSERT_PTR_NOT_NULL(result);
 
     ioopm_destroy_option(result); 
     ioopm_hash_table_destroy(ht);
