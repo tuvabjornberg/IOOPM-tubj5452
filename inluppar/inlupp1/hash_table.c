@@ -70,7 +70,7 @@ static entry_t *entry_create(int key, char *value, entry_t *next)
 
 static entry_t *find_previous_entry_for_key(entry_t *bucket, int key)
 {
-  unsigned bucket_index = key < 0 ? 0 : key % 17;
+  //unsigned bucket_index = key < 0 ? 0 : key % 17;
   //entry_t *sentinel = entry_create(0, "invalid", bucket); 
   //sentinel.key = -1;
   //sentinel.next = bucket;
@@ -86,8 +86,6 @@ static entry_t *find_previous_entry_for_key(entry_t *bucket, int key)
 
   return prev;
 }
-
-
 
 void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
 {
@@ -114,10 +112,10 @@ void ioopm_destroy_option(option_t *o) {
 
 option_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key)
 {
-  int bucket = key % 17; 
+  unsigned bucket_index = key < 0 ? 0 : key % 17;
 
   option_t *result = calloc(1, sizeof(option_t)); 
-  entry_t *tmp = find_previous_entry_for_key(&ht->buckets[bucket], key);
+  entry_t *tmp = find_previous_entry_for_key(&ht->buckets[bucket_index], key);
   entry_t *next = tmp->next;
 
   if (next != NULL)
