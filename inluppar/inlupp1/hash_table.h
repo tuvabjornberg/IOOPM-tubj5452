@@ -1,9 +1,8 @@
 #pragma once
 
 #include <stdbool.h>
-
-#define Successful(o) (o->success == true)
-#define Unsuccessful(o) (o->success == false)
+#define Successful(o) (o.success == true)
+#define Unsuccessful(o) (o.success == false)
 
 /**
  * @file hash_table.h
@@ -21,11 +20,11 @@
 typedef struct hash_table ioopm_hash_table_t;
 typedef struct option option_t; 
 
-//struct option
-//{
-//  bool success;
-//  char *value;
-//};
+struct option
+{
+  bool success;
+  char *value;
+};
 
 /// @brief Create a new hash table
 /// @return A new empty hash table
@@ -52,3 +51,9 @@ option_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key);
 /// @param key key to remove
 /// @return the value mapped to by key (FIXME: incomplete)
 char *ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key);
+
+/// @brief 
+/// @param 
+/// @param 
+/// @return 
+void ioopm_destroy_option(option_t *o); 

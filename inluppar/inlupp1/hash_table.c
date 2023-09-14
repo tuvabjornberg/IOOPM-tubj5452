@@ -5,8 +5,8 @@
 
 #define Success(v) (option_t){.success = true, .value = v};
 #define Failure() (option_t){.success = false};
-#define Successful(o) (o->success == true)
-#define Unsuccessful(o) (o->success == false)
+//#define Successful(o) (o->success == true)
+//#define Unsuccessful(o) (o->success == false)
 
 /// the types from above
 typedef struct entry entry_t;
@@ -25,11 +25,11 @@ struct hash_table
   entry_t buckets[17];
 };
 
-struct option
-{
-  bool success;
-  char *value;
-};
+//struct option
+//{
+//  bool success;
+//  char *value;
+//};
 
 ioopm_hash_table_t *ioopm_hash_table_create()
 {
@@ -57,24 +57,6 @@ void ioopm_hash_table_destroy(ioopm_hash_table_t *ht)
   free(ht);
 }
 
-static entry_t *find_previous_entry_for_key(entry_t *bucket, int key)
-{
-  entry_t sentinel;
-  sentinel.key = -1;
-  sentinel.next = bucket;
-
-  entry_t *prev = &sentinel;
-  entry_t *current = bucket;
-
-  while (current != NULL && current->key != key)
-  {
-    prev = current;
-    current = current->next;
-  }
-
-  return prev;
-}
-
 // Creates a new entry with a given key, value and next pointer
 static entry_t *entry_create(int key, char *value, entry_t *next)
 {
@@ -85,6 +67,27 @@ static entry_t *entry_create(int key, char *value, entry_t *next)
 
   return new_entry;
 }
+
+static entry_t *find_previous_entry_for_key(entry_t *bucket, int key)
+{
+  unsigned bucket_index = key < 0 ? 0 : key % 17;
+  //entry_t *sentinel = entry_create(0, "invalid", bucket); 
+  //sentinel.key = -1;
+  //sentinel.next = bucket;
+
+  entry_t *prev = bucket;
+  entry_t *current = bucket->next;
+
+  while (current != NULL && current->key != key)
+  {
+    prev = current;
+    current = current->next;
+  }
+
+  return prev;
+}
+
+
 
 void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
 {
@@ -105,29 +108,27 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
   }
 }
 
-//void destroy_option(option_t o) {
-//  free(o); 
-//}
+void ioopm_destroy_option(option_t *o) {
+    free(o); 
+}
 
 option_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key)
 {
   int bucket = key % 17; 
 
-  //option_t *result = {NULL};  //, NULL};
+  option_t *result = calloc(1, sizeof(option_t)); 
   entry_t *tmp = find_previous_entry_for_key(&ht->buckets[bucket], key);
   entry_t *next = tmp->next;
-  //option_t result = calloc(1, sizeof(option_t)); 
 
-  if (next && next->key == key)
-  {
-    *result = Success(next->value); //seg fault here
-  }
+  if (next != NULL)
+    {
+      *result = Success(next->value);
+    }
   else
-  {
-    *result = Failure(); 
-  }
-
-  return result;
+    {
+      *result = Failure();
+    }
+    return result; 
 }
 
 
