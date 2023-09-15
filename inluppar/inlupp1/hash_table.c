@@ -45,10 +45,7 @@ static void entry_destroy(entry_t *entry)
 
 void ioopm_hash_table_destroy(ioopm_hash_table_t *ht)
 {
-  for (int i = 0; i < No_Buckets; i++) // CHEAT/TODO: hardcoded, implement something general //ht != NULL
-  {
-    entry_destroy((&ht->buckets[i])->next);
-  }
+  ioopm_hash_table_clear(ht); 
   free(ht);
 }
 
@@ -158,7 +155,6 @@ char *ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
   return removed_value;
 }
 
-
 int ioopm_hash_table_size(ioopm_hash_table_t *ht) 
 {
   int counter = 0; 
@@ -191,5 +187,9 @@ bool ioopm_hash_table_is_empty(ioopm_hash_table_t *ht)
 
 void ioopm_hash_table_clear(ioopm_hash_table_t *ht)
 {
-
+  for (int i = 0; i < No_Buckets; i++) // CHEAT/TODO: hardcoded, implement something general //*ht != NULL
+  {
+    entry_destroy((&ht->buckets[i])->next);
+    ht->buckets[i].next = NULL;
+  }
 }

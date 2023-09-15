@@ -131,6 +131,8 @@ void test_size_hash_table()
 
     ioopm_hash_table_clear(ht); 
     CU_ASSERT_EQUAL(17, ioopm_hash_table_size(ht)); 
+    
+    ioopm_hash_table_destroy(ht); 
 }
 
 void test_is_empty_hash_table() 
@@ -148,10 +150,11 @@ void test_clear_hash_table()
 {
     ioopm_hash_table_t *ht = ioopm_hash_table_create(); 
     ioopm_hash_table_insert(ht, 1, "value1");
-    ioopm_hash_table_insert(ht, 2, "value1");
-    ioopm_hash_table_insert(ht, 18, "value1");
+    ioopm_hash_table_insert(ht, 2, "value2");
+    ioopm_hash_table_insert(ht, 18, "value3");
 
     ioopm_hash_table_clear(ht); 
+    CU_ASSERT_TRUE(ioopm_hash_table_is_empty(ht)); 
 
     option_t *lookup_result = ioopm_hash_table_lookup(ht, 18);
     CU_ASSERT_TRUE(Unsuccessful((*lookup_result)));
