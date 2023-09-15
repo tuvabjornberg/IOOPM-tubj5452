@@ -139,21 +139,24 @@ char *ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
 
   option_t *entry_to_remove = ioopm_hash_table_lookup(ht, key); 
 
-  entry_t *tmp = find_previous_entry_for_key(&ht->buckets[bucket_index], key);
-  entry_t *next = tmp->next;
+  entry_t *prev = find_previous_entry_for_key(&ht->buckets[bucket_index], key);
+  entry_t *current = prev->next;
 
   char *removed_value = 0; 
 
   if (entry_to_remove->success)
   {
-    if (next->next == NULL) {
+    if (current->next == NULL) {
       //last entry
-      removed_value = next->value; 
-      tmp->next = NULL; 
-      free(next); 
+      removed_value = current->value; 
+      prev->next = NULL; 
+      free(current); 
     }
-    else if (tmp == NULL) {
+    else if ((&ht->buckets[bucket_index])->next == current) {
       //first entry
+      removed_value = current->value; 
+      prev->next = current->next; 
+      free(current); 
     }
     else {
       //middle entry

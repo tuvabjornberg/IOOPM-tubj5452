@@ -79,13 +79,21 @@ void test_remove_entry()
     int key1 = 1; 
     int key2 = 18; 
     int key3 = 35; 
+    int key4 = 52; 
     ioopm_hash_table_insert(ht, key1, "value1");
     ioopm_hash_table_insert(ht, key2, "value2"); 
     ioopm_hash_table_insert(ht, key3, "value3"); 
+    ioopm_hash_table_insert(ht, key4, "value3"); 
+
+    //Remove inserted item (middle)
+    ioopm_hash_table_remove(ht, key2); 
+    option_t *result = ioopm_hash_table_lookup(ht, key2);
+    CU_ASSERT(Unsuccessful((*result)));
+    ioopm_destroy_option(result);  
 
     //Remove inserted item (last)
-    ioopm_hash_table_remove(ht, key3); 
-    option_t *result = ioopm_hash_table_lookup(ht, key3);
+    ioopm_hash_table_remove(ht, key4); 
+    result = ioopm_hash_table_lookup(ht, key4);
     CU_ASSERT(Unsuccessful((*result)));
     ioopm_destroy_option(result); 
 
@@ -94,12 +102,6 @@ void test_remove_entry()
     result = ioopm_hash_table_lookup(ht, key1);
     CU_ASSERT(Unsuccessful((*result)));
     ioopm_destroy_option(result);
-
-    //Remove inserted item (middle)
-    ioopm_hash_table_remove(ht, key2); 
-    result = ioopm_hash_table_lookup(ht, key2);
-    CU_ASSERT(Unsuccessful((*result)));
-    ioopm_destroy_option(result);  
 
     //Remove for not inserted item
     ioopm_hash_table_remove(ht, key1); 
