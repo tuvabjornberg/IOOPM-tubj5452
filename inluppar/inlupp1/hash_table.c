@@ -146,36 +146,22 @@ char *ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
 
   if (entry_to_remove->success)
   {
+    removed_value = current->value; 
+
     if (current->next == NULL) {
-      //last entry
-      removed_value = current->value; 
+      //for last entries
       prev->next = NULL; 
       free(current); 
     }
-    else if ((&ht->buckets[bucket_index])->next == current) {
-      //first entry
-      removed_value = current->value; 
-      prev->next = current->next; 
-      free(current); 
-    }
     else {
-      //middle entry
+      //for first and middle entries
+      prev->next = current->next;
+      free(current);
     }
   }
   else {
-    //if key does not have an entry
+    removed_value = "key does not have an entry"; 
   }
-
-  //remove if entry has both previous and next
-  /* from lecture
-  link_t *prev = list_find_previous_link(list->first, value);
-  link_t *to_remove = prev->next;
-  prev->next = to_remove->next;
-  free(to_remove);
-  */
-
-
-
 
   ioopm_destroy_option(entry_to_remove); 
   return removed_value; 

@@ -50,14 +50,9 @@ option_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key);
 /// @brief remove any mapping from key to a value
 /// @param ht hash table operated upon
 /// @param key key to remove
-/// @return the value mapped to by key (FIXME: incomplete)
+/// @return the value of the removed entry from ht with key
 char *ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key);
 
 /// @brief delete an option and free its memory
 /// @param option option with success and value 
 void ioopm_destroy_option(option_t *option_found); 
-
-/// @brief delete a signle entry from hashtable
-/// @param ht a hash table operated upon
-/// @param key a key to an entry to be removed
-//void ioopm_remove_single_entry(ioopm_hash_table_t *ht, int key); 

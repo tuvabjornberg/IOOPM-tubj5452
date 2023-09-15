@@ -36,19 +36,19 @@ void test_insert_once()
     // Test existing key1
     option_t *result = ioopm_hash_table_lookup(ht, key1);
 
-    CU_ASSERT(Successful((*result)));
+    CU_ASSERT_TRUE(Successful((*result)));
     CU_ASSERT_STRING_EQUAL("value1", result->value);
     ioopm_destroy_option(result); 
 
     // Test existing key2
     result = ioopm_hash_table_lookup(ht, key2);
-    CU_ASSERT(Successful((*result)));
+    CU_ASSERT_TRUE(Successful((*result)));
     CU_ASSERT_STRING_EQUAL("value2", result->value);
     ioopm_destroy_option(result); 
 
     // Test invalid_key 
     result = ioopm_hash_table_lookup(ht, invalid_key);
-    CU_ASSERT(Unsuccessful((*result)));
+    CU_ASSERT_TRUE(Unsuccessful((*result)));
     ioopm_destroy_option(result); 
 
     ioopm_hash_table_destroy(ht);
@@ -83,30 +83,34 @@ void test_remove_entry()
     ioopm_hash_table_insert(ht, key1, "value1");
     ioopm_hash_table_insert(ht, key2, "value2"); 
     ioopm_hash_table_insert(ht, key3, "value3"); 
-    ioopm_hash_table_insert(ht, key4, "value3"); 
+    ioopm_hash_table_insert(ht, key4, "value4"); 
 
     //Remove inserted item (middle)
-    ioopm_hash_table_remove(ht, key2); 
+    char *value_removed = ioopm_hash_table_remove(ht, key2); 
+    CU_ASSERT_STRING_EQUAL("value2", value_removed); 
     option_t *result = ioopm_hash_table_lookup(ht, key2);
-    CU_ASSERT(Unsuccessful((*result)));
+    CU_ASSERT_TRUE(Unsuccessful((*result)));
     ioopm_destroy_option(result);  
 
     //Remove inserted item (last)
-    ioopm_hash_table_remove(ht, key4); 
+    value_removed = ioopm_hash_table_remove(ht, key4); 
     result = ioopm_hash_table_lookup(ht, key4);
-    CU_ASSERT(Unsuccessful((*result)));
+    CU_ASSERT_STRING_EQUAL("value4", value_removed); 
+    CU_ASSERT_TRUE(Unsuccessful((*result)));
     ioopm_destroy_option(result); 
 
     //Remove inserted item (first)
-    ioopm_hash_table_remove(ht, key1); 
+    value_removed = ioopm_hash_table_remove(ht, key1); 
     result = ioopm_hash_table_lookup(ht, key1);
-    CU_ASSERT(Unsuccessful((*result)));
+    CU_ASSERT_STRING_EQUAL("value1", value_removed); 
+    CU_ASSERT_TRUE(Unsuccessful((*result)));
     ioopm_destroy_option(result);
 
     //Remove for not inserted item
-    ioopm_hash_table_remove(ht, key1); 
+    value_removed = ioopm_hash_table_remove(ht, key1); 
     result = ioopm_hash_table_lookup(ht, key1);
-    CU_ASSERT(Unsuccessful((*result)));
+    CU_ASSERT_STRING_EQUAL("key does not have an entry", value_removed); 
+    CU_ASSERT_TRUE(Unsuccessful((*result)));
     ioopm_destroy_option(result); 
 
     ioopm_hash_table_destroy(ht); 
