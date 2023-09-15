@@ -118,6 +118,50 @@ void test_remove_entry()
     ioopm_hash_table_destroy(ht);
 }
 
+void test_size_hash_table()
+{
+    ioopm_hash_table_t *ht = ioopm_hash_table_create(); 
+    CU_ASSERT_EQUAL(17, ioopm_hash_table_size(ht)); 
+
+    ioopm_hash_table_insert(ht, 1, "value1");
+    ioopm_hash_table_insert(ht, 2, "value1");
+    ioopm_hash_table_insert(ht, 18, "value1");
+
+    CU_ASSERT_EQUAL(20, ioopm_hash_table_size(ht)); 
+
+    ioopm_hash_table_clear(ht); 
+    CU_ASSERT_EQUAL(17, ioopm_hash_table_size(ht)); 
+}
+
+void test_is_empty_hash_table() 
+{
+    ioopm_hash_table_t *ht = ioopm_hash_table_create(); 
+    CU_ASSERT_TRUE(ioopm_hash_table_is_empty(ht)); 
+
+    ioopm_hash_table_insert(ht, 1, "value1");
+    CU_ASSERT_FALSE(ioopm_hash_table_is_empty(ht)); 
+
+    ioopm_hash_table_destroy(ht); 
+}
+
+void test_clear_hash_table() 
+{
+    ioopm_hash_table_t *ht = ioopm_hash_table_create(); 
+    ioopm_hash_table_insert(ht, 1, "value1");
+    ioopm_hash_table_insert(ht, 2, "value1");
+    ioopm_hash_table_insert(ht, 18, "value1");
+
+    ioopm_hash_table_clear(ht); 
+
+    option_t *lookup_result = ioopm_hash_table_lookup(ht, 18);
+    CU_ASSERT_TRUE(Unsuccessful((*lookup_result)));
+    ioopm_option_destroy(lookup_result);
+
+    CU_ASSERT_EQUAL(17, ioopm_hash_table_size(ht)); 
+
+    ioopm_hash_table_destroy(ht); 
+}
+
 int main()
 {
     // First we try to set up CUnit, and exit if we fail
@@ -140,10 +184,15 @@ int main()
     // the test in question. If you want to add another test, just
     // copy a line below and change the information
     if (
-        (CU_add_test(my_test_suite, "A simple create_destroy test", test_create_destroy) == NULL ||
-         CU_add_test(my_test_suite, "A simple insert_lookup test", test_insert_once) == NULL ||
+        (CU_add_test(my_test_suite, "A simple create and destroy test", test_create_destroy) == NULL ||
+         CU_add_test(my_test_suite, "A simple insert and lookup test", test_insert_once) == NULL ||
          CU_add_test(my_test_suite, "Empty lookup", test_lookup_empty) == NULL ||
-         CU_add_test(my_test_suite, "Remove a single element", test_remove_entry) == NULL))
+         CU_add_test(my_test_suite, "Remove a single element", test_remove_entry) == NULL ||
+         CU_add_test(my_test_suite, "Test size of a hash_table", test_size_hash_table) == NULL ||
+         CU_add_test(my_test_suite, "Test for an empty hash table", test_is_empty_hash_table) == NULL ||
+         CU_add_test(my_test_suite, "Clearing a hash_table", test_clear_hash_table) == NULL
+        )
+        )
     {
         // If adding any of the tests fails, we tear down CUnit and exit
         CU_cleanup_registry();

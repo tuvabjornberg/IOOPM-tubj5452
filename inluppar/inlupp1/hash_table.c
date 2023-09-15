@@ -157,3 +157,39 @@ char *ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
   ioopm_option_destroy(lookup_result);
   return removed_value;
 }
+
+
+int ioopm_hash_table_size(ioopm_hash_table_t *ht) 
+{
+  int counter = 0; 
+  for (int i = 0; i < No_Buckets; i++) 
+  {
+    entry_t *cursor = &ht->buckets[i]; 
+    counter ++; 
+    while (cursor->next != NULL)
+    {
+      counter ++; 
+      cursor = cursor->next; 
+    }
+  }
+  return counter;  
+}
+
+bool ioopm_hash_table_is_empty(ioopm_hash_table_t *ht)
+{
+  for (int i = 0; i < No_Buckets; i++) 
+  {
+    entry_t *cursor = &ht->buckets[i]; 
+    if (cursor->next != NULL)
+    {
+      return false; 
+    }
+  }
+  
+  return true;   
+}
+
+void ioopm_hash_table_clear(ioopm_hash_table_t *ht)
+{
+
+}
