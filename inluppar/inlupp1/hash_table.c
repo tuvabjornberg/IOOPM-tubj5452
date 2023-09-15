@@ -92,8 +92,8 @@ static entry_t *find_previous_entry_for_key(entry_t *bucket, int key)
 void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
 {
   /// Calculate the bucket for this entry
-  int bucket = key % 17;
-  
+  unsigned bucket = key < 0 ? 0 : key % 17;
+
   /// Search for an existing entry for a key 
   entry_t *entry = find_previous_entry_for_key(&ht->buckets[bucket], key);
   entry_t *next = entry->next;
@@ -130,4 +130,50 @@ option_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key)
       *result = Failure();
     }
     return result; 
+}
+
+char *ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
+{
+  //Removing an entry for a given key. 
+  unsigned bucket_index = key < 0 ? 0 : key % 17;
+
+  option_t *entry_to_remove = ioopm_hash_table_lookup(ht, key); 
+
+  entry_t *tmp = find_previous_entry_for_key(&ht->buckets[bucket_index], key);
+  entry_t *next = tmp->next;
+
+  char *removed_value = 0; 
+
+  if (entry_to_remove->success)
+  {
+    if (next->next == NULL) {
+      //last entry
+      removed_value = next->value; 
+      tmp->next = NULL; 
+      free(next); 
+    }
+    else if (tmp == NULL) {
+      //first entry
+    }
+    else {
+      //middle entry
+    }
+  }
+  else {
+    //if key does not have an entry
+  }
+
+  //remove if entry has both previous and next
+  /* from lecture
+  link_t *prev = list_find_previous_link(list->first, value);
+  link_t *to_remove = prev->next;
+  prev->next = to_remove->next;
+  free(to_remove);
+  */
+
+
+
+
+  ioopm_destroy_option(entry_to_remove); 
+  return removed_value; 
 }

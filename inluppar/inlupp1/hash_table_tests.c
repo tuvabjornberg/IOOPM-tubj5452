@@ -28,12 +28,10 @@ void test_insert_once()
     int invalid_key = -1;
 
     int key1 = 1; 
-    int key2 = 2; 
-    int key3 = 3; 
+    int key2 = 18; 
 
     ioopm_hash_table_insert(ht, key1, "value1");
     ioopm_hash_table_insert(ht, key2, "value2");
-    ioopm_hash_table_insert(ht, key3, "value3");
 
     // Test existing key1
     option_t *result = ioopm_hash_table_lookup(ht, key1);
@@ -72,6 +70,46 @@ void test_lookup_empty()
     ioopm_hash_table_destroy(ht);
 }
 
+void test_remove_entry()
+{
+    //Write tests both for removing things you have inserted 
+    //and for (trying to) remove things you have not inserted. 
+    ioopm_hash_table_t *ht = ioopm_hash_table_create(); 
+
+    int key1 = 1; 
+    int key2 = 18; 
+    int key3 = 35; 
+    ioopm_hash_table_insert(ht, key1, "value1");
+    ioopm_hash_table_insert(ht, key2, "value2"); 
+    ioopm_hash_table_insert(ht, key3, "value3"); 
+
+    //Remove inserted item (last)
+    ioopm_hash_table_remove(ht, key3); 
+    option_t *result = ioopm_hash_table_lookup(ht, key3);
+    CU_ASSERT(Unsuccessful((*result)));
+    ioopm_destroy_option(result); 
+
+    //Remove inserted item (first)
+    ioopm_hash_table_remove(ht, key1); 
+    result = ioopm_hash_table_lookup(ht, key1);
+    CU_ASSERT(Unsuccessful((*result)));
+    ioopm_destroy_option(result);
+
+    //Remove inserted item (middle)
+    ioopm_hash_table_remove(ht, key2); 
+    result = ioopm_hash_table_lookup(ht, key2);
+    CU_ASSERT(Unsuccessful((*result)));
+    ioopm_destroy_option(result);  
+
+    //Remove for not inserted item
+    ioopm_hash_table_remove(ht, key1); 
+    result = ioopm_hash_table_lookup(ht, key1);
+    CU_ASSERT(Unsuccessful((*result)));
+    ioopm_destroy_option(result); 
+
+    ioopm_hash_table_destroy(ht); 
+}
+
 int main() {
     // First we try to set up CUnit, and exit if we fail
     if (CU_initialize_registry() != CUE_SUCCESS)
@@ -94,7 +132,8 @@ int main() {
     if (
         (CU_add_test(my_test_suite, "A simple create_destroy test", test_create_destroy) == NULL ||
         CU_add_test(my_test_suite, "A simple insert_lookup test", test_insert_once) == NULL ||
-	    CU_add_test(my_test_suite, "Empty lookup", test_lookup_empty) == NULL)
+	    CU_add_test(my_test_suite, "Empty lookup", test_lookup_empty) == NULL ||
+        CU_add_test(my_test_suite, "Remove a single elemet", test_remove_entry) == NULL)
     )
         {
         // If adding any of the tests fails, we tear down CUnit and exit
