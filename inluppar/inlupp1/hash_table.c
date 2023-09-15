@@ -157,6 +157,9 @@ char *ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
     }
     else {
       //middle entry
+      removed_value = next->value; 
+      tmp->next = next->next;
+      free(next);
     }
   }
   else {
