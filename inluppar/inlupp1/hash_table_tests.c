@@ -116,6 +116,14 @@ void test_remove_entry()
     ioopm_hash_table_destroy(ht); 
 }
 
+void test_number_of_entries()
+{
+    ioopm_hash_table_t *ht = ioopm_hash_table_create();
+
+    //Test size of empty hash table
+    
+}
+
 int main() {
     // First we try to set up CUnit, and exit if we fail
     if (CU_initialize_registry() != CUE_SUCCESS)
