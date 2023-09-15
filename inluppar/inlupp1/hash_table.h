@@ -19,7 +19,7 @@
  */
 
 typedef struct hash_table ioopm_hash_table_t;
-typedef struct option option_t; 
+typedef struct option option_t;
 
 struct option
 {
@@ -55,9 +55,4 @@ char *ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key);
 
 /// @brief delete an option and free its memory
 /// @param option option with success and value 
-void ioopm_destroy_option(option_t *option_found);
-
-/// @brief returns the number of key => value entries in the hash table
-/// @param h hash table operated upon
-/// @return the number of key => value entries in the hash table
-int ioopm_hash_table_size(ioopm_hash_table_t *ht);
+void ioopm_destroy_option(option_t *option_found); 

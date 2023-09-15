@@ -7,9 +7,9 @@
       "request": "launch",
       "args": [],
       "stopAtEntry": false,
-      "externalConsole": true,
-      "cwd": "c:/Program Files (x86)/MSYS2/home/tuvab/ioopm/labbar/lab2",
-      "program": "c:/Program Files (x86)/MSYS2/home/tuvab/ioopm/labbar/lab2/build/Debug/outDebug",
+      "externalConsole": false,
+      "cwd": "/home/tuva/ioopm",
+      "program": "/home/tuva/ioopm/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
