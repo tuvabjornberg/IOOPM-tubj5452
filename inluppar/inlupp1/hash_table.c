@@ -6,6 +6,8 @@
 #define Success(v) (option_t){.success = true, .value = v};
 #define Failure() (option_t){.success = false};
 
+#define No_Buckets 17
+
 /// the types from above
 typedef struct entry entry_t;
 typedef struct hash_table ioopm_hash_table_t;
@@ -20,42 +22,31 @@ struct entry
 
 struct hash_table
 {
-  entry_t buckets[17];
+  entry_t buckets[No_Buckets];
 };
 
 ioopm_hash_table_t *ioopm_hash_table_create()
 {
-  /// Allocate space for a ioopm_hash_table_t = 17 pointers to
+  /// Allocate space for a ioopm_hash_table_t = No_Buckets (17) pointers to
   /// entry_t's, which will be set to NULL
   ioopm_hash_table_t *result = calloc(1, sizeof(ioopm_hash_table_t));
   return result;
 }
 
-/*
-static void entry_destroy_recursive(entry_t *entry)
-{
-  if (entry != NULL)
-  {
-    entry_destroy(entry->next);
-    free(entry);
-  }
-}
-*/
-
 static void entry_destroy(entry_t *entry)
 {
   while (entry != NULL)
   {
-      entry_t *next = entry->next;
-      free(entry);
-      entry = next;
+    entry_t *next = entry->next;
+    free(entry);
+    entry = next;
   }
 }
 
 void ioopm_hash_table_destroy(ioopm_hash_table_t *ht)
 {
-  for (int i = 0; i < 17; i++) // CHEAT/TODO: hardcoded, implement something general //ht != NULL
-  { 
+  for (int i = 0; i < No_Buckets; i++) // CHEAT/TODO: hardcoded, implement something general //ht != NULL
+  {
     entry_destroy((&ht->buckets[i])->next);
   }
   free(ht);
@@ -74,9 +65,6 @@ static entry_t *entry_create(int key, char *value, entry_t *next)
 
 static entry_t *find_previous_entry_for_key(entry_t *bucket, int key)
 {
-  //unsigned bucket_index = key < 0 ? 0 : key % 17;
-  //entry_t *sentinel = entry_create(0, "invalid", bucket); 
-
   entry_t *prev = bucket;
   entry_t *current = bucket->next;
 
@@ -92,10 +80,10 @@ static entry_t *find_previous_entry_for_key(entry_t *bucket, int key)
 void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
 {
   /// Calculate the bucket for this entry
-  unsigned bucket = key < 0 ? 0 : key % 17;
+  int bucket_index = key < 0 ? 0 : key % No_Buckets;
 
-  /// Search for an existing entry for a key 
-  entry_t *entry = find_previous_entry_for_key(&ht->buckets[bucket], key);
+  /// Search for an existing entry for a key
+  entry_t *entry = find_previous_entry_for_key(&ht->buckets[bucket_index], key);
   entry_t *next = entry->next;
 
   /// Check if the next entry should be updated or not
@@ -109,60 +97,63 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
   }
 }
 
-void ioopm_destroy_option(option_t *option_found) {
-    free(option_found); 
+void ioopm_option_destroy(option_t *result_option)
+{
+  free(result_option);
 }
 
 option_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key)
 {
-  unsigned bucket_index = key < 0 ? 0 : key % 17;
+  int bucket_index = key < 0 ? 0 : key % No_Buckets;
 
-  option_t *result = calloc(1, sizeof(option_t)); 
-  entry_t *tmp = find_previous_entry_for_key(&ht->buckets[bucket_index], key);
-  entry_t *next = tmp->next;
+  option_t *lookup_result = calloc(1, sizeof(option_t));
+  entry_t *prev = find_previous_entry_for_key(&ht->buckets[bucket_index], key);
+  entry_t *current = prev->next;
 
-  if (next != NULL)
-    {
-      *result = Success(next->value);
-    }
+  if (current != NULL)
+  {
+    *lookup_result = Success(current->value);
+  }
   else
-    {
-      *result = Failure();
-    }
-    return result; 
+  {
+    *lookup_result = Failure();
+  }
+  return lookup_result;
 }
 
 char *ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
 {
-  //Removing an entry for a given key. 
-  unsigned bucket_index = key < 0 ? 0 : key % 17;
+  int bucket_index = key < 0 ? 0 : key % No_Buckets;
 
-  option_t *entry_to_remove = ioopm_hash_table_lookup(ht, key); 
+  option_t *lookup_result = ioopm_hash_table_lookup(ht, key);
 
   entry_t *prev = find_previous_entry_for_key(&ht->buckets[bucket_index], key);
   entry_t *current = prev->next;
 
-  char *removed_value = 0; 
+  char *removed_value = 0;
 
-  if (entry_to_remove->success)
+  if (lookup_result->success)
   {
-    removed_value = current->value; 
+    removed_value = current->value;
 
-    if (current->next == NULL) {
-      //for last entries
-      prev->next = NULL; 
-      free(current); 
+    if (current->next == NULL)
+    {
+      // for last entries
+      prev->next = NULL;
+      free(current);
     }
-    else {
-      //for first and middle entries
+    else
+    {
+      // for first and middle entries
       prev->next = current->next;
       free(current);
     }
   }
-  else {
-    removed_value = "key does not have an entry"; 
+  else
+  {
+    removed_value = "key does not have an entry";
   }
 
-  ioopm_destroy_option(entry_to_remove); 
-  return removed_value; 
+  ioopm_option_destroy(lookup_result);
+  return removed_value;
 }
