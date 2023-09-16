@@ -6,7 +6,7 @@
 #define Success(v) (option_t){.success = true, .value = v};
 #define Failure() (option_t){.success = false};
 
-#define No_Buckets 17
+#define No_Buckets 17 //set only for debugging purposes
 
 /// the types from above
 typedef struct entry entry_t;
@@ -94,11 +94,6 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
   }
 }
 
-void ioopm_option_destroy(option_t *result_option)
-{
-  free(result_option);
-}
-
 option_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key)
 {
   int bucket_index = key < 0 ? 0 : key % No_Buckets;
@@ -151,7 +146,7 @@ char *ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
     removed_value = "key does not have an entry";
   }
 
-  ioopm_option_destroy(lookup_result);
+  free(lookup_result);
   return removed_value;
 }
 
@@ -161,10 +156,10 @@ int ioopm_hash_table_size(ioopm_hash_table_t *ht)
   for (int i = 0; i < No_Buckets; i++) 
   {
     entry_t *cursor = &ht->buckets[i]; 
-    counter ++; 
+    counter++; 
     while (cursor->next != NULL)
     {
-      counter ++; 
+      counter++; 
       cursor = cursor->next; 
     }
   }
@@ -190,6 +185,44 @@ void ioopm_hash_table_clear(ioopm_hash_table_t *ht)
   for (int i = 0; i < No_Buckets; i++) // CHEAT/TODO: hardcoded, implement something general //*ht != NULL
   {
     entry_destroy((&ht->buckets[i])->next);
-    ht->buckets[i].next = NULL;
+    ht->buckets[i].next = NULL; //reset all dangling pointers 
   }
+}
+
+int *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
+{
+  int *array_of_keys = calloc(1, sizeof(int) * ioopm_hash_table_size(ht)); 
+  int index = 0; 
+
+  for (int i = 0; i < No_Buckets; i++) 
+  {
+    entry_t *current = (&ht->buckets[i])->next; 
+    while (current != NULL)
+    {
+      array_of_keys[index] = current->key; 
+      current = current->next; 
+      index++; 
+    }
+  }
+  return array_of_keys;  
+}
+
+char **ioopm_hash_table_values(ioopm_hash_table_t *ht)
+{
+  char **array_of_values = calloc(1, sizeof(char *) * ioopm_hash_table_size(ht)); 
+  int index = 0; 
+
+  for (int i = 0; i < No_Buckets; i++) 
+  {
+    entry_t *current = (&ht->buckets[i])->next; 
+    while (current != NULL)
+    {
+      array_of_values[index] = current->value; 
+      current = current->next; 
+      index++; 
+    }
+  }
+  array_of_values[index] = NULL; //last pointer to use as an end marker
+
+  return array_of_values;   
 }
