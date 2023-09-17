@@ -272,6 +272,40 @@ void test_table_values()
     ioopm_hash_table_destroy(ht); 
 }
 
+void test_ht_has_key()
+{
+    ioopm_hash_table_t *ht = ioopm_hash_table_create();
+
+    int key1 = 1;  
+    int key2 = 18;
+    int key3 = 35;  
+    ioopm_hash_table_insert(ht, key1, "value1"); 
+    ioopm_hash_table_insert(ht, key2, "value2"); 
+
+    CU_ASSERT_TRUE(ioopm_hash_table_has_key(ht, key2)); 
+    CU_ASSERT_FALSE(ioopm_hash_table_has_key(ht, key3)); 
+
+    ioopm_hash_table_destroy(ht); 
+}
+
+void test_ht_has_value() 
+{
+    ioopm_hash_table_t *ht = ioopm_hash_table_create();
+
+    int key1 = 1;  
+    int key2 = 18; 
+    char *value1 = "value1"; 
+    char *value2 = "value2";
+    char *value3 = "value3";  
+    ioopm_hash_table_insert(ht, key1, value1); 
+    ioopm_hash_table_insert(ht, key2, value2); 
+
+    CU_ASSERT_TRUE(ioopm_hash_table_has_value(ht, value2)); 
+    CU_ASSERT_FALSE(ioopm_hash_table_has_value(ht, value3)); 
+
+    ioopm_hash_table_destroy(ht); 
+}
+
 int main()
 {
     // First we try to set up CUnit, and exit if we fail
@@ -302,7 +336,9 @@ int main()
          CU_add_test(my_test_suite, "Test for an empty hash table", test_is_empty_hash_table) == NULL ||
          CU_add_test(my_test_suite, "Clearing a hash_table", test_clear_hash_table) == NULL ||
          CU_add_test(my_test_suite, "Test on a generated array of keys", test_table_keys) == NULL ||
-         CU_add_test(my_test_suite, "Test on a generated array of values", test_table_values) == NULL
+         CU_add_test(my_test_suite, "Test on a generated array of values", test_table_values) == NULL ||
+         CU_add_test(my_test_suite, "If hash table has key", test_ht_has_key) == NULL ||
+         CU_add_test(my_test_suite, "If hash table has value", test_ht_has_value) == NULL
         )
         )
     {

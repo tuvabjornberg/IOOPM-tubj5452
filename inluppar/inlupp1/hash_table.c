@@ -2,13 +2,14 @@
 #include "hash_table.h"
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 
 #define Success(v) (option_t){.success = true, .value = v};
 #define Failure() (option_t){.success = false};
 
 #define No_Buckets 17 //set only for debugging purposes
 
-/// the types from above
+/// the types from abovem  
 typedef struct entry entry_t;
 typedef struct hash_table ioopm_hash_table_t;
 typedef struct option option_t;
@@ -153,7 +154,7 @@ char *ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
 int ioopm_hash_table_size(ioopm_hash_table_t *ht) 
 {
   int counter = 0; 
-  for (int i = 0; i < No_Buckets; i++) 
+  for (int i = 0; i < No_Buckets; i++) // CHEAT/TODO: hardcoded, implement something general //*ht != NULL
   {
     entry_t *cursor = &ht->buckets[i]; 
     counter++; 
@@ -225,4 +226,44 @@ char **ioopm_hash_table_values(ioopm_hash_table_t *ht)
   array_of_values[index] = NULL; //last pointer to use as an end marker
 
   return array_of_values;   
+}
+
+bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, int key)
+{
+  option_t *lookup_result = ioopm_hash_table_lookup(ht, key);
+
+  if (lookup_result->success)
+  {
+    free(lookup_result); 
+    return true; 
+  } 
+  else
+  {
+    free(lookup_result); 
+    return false; 
+  }
+}
+
+bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value)
+{
+  for (int i = 0; i < No_Buckets; i++) 
+  {
+    entry_t *current = (&ht->buckets[i])->next; 
+    
+    while (current != NULL)
+    {
+      char *duplicate = strdup(current->value); 
+
+      //test using both the identical string and the equivalent string 
+      if (!strcmp(current->value, value) && !strcmp(duplicate, value) && current->value == value)
+      {
+        free(duplicate); 
+        return true; 
+      }
+      
+      free(duplicate); 
+      current = current->next; 
+    }
+  }
+  return false; 
 }
