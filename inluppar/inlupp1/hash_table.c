@@ -267,3 +267,33 @@ bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value)
   }
   return false; 
 }
+
+bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg) {
+  for (int i = 0; i < No_Buckets; i++) {
+    entry_t *current = (&ht->buckets[i])->next;
+
+    while (current != NULL) 
+    {
+      if (!pred(current->key, current->value, arg)) {
+        return false;
+      }
+      current = current->next;
+    } 
+  }
+  return true;
+}
+
+bool ioopm_hash_table_any(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg) {
+  for (int i = 0; i < No_Buckets; i++) {
+    entry_t *current = (&ht->buckets[i])->next;
+
+    while (current != NULL) 
+    {
+      if (pred(current->key, current->value, arg)) {
+        return true;
+      }
+      current = current->next;
+    } 
+  }
+  return false;
+}

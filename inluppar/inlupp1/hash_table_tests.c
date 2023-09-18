@@ -315,9 +315,7 @@ static bool key_equiv(int key, char *value_ignored, void *x)
 
 static bool value_equiv(int key_ignored, char *value, void *x)
 {
-  char *other_value_ptr = x;
-  char other_value = *other_value_ptr;
-  return value == other_value;
+  return strcmp(value, (char *)x) == 0;
 }
 
 void test_ht_has_any()
@@ -325,43 +323,49 @@ void test_ht_has_any()
     ioopm_hash_table_t *ht = ioopm_hash_table_create();
     int key1 = 1;  
     int key2 = 18; 
-    int key3 = 27; 
+    int key3 = 27;
+    int false_key = 17; 
     char *value1 = "value1"; 
     char *value2 = "value2";
     char *value3 = "value3"; 
+    char *false_value = "no";
     ioopm_hash_table_insert(ht, key1, value1); 
     ioopm_hash_table_insert(ht, key2, value2); 
     ioopm_hash_table_insert(ht, key3, value3); 
 
-    CU_ASSERT_TRUE(ioopm_hash_table_any(ht, key_equiv, 18)); 
-    CU_ASSERT_FALSE(ioopm_hash_table_any(ht, key_equiv, 17)); 
+    CU_ASSERT_TRUE(ioopm_hash_table_any(ht, key_equiv, &key2)); 
+    CU_ASSERT_FALSE(ioopm_hash_table_any(ht, key_equiv, &false_key)); 
 
-    CU_ASSERT_TRUE(ioopm_hash_table_all(ht, value_equiv, "value1"))
-    CU_ASSERT_FALSE(ioopm_hash_table_all(ht, value_equiv, "no"))
+    CU_ASSERT_TRUE(ioopm_hash_table_all(ht, value_equiv, value1))
+    CU_ASSERT_FALSE(ioopm_hash_table_all(ht, value_equiv, false_value));
 
     ioopm_hash_table_destroy(ht); 
 }
 
-
-/*
 void test_ht_has_all()
 {
     ioopm_hash_table_t *ht = ioopm_hash_table_create();
     int key1 = 1;  
     int key2 = 18; 
-    int key3 = 27; 
+    int key3 = 27;
+    int false_key = 17; 
     char *value1 = "value1"; 
     char *value2 = "value2";
     char *value3 = "value3"; 
+    char *false_value = "no";
     ioopm_hash_table_insert(ht, key1, value1); 
     ioopm_hash_table_insert(ht, key2, value2); 
     ioopm_hash_table_insert(ht, key3, value3); 
 
+    CU_ASSERT_TRUE(ioopm_hash_table_all(ht, P, x)); 
+    CU_ASSERT_FALSE(ioopm_hash_table_all(ht, P, x)); 
 
+    CU_ASSERT_TRUE(ioopm_hash_table_all(ht, P, x))
+    CU_ASSERT_FALSE(ioopm_hash_table_all(ht, P, x));
 
     ioopm_hash_table_destroy(ht); 
 }
-*/
+
 
 int main()
 {
@@ -396,9 +400,10 @@ int main()
          CU_add_test(my_test_suite, "Test on a generated array of values", test_table_values) == NULL ||
          CU_add_test(my_test_suite, "If hash table has key, with any test", test_ht_has_key) == NULL ||
          CU_add_test(my_test_suite, "If hash table has value, with any test", test_ht_has_value) == NULL ||
-         CU_add_test(my_test_suite, "If hash table has all keys and values", test_has_all) == NULL
+         CU_add_test(my_test_suite, "If hash table has all keys and values", test_ht_has_all) == NULL
         )
         )
+        
     {
         // If adding any of the tests fails, we tear down CUnit and exit
         CU_cleanup_registry();
