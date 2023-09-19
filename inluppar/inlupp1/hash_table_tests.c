@@ -387,19 +387,18 @@ static void add_version_value(int key_ignored, char **value, void *arg) {
     strcpy(new_value, version);
     strcat(new_value, original_value);
 
-    // Update the value in the hash table
+    // update the value in the hash table
     *value = new_value;
 }
-
 
 void test_ht_apply_to_all()
 {
     ioopm_hash_table_t *ht = ioopm_hash_table_create();
     char *version = "version 2: ";
-    char *false_value = "no";
 
     int keys[3] = {1, 18, 27}; 
     char *values[3] =  {"value1", "value2", "value3"}; 
+
     bool found[3] = {false}; 
         
     for (int i = 0; i < 3; i++)
@@ -407,24 +406,27 @@ void test_ht_apply_to_all()
         ioopm_hash_table_insert(ht, keys[i], values[i]);
     }
 
-    ioopm_hash_table_apply_to_all(ht, add_version_value, version); //!!!!!!!!!!!!!!!!!!!
+    ioopm_hash_table_apply_to_all(ht, add_version_value, version); 
 
-    char **array_apply_all = ioopm_hash_table_values(ht); 
+    char **array_of_applied = ioopm_hash_table_values(ht); 
 
     for (int i = 0; i < 3; i++)
     {
-        char *value_after_apply = array_apply_all[i]; 
+        char *value_after_apply = array_of_applied[i]; 
         bool value_updated = false;  
 
         for (int j = 0; j < 3; j++)
         {
-            char *expected_value = strcat("version 2: ", values[j]); 
+            char *expected_value = (char *)calloc(1, strlen(version) + strlen(values[j]) + 1); // +1 for null-terminator
+
+            strcpy(expected_value, version);
+            strcat(expected_value, values[j]); 
+
             if (!strcmp(value_after_apply, expected_value))
-            // if (!strcmp(current->value, value) && !strcmp(duplicate, value) && current->value == value)
             {
                 value_updated = true; 
             }
-            
+            free(expected_value); 
         }
 
         if (!value_updated)
@@ -436,16 +438,16 @@ void test_ht_apply_to_all()
             found[i] = true; 
         }
 
+        free(value_after_apply); //caller of apply_func needs to be observant of freeing mem if ex. exteding value
     } 
 
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 3; i++)
     {
         CU_ASSERT_TRUE(found[i]); 
     }
-
-    free(array_apply_all); 
+    
+    free(array_of_applied); 
     ioopm_hash_table_destroy(ht); 
-
 }
 
 int main()
