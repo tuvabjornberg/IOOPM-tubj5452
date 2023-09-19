@@ -268,13 +268,34 @@ bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value)
   return false; 
 }
 
-bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg) {
-  for (int i = 0; i < No_Buckets; i++) {
+bool ioopm_hash_table_any(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg) 
+{
+  for (int i = 0; i < No_Buckets; i++) 
+  {
     entry_t *current = (&ht->buckets[i])->next;
 
     while (current != NULL) 
     {
-      if (!pred(current->key, current->value, arg)) {
+      if (pred(current->key, current->value, arg)) 
+      {
+        return true;
+      }
+      current = current->next;
+    } 
+  }
+  return false;
+}
+
+bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg) 
+{
+  for (int i = 0; i < No_Buckets; i++) 
+  {
+    entry_t *current = (&ht->buckets[i])->next;
+
+    while (current != NULL) 
+    {
+      if (!pred(current->key, current->value, arg)) 
+      {
         return false;
       }
       current = current->next;
@@ -283,17 +304,18 @@ bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate pred, void *ar
   return true;
 }
 
-bool ioopm_hash_table_any(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg) {
-  for (int i = 0; i < No_Buckets; i++) {
+void ioopm_hash_table_apply_to_all(ioopm_hash_table_t *ht, ioopm_apply_function apply_fun, void *arg)
+{
+  for (int i = 0; i < No_Buckets; i++) 
+  {
     entry_t *current = (&ht->buckets[i])->next;
-
-    while (current != NULL) 
-    {
-      if (pred(current->key, current->value, arg)) {
-        return true;
-      }
-      current = current->next;
-    } 
+  
+  while (current != NULL) 
+  {
+    apply_fun(current->key, &(current->value), arg); // address of value to apply function
+    current = current->next;
+    }
   }
-  return false;
 }
+
+

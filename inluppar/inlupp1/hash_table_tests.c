@@ -342,13 +342,24 @@ void test_ht_has_any()
     ioopm_hash_table_destroy(ht); 
 }
 
+static bool mod_equiv(int key, char *value_ignored, void *x)
+{
+    // cast arg to int* and dereference it
+    return key % *((int *)x) == 1;
+}
+
+static bool starts_with_char(int key, char *value, void *arg) {
+    // cast arg to char and dereference it
+    return value[0] == *((char *)arg);
+}
+
 void test_ht_has_all()
 {
     ioopm_hash_table_t *ht = ioopm_hash_table_create();
     int key1 = 1;  
     int key2 = 18; 
-    int key3 = 27;
-    int false_key = 17; 
+    int key3 = 35;
+    int mod = 17; 
     char *value1 = "value1"; 
     char *value2 = "value2";
     char *value3 = "value3"; 
@@ -357,15 +368,85 @@ void test_ht_has_all()
     ioopm_hash_table_insert(ht, key2, value2); 
     ioopm_hash_table_insert(ht, key3, value3); 
 
-    CU_ASSERT_TRUE(ioopm_hash_table_all(ht, P, x)); 
-    CU_ASSERT_FALSE(ioopm_hash_table_all(ht, P, x)); 
+    CU_ASSERT_TRUE(ioopm_hash_table_all(ht, mod_equiv, &mod)); 
+    CU_ASSERT_FALSE(ioopm_hash_table_all(ht, mod_equiv, &false_value)); //false_value will be converted to int (ascii)
 
-    CU_ASSERT_TRUE(ioopm_hash_table_all(ht, P, x))
-    CU_ASSERT_FALSE(ioopm_hash_table_all(ht, P, x));
+    CU_ASSERT_TRUE(ioopm_hash_table_all(ht, starts_with_char, "v"))
+    //CU_ASSERT_FALSE(ioopm_hash_table_all(ht, starts_with_char, limit)); //seg fault
 
     ioopm_hash_table_destroy(ht); 
 }
 
+static void add_version_value(int key_ignored, char **value, void *arg) {
+    char *version = (char *)arg; 
+    char *original_value = *value;
+
+    // allocate memory for the new value, since new value has more characters than the original
+    char *new_value = (char *)calloc(1, strlen(version) + strlen(original_value) + 1); // +1 for null-terminator
+
+    strcpy(new_value, version);
+    strcat(new_value, original_value);
+
+    // Update the value in the hash table
+    *value = new_value;
+}
+
+
+void test_ht_apply_to_all()
+{
+    ioopm_hash_table_t *ht = ioopm_hash_table_create();
+    char *version = "version 2: ";
+    char *false_value = "no";
+
+    int keys[3] = {1, 18, 27}; 
+    char *values[3] =  {"value1", "value2", "value3"}; 
+    bool found[3] = {false}; 
+        
+    for (int i = 0; i < 3; i++)
+    {
+        ioopm_hash_table_insert(ht, keys[i], values[i]);
+    }
+
+    ioopm_hash_table_apply_to_all(ht, add_version_value, version); //!!!!!!!!!!!!!!!!!!!
+
+    char **array_apply_all = ioopm_hash_table_values(ht); 
+
+    for (int i = 0; i < 3; i++)
+    {
+        char *value_after_apply = array_apply_all[i]; 
+        bool value_updated = false;  
+
+        for (int j = 0; j < 3; j++)
+        {
+            char *expected_value = strcat("version 2: ", values[j]); 
+            if (!strcmp(value_after_apply, expected_value))
+            // if (!strcmp(current->value, value) && !strcmp(duplicate, value) && current->value == value)
+            {
+                value_updated = true; 
+            }
+            
+        }
+
+        if (!value_updated)
+        {
+            CU_FAIL("Value not updated"); 
+        }
+        else 
+        {
+            found[i] = true; 
+        }
+
+    } 
+
+    for (int i = 0; i < 5; i++)
+    {
+        CU_ASSERT_TRUE(found[i]); 
+    }
+
+    free(array_apply_all); 
+    ioopm_hash_table_destroy(ht); 
+
+}
 
 int main()
 {
@@ -399,11 +480,11 @@ int main()
          CU_add_test(my_test_suite, "Test on a generated array of keys", test_table_keys) == NULL ||
          CU_add_test(my_test_suite, "Test on a generated array of values", test_table_values) == NULL ||
          CU_add_test(my_test_suite, "If hash table has key, with any test", test_ht_has_key) == NULL ||
-         CU_add_test(my_test_suite, "If hash table has value, with any test", test_ht_has_value) == NULL ||
-         CU_add_test(my_test_suite, "If hash table has all keys and values", test_ht_has_all) == NULL
+         CU_add_test(my_test_suite, "Predicate function that satisfies any antry", test_ht_has_value) == NULL ||
+         CU_add_test(my_test_suite, "Predicate function that satisfies all entries", test_ht_has_all) == NULL ||
+         CU_add_test(my_test_suite, "Apply function on all entries", test_ht_apply_to_all) == NULL
         )
-        )
-        
+       )
     {
         // If adding any of the tests fails, we tear down CUnit and exit
         CU_cleanup_registry();

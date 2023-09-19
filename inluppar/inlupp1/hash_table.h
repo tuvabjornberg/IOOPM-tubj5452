@@ -90,17 +90,17 @@ bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, int key);
 /// @param value the value sought
 bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value);
 
-/// @brief check if a predicate is satisfied by all entries in a hash table
-/// @param ht hash table operated upon
-/// @param pred the predicate
-/// @param arg extra argument to pred
-bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg);
-
 /// @brief check if a predicate is satisfied by any entry in a hash table
 /// @param ht hash table operated upon
 /// @param pred the predicate
 /// @param arg extra argument to pred
 bool ioopm_hash_table_any(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg);
+
+/// @brief check if a predicate is satisfied by all entries in a hash table
+/// @param ht hash table operated upon
+/// @param pred the predicate
+/// @param arg extra argument to pred
+bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg);
 
 /// @brief apply a function to all entries in a hash table
 /// @param ht hash table operated upon
