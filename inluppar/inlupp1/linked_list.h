@@ -3,6 +3,9 @@
 
 typedef struct list ioopm_list_t; /// Meta: struct definition goes in C file
 
+typedef bool(*ioopm_int_predicate)(int value, void *extra);
+typedef void(*ioopm_apply_int_function)(int *value, void *extra);
+
 /// @brief Creates a new empty list
 /// @return an empty linked list
 ioopm_list_t *ioopm_linked_list_create(void);
@@ -66,7 +69,7 @@ bool ioopm_linked_list_is_empty(ioopm_list_t *list);
 /// @param list the linked list
 void ioopm_linked_list_clear(ioopm_list_t *list);
 
-/*
+
 /// @brief Test if a supplied property holds for all elements in a list.
 /// The function returns as soon as the return value can be determined.
 /// @param list the linked list
@@ -88,4 +91,3 @@ bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_int_predicate prop, void *e
 /// @param fun the function to be applied
 /// @param extra an additional argument (may be NULL) that will be passed to all internal calls of fun
 void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function fun, void *extra);
-*/

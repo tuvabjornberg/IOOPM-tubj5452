@@ -230,6 +230,74 @@ void test_clear()
 
 }
 
+static bool mod_equiv(int num, void *mod) {
+    return num % *(int *)mod == 0;
+}
+
+
+static void add_value_to_int(int *num, void *add) {
+    *num = *num + *(int *)add;
+}
+
+
+void test_all() {
+    ioopm_list_t *list = ioopm_linked_list_create();
+
+    int values[4] = {2, 4, 8, 12};
+    int mod_test = 2;
+
+    for (int i = 0; i < 4; i++)
+    {
+        ioopm_linked_list_append(list, values[i]); 
+    }
+
+    CU_ASSERT_TRUE(ioopm_linked_list_all(list, mod_equiv, &mod_test));
+    ioopm_linked_list_insert(list, 2, 5);
+    CU_ASSERT_FALSE(ioopm_linked_list_all(list, mod_equiv, &mod_test));
+
+    ioopm_linked_list_destroy(list);
+}
+
+void test_any() {
+    ioopm_list_t *list = ioopm_linked_list_create();
+
+    int values[4] = {1, 2, 3, 5};
+    int mod_test = 2;
+
+    for (int i = 0; i < 4; i++)
+    {
+        ioopm_linked_list_append(list, values[i]); 
+    }
+
+    CU_ASSERT_TRUE(ioopm_linked_list_any(list, mod_equiv, &mod_test));
+    ioopm_linked_list_remove(list, 1);
+    CU_ASSERT_FALSE(ioopm_linked_list_any(list, mod_equiv, &mod_test));
+
+    ioopm_linked_list_destroy(list);
+}
+
+void test_apply_to_all() {
+    ioopm_list_t *list = ioopm_linked_list_create();
+    int values[4] = {1, 2, 3, 4};
+
+    for (int i = 0; i < 4; i++)
+    {
+        ioopm_linked_list_append(list, values[i]); 
+    }
+    int add_by_ten = 10;
+    ioopm_linked_list_apply_to_all(list, add_value_to_int, &add_by_ten);
+
+   
+    int expected_values[4] = {11, 12, 13, 14};
+
+    for (int i = 0; i < 4; i++)
+    {
+        CU_ASSERT_EQUAL(expected_values[i], ioopm_linked_list_get(list, i)); 
+    }
+
+    ioopm_linked_list_destroy(list);
+}
+
 int main()
 {
     // First we try to set up CUnit, and exit if we fail
@@ -261,7 +329,10 @@ int main()
          CU_add_test(my_test_suite, "Test if list is empty", test_is_empty) == NULL ||
          CU_add_test(my_test_suite, "Get value correctly", test_get) == NULL ||
          CU_add_test(my_test_suite, "Test for removing elements", test_remove) == NULL || 
-         CU_add_test(my_test_suite, "Test for clearing list", test_clear) == NULL
+         CU_add_test(my_test_suite, "Test for clearing list", test_clear) == NULL ||
+         CU_add_test(my_test_suite, "Test for all in list", test_all) == NULL ||
+         CU_add_test(my_test_suite, "Test for any in list", test_any) == NULL ||
+         CU_add_test(my_test_suite, "Test for apply to all in list", test_apply_to_all) == NULL
         )
        )
     {
