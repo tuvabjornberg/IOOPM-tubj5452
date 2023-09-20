@@ -222,9 +222,41 @@ void ioopm_linked_list_clear(ioopm_list_t *list)
         link_t *next = current->next;
         free(current);
         current = next;
-    } 
-
-    list->last = NULL;
-    list->size = 0;
+        list->size--;
+    }
 }
 
+bool ioopm_linked_list_all(ioopm_list_t *list, ioopm_int_predicate prop, void *extra) {
+    link_t *current = list->first;
+    
+    while (current != NULL) {
+        if (!prop(current->value, extra)) {
+            return false;
+        }
+        current = current->next;
+    }
+
+    return true;
+}
+
+bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_int_predicate prop, void *extra) {
+    link_t *current = list->first;
+    
+    while (current != NULL) {
+        if (prop(current->value, extra)) {
+            return true;
+        }
+        current = current->next;
+    }
+    
+    return false;
+}
+
+void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function fun, void *extra) {
+    link_t *current = list->first;
+
+    while (current != NULL) {
+        fun(&(current->value), extra);
+        current = current->next;;
+    }
+}
