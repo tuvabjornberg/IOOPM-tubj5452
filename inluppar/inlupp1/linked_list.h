@@ -1,7 +1,6 @@
 #pragma once
 #include <stdbool.h>
 
-typedef struct link ioopm_link_t;
 typedef struct list ioopm_list_t; /// Meta: struct definition goes in C file
 
 /// @brief Creates a new empty list
