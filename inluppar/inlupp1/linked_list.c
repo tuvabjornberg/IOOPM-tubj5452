@@ -184,7 +184,6 @@ int ioopm_linked_list_get(ioopm_list_t *list, int index)
     }
 }
 
-
 bool ioopm_linked_list_contains(ioopm_list_t *list, int element)
 {
     link_t *current = list->first;
@@ -201,7 +200,6 @@ bool ioopm_linked_list_contains(ioopm_list_t *list, int element)
 
     return false; 
 }
-
 
 int ioopm_linked_list_size(ioopm_list_t *list)
 {
@@ -226,37 +224,47 @@ void ioopm_linked_list_clear(ioopm_list_t *list)
     }
 }
 
-bool ioopm_linked_list_all(ioopm_list_t *list, ioopm_int_predicate prop, void *extra) {
+bool ioopm_linked_list_all(ioopm_list_t *list, ioopm_int_predicate prop, void *extra) 
+{
     link_t *current = list->first;
     
-    while (current != NULL) {
-        if (!prop(current->value, extra)) {
+    while (current != NULL) 
+    {
+        if (!prop(current->value, extra)) 
+        {
             return false;
         }
+
         current = current->next;
     }
 
     return true;
 }
 
-bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_int_predicate prop, void *extra) {
+bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_int_predicate prop, void *extra) 
+{
     link_t *current = list->first;
     
-    while (current != NULL) {
-        if (prop(current->value, extra)) {
+    while (current != NULL) 
+    {
+        if (prop(current->value, extra)) 
+        {
             return true;
         }
+
         current = current->next;
     }
     
     return false;
 }
 
-void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function fun, void *extra) {
+void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function fun, void *extra) 
+{
     link_t *current = list->first;
 
-    while (current != NULL) {
+    while (current != NULL) 
+    {
         fun(&(current->value), extra);
-        current = current->next;;
+        current = current->next;
     }
 }

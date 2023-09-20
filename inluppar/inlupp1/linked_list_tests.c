@@ -204,6 +204,7 @@ void test_size()
 void test_is_empty()
 {
     ioopm_list_t *list = ioopm_linked_list_create();
+    
     CU_ASSERT_TRUE(ioopm_linked_list_is_empty(list)); 
 
     int value_insert = 1; 
@@ -226,6 +227,7 @@ void test_clear()
     }
 
     CU_ASSERT_FALSE(ioopm_linked_list_is_empty(list));
+
     ioopm_linked_list_clear(list);
     CU_ASSERT_EQUAL(ioopm_linked_list_size(list), 0); 
     CU_ASSERT_TRUE(ioopm_linked_list_is_empty(list));
@@ -237,11 +239,9 @@ static bool mod_equiv(int num, void *mod) {
     return num % *(int *)mod == 0;
 }
 
-
 static void add_value_to_int(int *num, void *add) {
     *num = *num + *(int *)add;
 }
-
 
 void test_all() {
     ioopm_list_t *list = ioopm_linked_list_create();
@@ -273,6 +273,7 @@ void test_any() {
     }
 
     CU_ASSERT_TRUE(ioopm_linked_list_any(list, mod_equiv, &mod_test));
+
     ioopm_linked_list_remove(list, 1);
     CU_ASSERT_FALSE(ioopm_linked_list_any(list, mod_equiv, &mod_test));
 
@@ -281,16 +282,17 @@ void test_any() {
 
 void test_apply_to_all() {
     ioopm_list_t *list = ioopm_linked_list_create();
+
     int values[4] = {1, 2, 3, 4};
 
     for (int i = 0; i < 4; i++)
     {
         ioopm_linked_list_append(list, values[i]); 
     }
+
     int add_by_ten = 10;
     ioopm_linked_list_apply_to_all(list, add_value_to_int, &add_by_ten);
 
-   
     int expected_values[4] = {11, 12, 13, 14};
 
     for (int i = 0; i < 4; i++)
