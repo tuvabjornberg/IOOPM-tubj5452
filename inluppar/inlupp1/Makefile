@@ -22,4 +22,4 @@ test: test1 test2
 	./test2
 
 clean:
-	rm -f *.o myprog test1
+	rm -f *.o myprog test1 test2

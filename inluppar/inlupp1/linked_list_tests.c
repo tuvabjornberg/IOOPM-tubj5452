@@ -112,7 +112,7 @@ void test_remove()
     //remove last item
     return_value = ioopm_linked_list_remove(list, 6);
     size = ioopm_linked_list_size(list); 
-    CU_ASSERT_EQUAL(return_value, 7); 
+    CU_ASSERT_EQUAL(return_value, 8); 
     CU_ASSERT_EQUAL(size, 6);     
     for (int i = 0; i < size - 1; i++)
     {

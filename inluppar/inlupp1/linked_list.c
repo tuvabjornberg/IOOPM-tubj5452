@@ -26,11 +26,14 @@ ioopm_list_t *ioopm_linked_list_create()
 void ioopm_linked_list_destroy(ioopm_list_t *list) 
 {
     link_t *current = list->first;
-    while (current != NULL) {
+
+    while (current != NULL) 
+    {
         link_t *next = current->next;
         free(current);
         current = next;
     }
+
     free(list); 
 }
 
@@ -46,11 +49,15 @@ void ioopm_linked_list_append(ioopm_list_t *list, int value)
 {
     link_t *new_link = link_create(value, NULL); 
 
-    if (new_link != NULL) { //check if mem was allocated correctly
-        if (list->last == NULL) {
+    if (new_link != NULL) //check if mem was allocated correctly
+    { 
+        if (list->last == NULL) 
+        {
             // if empty list
             list->first = new_link;
-        } else {
+        } 
+        else 
+        {
             // if non-empty list 
             list->last->next = new_link;
         }
@@ -67,11 +74,13 @@ void ioopm_linked_list_prepend(ioopm_list_t *list, int value)
     if (new_link != NULL) //check if mem was allocated correctly
     {
         list->first = new_link; 
+
         if (list->last == NULL)
         {
             //if empty list
             list->last = new_link; 
         }
+
         list->size++; 
     }
 
@@ -102,7 +111,6 @@ void ioopm_linked_list_insert(ioopm_list_t *list, int index, int value)
                 current->next = new_link; 
                 new_link->next = tmp; 
                 list->size++; 
-                //break; 
             }
             counter++; 
             current = current->next; 
@@ -132,18 +140,20 @@ int ioopm_linked_list_remove(ioopm_list_t *list, int index)
         {
             while (index > 0 && index < linked_list_size  && counter < index) 
             {
-                value = current->value; 
                 //last index
                 if (index == linked_list_size - 2 && current->next == NULL) 
                 {
+                    value = current->value; 
                     free(current->next); 
                     current->next = NULL;
                     list->last = current;  
                     list->size--; 
                 }
+
                 //middle index
-                else if (counter == index - 1 ) //&& current->next- != NULL)
-                {            
+                else if (counter == index - 1) 
+                {      
+                    value = current->next->value;       
                     link_t *tmp = current->next->next; 
                     free(current->next); 
                     current->next = tmp;
@@ -182,15 +192,18 @@ int ioopm_linked_list_get(ioopm_list_t *list, int index)
 
 bool ioopm_linked_list_contains(ioopm_list_t *list, int element)
 {
-    link_t *current = list->first; 
+    link_t *current = list->first;
+     
     while (current != NULL)
     {
         if (current->value == element)
         {
             return true; 
         }
+        
         current = current->next; 
     }
+
     return false; 
 }
 
