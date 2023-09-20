@@ -208,6 +208,12 @@ bool ioopm_linked_list_is_empty(ioopm_list_t *list)
 
 void ioopm_linked_list_clear(ioopm_list_t *list)
 {
-
+    link_t *current = list->first;
+    while (current != NULL) {
+        link_t *next = current->next;
+        free(current);
+        current = next;
+        list->size--;
+    }
 }
 

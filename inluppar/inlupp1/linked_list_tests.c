@@ -216,6 +216,17 @@ void test_is_empty()
 
 void test_clear()
 {
+    ioopm_list_t *list = ioopm_linked_list_create();
+
+    int values[4] = {1, 2, 3, 4};
+
+    for (int i = 0; i < 4; i++)
+    {
+        ioopm_linked_list_append(list, values[i]); 
+    }
+
+    ioopm_linked_list_clear(list);
+    CU_ASSERT_TRUE(ioopm_linked_list_is_empty(list));
 
 }
 
@@ -249,7 +260,8 @@ int main()
          CU_add_test(my_test_suite, "Test for linked list size", test_size) == NULL ||
          CU_add_test(my_test_suite, "Test if list is empty", test_is_empty) == NULL ||
          CU_add_test(my_test_suite, "Get value correctly", test_get) == NULL ||
-         CU_add_test(my_test_suite, "Test for removing elements", test_remove) == NULL
+         CU_add_test(my_test_suite, "Test for removing elements", test_remove) == NULL || 
+         CU_add_test(my_test_suite, "Test for clearing list", test_clear) == NULL
         )
        )
     {
