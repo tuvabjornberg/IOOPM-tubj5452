@@ -25,15 +25,10 @@ ioopm_list_t *ioopm_linked_list_create()
 
 void ioopm_linked_list_destroy(ioopm_list_t *list) 
 {
-    link_t *current = list->first;
-
-    while (current != NULL) 
+    if (!ioopm_linked_list_is_empty(list))
     {
-        link_t *next = current->next;
-        free(current);
-        current = next;
+        ioopm_linked_list_clear(list); 
     }
-
     free(list); 
 }
 
@@ -193,7 +188,7 @@ int ioopm_linked_list_get(ioopm_list_t *list, int index)
 bool ioopm_linked_list_contains(ioopm_list_t *list, int element)
 {
     link_t *current = list->first;
-     
+
     while (current != NULL)
     {
         if (current->value == element)
@@ -218,15 +213,18 @@ bool ioopm_linked_list_is_empty(ioopm_list_t *list)
     return list->size == 0; 
 }
 
-
 void ioopm_linked_list_clear(ioopm_list_t *list)
 {
-    link_t *current = list->first;
-    while (current != NULL) {
+    link_t *current = list->first; 
+
+    while (current != NULL) 
+    {
         link_t *next = current->next;
         free(current);
         current = next;
-        list->size--;
-    }
+    } 
+
+    list->last = NULL;
+    list->size = 0;
 }
 

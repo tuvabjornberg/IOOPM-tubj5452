@@ -225,9 +225,12 @@ void test_clear()
         ioopm_linked_list_append(list, values[i]); 
     }
 
+    CU_ASSERT_FALSE(ioopm_linked_list_is_empty(list));
     ioopm_linked_list_clear(list);
+    CU_ASSERT_EQUAL(ioopm_linked_list_size(list), 0); 
     CU_ASSERT_TRUE(ioopm_linked_list_is_empty(list));
-
+    
+    ioopm_linked_list_destroy(list);
 }
 
 int main()
