@@ -398,6 +398,7 @@ void test_ht_apply_to_all()
 
     int keys[3] = {1, 18, 27}; 
     char *values[3] =  {"value1", "value2", "value3"}; 
+    char *expected_values[3] =  {"version 2: value1", "version 2: value2", "version 2: value3"}; 
 
     bool found[3] = {false}; 
         
@@ -415,18 +416,9 @@ void test_ht_apply_to_all()
         char *value_after_apply = array_of_applied[i]; 
         bool value_updated = false;  
 
-        for (int j = 0; j < 3; j++)
+        if (!strcmp(value_after_apply, expected_values[i]))
         {
-            char *expected_value = (char *)calloc(1, strlen(version) + strlen(values[j]) + 1); // +1 for null-terminator
-
-            strcpy(expected_value, version);
-            strcat(expected_value, values[j]); 
-
-            if (!strcmp(value_after_apply, expected_value))
-            {
-                value_updated = true; 
-            }
-            free(expected_value); 
+            value_updated = true; 
         }
 
         if (!value_updated)

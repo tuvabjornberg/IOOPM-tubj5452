@@ -277,19 +277,36 @@ void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function
     }
 }
 
-ioopm_list_iterator_t *ioopm_list_iterator(ioopm_list_t *list)
+ioopm_list_iterator_t *ioopm_list_iterator(ioopm_list_t *list) 
 {
-    return list->first; 
+    ioopm_list_iterator_t *iter = calloc(1, sizeof(ioopm_list_iterator_t));
+
+    if (iter == NULL) {
+        return NULL;
+    }
+
+    iter->list = list;
+    iter->current = list->first; 
+
+    return iter;
 }
 
-bool ioopm_iterator_has_next(ioopm_list_iterator_t *iter)
+bool ioopm_iterator_has_next(ioopm_list_iterator_t *iter) 
 {
-    
+    return iter->current != NULL;
 }
-int ioopm_iterator_next(ioopm_list_iterator_t *iter)
+
+int ioopm_iterator_next(ioopm_list_iterator_t *iter) 
 {
-    
+    if (!ioopm_iterator_has_next(iter)) {
+        return 0; 
+    }
+
+    iter->current = iter->current->next; 
+    return iter->current->value;
 }
+
+/*
 int ioopm_iterator_remove(ioopm_list_iterator_t *iter)
 {
     
@@ -298,15 +315,32 @@ void ioopm_iterator_insert(ioopm_list_iterator_t *iter, int element)
 {
     
 }
+*/
+
 void ioopm_iterator_reset(ioopm_list_iterator_t *iter)
 {
-    
+    if (iter->current != NULL) 
+    {
+        iter->current = iter->list->first; 
+    }
+    else
+    {
+        iter->list->first = NULL; 
+    }
 }
+
 int ioopm_iterator_current(ioopm_list_iterator_t *iter)
 {
-    
+    if (iter->current != NULL)
+    {
+        return iter->current->value; 
+    }
+    else
+    {
+        return 0; 
+    }
 }
 void ioopm_iterator_destroy(ioopm_list_iterator_t *iter)
 {
-
+    free(iter); 
 }
