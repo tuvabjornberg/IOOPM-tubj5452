@@ -314,6 +314,35 @@ void test_apply_to_all() {
     ioopm_linked_list_destroy(list);
 }
 
+void ioopm_iterator_has_next(ioopm_list_iterator_t *iter)
+{
+    
+}
+void ioopm_iterator_next(ioopm_list_iterator_t *iter)
+{
+    
+}
+void ioopm_iterator_remove(ioopm_list_iterator_t *iter)
+{
+    
+}
+void ioopm_iterator_insert(ioopm_list_iterator_t *iter, int element)
+{
+    
+}
+void ioopm_iterator_reset(ioopm_list_iterator_t *iter)
+{
+    
+}
+void ioopm_iterator_current(ioopm_list_iterator_t *iter)
+{
+    
+}
+void ioopm_iterator_destroy(ioopm_list_iterator_t *iter)
+{
+
+}
+
 int main()
 {
     // First we try to set up CUnit, and exit if we fail

@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include "linked_list.h"
+#include "iterator.h"
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
@@ -17,6 +18,13 @@ struct list
   link_t *last;
   size_t size;
 };
+
+struct iter
+{
+    link_t *current; 
+    ioopm_list_t *list; 
+}; 
+
 
 ioopm_list_t *ioopm_linked_list_create() 
 {
@@ -267,4 +275,38 @@ void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function
         fun(&(current->value), extra);
         current = current->next;
     }
+}
+
+ioopm_list_iterator_t *ioopm_list_iterator(ioopm_list_t *list)
+{
+    return list->first; 
+}
+
+bool ioopm_iterator_has_next(ioopm_list_iterator_t *iter)
+{
+    
+}
+int ioopm_iterator_next(ioopm_list_iterator_t *iter)
+{
+    
+}
+int ioopm_iterator_remove(ioopm_list_iterator_t *iter)
+{
+    
+}
+void ioopm_iterator_insert(ioopm_list_iterator_t *iter, int element)
+{
+    
+}
+void ioopm_iterator_reset(ioopm_list_iterator_t *iter)
+{
+    
+}
+int ioopm_iterator_current(ioopm_list_iterator_t *iter)
+{
+    
+}
+void ioopm_iterator_destroy(ioopm_list_iterator_t *iter)
+{
+
 }
