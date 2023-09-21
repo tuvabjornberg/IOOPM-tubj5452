@@ -118,7 +118,7 @@ int ioopm_linked_list_remove(ioopm_list_t *list, int index)
     link_t *current = list->first; 
     int counter = 0; 
     int linked_list_size = ioopm_linked_list_size(list);
-    int value = 0;  
+    int value = -1;  
 
     if (list != NULL)
     {

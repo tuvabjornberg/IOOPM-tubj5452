@@ -67,6 +67,10 @@ void test_insert()
     int values[4] = {1, 2, 3, 4}; 
     int value_insert = 5; 
 
+    ioopm_linked_list_insert(list, 2, value_insert); 
+    CU_ASSERT_FALSE(ioopm_linked_list_contains(list, value_insert));
+    CU_ASSERT_EQUAL(ioopm_linked_list_get(list, 2), -1); 
+
     for (int i = 0; i < 4; i++)
     {
         ioopm_linked_list_append(list, values[i]); 
@@ -92,6 +96,9 @@ void test_remove()
 {
     ioopm_list_t *list = ioopm_linked_list_create();
 
+    int return_value = ioopm_linked_list_remove(list, 3); 
+    CU_ASSERT_EQUAL(return_value, -1); 
+
     int values[8] = {1, 2, 3, 4, 5, 6, 7, 8}; 
     for (int i = 0; i < 8; i++)
     {
@@ -100,7 +107,7 @@ void test_remove()
     CU_ASSERT_EQUAL(ioopm_linked_list_size(list), 8); 
 
     //remove first item
-    int return_value = ioopm_linked_list_remove(list, 0); 
+    return_value = ioopm_linked_list_remove(list, 0); 
     int size = ioopm_linked_list_size(list); 
     CU_ASSERT_EQUAL(return_value, 1); 
     CU_ASSERT_EQUAL(size, 7);    
@@ -134,6 +141,8 @@ void test_get()
 {
     ioopm_list_t *list = ioopm_linked_list_create();
 
+    CU_ASSERT_EQUAL(ioopm_linked_list_get(list, 2), -1); 
+
     int values[4] = {9, 8, 7, 6}; 
     int value_insert = 5; 
 
@@ -157,6 +166,8 @@ void test_contains()
 
     int values[4] = {1, 2, 3, 4}; 
     int false_value = 5; 
+
+    CU_ASSERT_FALSE(ioopm_linked_list_contains(list, false_value));
 
     for (int i = 0; i < 4; i++)
     {
