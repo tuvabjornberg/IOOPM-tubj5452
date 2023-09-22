@@ -25,7 +25,6 @@ struct iter
     ioopm_list_t *list; 
 }; 
 
-
 ioopm_list_t *ioopm_linked_list_create() 
 {
     return calloc(1, sizeof(struct list));
@@ -306,7 +305,7 @@ int ioopm_iterator_next(ioopm_list_iterator_t *iter)
     return iter->current->value;
 }
 
-
+/*
 int ioopm_iterator_remove(ioopm_list_iterator_t *iter)
 {
     
@@ -315,7 +314,7 @@ void ioopm_iterator_insert(ioopm_list_iterator_t *iter, int element)
 {
     
 }
-
+*/
 
 void ioopm_iterator_reset(ioopm_list_iterator_t *iter)
 {
