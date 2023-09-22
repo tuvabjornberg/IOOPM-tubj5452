@@ -14,7 +14,7 @@ bool ioopm_iterator_has_next(ioopm_list_iterator_t *iter);
 
 /// @brief Step the iterator forward one step
 /// @param iter the iterator
-/// @return the next element
+/// @return the next element, 0 if no next element
 int ioopm_iterator_next(ioopm_list_iterator_t *iter);
 
 /*
@@ -32,12 +32,12 @@ void ioopm_iterator_insert(ioopm_list_iterator_t *iter, int element);
 */
 
 /// @brief Reposition the iterator at the start of the underlying list
-/// @param iter the iterator
+/// @param iter the iterator 
 void ioopm_iterator_reset(ioopm_list_iterator_t *iter);
 
 /// @brief Return the current element from the underlying list
 /// @param iter the iterator
-/// @return the current element
+/// @return the current element if list has elements, else 0
 int ioopm_iterator_current(ioopm_list_iterator_t *iter);
 
 /// @brief Destroy the iterator and return its resources
