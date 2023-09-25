@@ -91,7 +91,7 @@ void ioopm_linked_list_insert(ioopm_list_t *list, int index, int value)
 {
     link_t *current = list->first;
     int counter = 0;
-    int linked_list_size = ioopm_linked_list_size(list);
+    size_t linked_list_size = ioopm_linked_list_size(list);
 
     if (index == 0)
     {
@@ -123,7 +123,7 @@ int ioopm_linked_list_remove(ioopm_list_t *list, int index)
 {
     link_t *current = list->first;
     int counter = 0;
-    int linked_list_size = ioopm_linked_list_size(list);
+    size_t linked_list_size = ioopm_linked_list_size(list);
     int value = -1;
 
     if (list != NULL)
@@ -207,7 +207,7 @@ bool ioopm_linked_list_contains(ioopm_list_t *list, int element)
     return false;
 }
 
-int ioopm_linked_list_size(ioopm_list_t *list)
+size_t ioopm_linked_list_size(ioopm_list_t *list)
 {
     return list->size;
 }

@@ -53,5 +53,7 @@ dkms.conf
 
 # Others
 *test1
-*myprog
 *test2
+*hash_test
+*myprog
+*list_test

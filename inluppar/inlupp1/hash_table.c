@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include "hash_table.h"
+#include "linked_list.h"
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
@@ -151,7 +152,7 @@ char *ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
   return removed_value;
 }
 
-int ioopm_hash_table_size(ioopm_hash_table_t *ht) 
+size_t ioopm_hash_table_size(ioopm_hash_table_t *ht) 
 {
   int counter = 0; 
   for (int i = 0; i < No_Buckets; i++) // CHEAT/TODO: hardcoded, implement something general //*ht != NULL
@@ -190,22 +191,20 @@ void ioopm_hash_table_clear(ioopm_hash_table_t *ht)
   }
 }
 
-int *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
+ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
 {
-  int *array_of_keys = calloc(1, sizeof(int) * ioopm_hash_table_size(ht)); 
-  int index = 0; 
+  ioopm_list_t *list = ioopm_linked_list_create();
 
   for (int i = 0; i < No_Buckets; i++) 
   {
     entry_t *current = (&ht->buckets[i])->next; 
     while (current != NULL)
     {
-      array_of_keys[index] = current->key; 
+      ioopm_linked_list_append(list, current->key); 
       current = current->next; 
-      index++; 
     }
   }
-  return array_of_keys;  
+  return list;  
 }
 
 char **ioopm_hash_table_values(ioopm_hash_table_t *ht)

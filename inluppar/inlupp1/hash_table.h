@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdbool.h>
+#include "linked_list.h"
 
 #define Successful(o) (o.success == true)
 #define Unsuccessful(o) (o.success == false)
@@ -59,7 +60,7 @@ char *ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key);
 /// @brief returns the number of key => value entries in the hash table
 /// @param ht hash table operated upon
 /// @return the number of key => value entries in the hash table
-int ioopm_hash_table_size(ioopm_hash_table_t *ht);
+size_t ioopm_hash_table_size(ioopm_hash_table_t *ht);
 
 /// @brief checks if the hash table is empty
 /// @param ht hash table operated upon
@@ -70,10 +71,10 @@ bool ioopm_hash_table_is_empty(ioopm_hash_table_t *ht);
 /// @param ht hash table operated upon
 void ioopm_hash_table_clear(ioopm_hash_table_t *ht);
 
-/// @brief return the keys for all entries in a hash map (in no particular order, but same as ioopm_hash_table_values)
+/// @brief return the keys for all entries in a linked list, in appended order
 /// @param ht hash table operated upon
-/// @return an array of keys for hash table h
-int *ioopm_hash_table_keys(ioopm_hash_table_t *ht);
+/// @return a linked list of keys for hash table h
+ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht);
 
 /// @brief return the values for all entries in a hash map (in no particular order, but same as ioopm_hash_table_keys)
 /// @param ht hash table operated upon

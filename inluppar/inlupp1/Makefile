@@ -1,25 +1,35 @@
-main: myprog
+main: driver
 
 C_COMPILER     = gcc
 C_OPTIONS      = -Wall -pedantic -g
 C_LINK_OPTIONS = -lm 
 CUNIT_LINK     = -lcunit
 
-%.o:  %.c
+%.o:  %.c #%.h $<
 	$(C_COMPILER) $(C_OPTIONS) $^ -c 
 
-myprog: hash_table.o linked_list.o
+driver: hash_table.o linked_list.o
 	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@
 
-test1: hash_table_tests.o hash_table.o 
+hash_test: hash_table_tests.o hash_table.o linked_list.o 
 	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) 
 
-test2: linked_list_tests.o linked_list.o
+list_test: linked_list_tests.o linked_list.o
 	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) 
 
-test: test1 test2
-	./test1 
-	./test2
+test: hash_test list_test
+	./hash_test 
+	./list_test
+
+#.PHONY: test
 
 clean:
-	rm -f *.o myprog test1 test2
+	rm -f *.o driver hash_test list_test
+
+hash_mem: hash_test
+	valgrind --leak-check=full ./hash_test
+
+list_mem: list_test
+	valgrind --leak-check=full ./list_test
+
+#.PHONY: main test clean
