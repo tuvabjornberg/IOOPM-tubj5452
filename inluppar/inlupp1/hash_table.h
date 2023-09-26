@@ -9,9 +9,6 @@
 #define Successful(o) (o.success == true)
 #define Unsuccessful(o) (o.success == false)
 
-#define int_elem(x) (elem_t) { .integer=(x) }
-#define str_elem(x) (elem_t) { .string=(x) }
-
 #define ioopm_int_str_ht_insert(ht, i, s) ioopm_hash_table_insert(ht, int_elem(i), str_elem(s))
 
 /**
@@ -20,9 +17,7 @@
  * @date 11/09-2023
  * @brief Simple hash table that maps integer keys to string values.
  *
- * Here typically goes a more extensive explanation of what the header
- * defines. Doxygens tags are words preceeded by either a backslash @\
- * or by an at symbol @@.
+ * Create, insert, remove and genereral management of a hash_table. 
  *
  * @see $CANVAS_OBJECT_REFERENCE$/assignments/gb54499f3b7b264e3af3b68c756090f52
  */
@@ -39,7 +34,7 @@ struct option
   elem_t value;
 };
 
-/// @brief create a new hash table
+/// @brief create a new hash table, with a hash-function
 /// @param hash_fun a hash function
 /// @return a new empty hash table
 ioopm_hash_table_t *ioopm_hash_table_create(ioopm_hash_function hash_fun);
@@ -57,7 +52,7 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value);
 /// @brief lookup value for key in hash table ht
 /// @param ht hash table operated upon
 /// @param key key to lookup
-/// @return an option with an is found bool and a value
+/// @return an option with an truth-value and a value
 option_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, elem_t key);
 
 /// @brief remove any mapping from key to a value
@@ -87,8 +82,8 @@ ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht);
 
 /// @brief return the values for all entries in a hash map (in no particular order, but same as ioopm_hash_table_keys)
 /// @param ht hash table operated upon
-/// @return a NULL terminated array of values for hash table h
-char **ioopm_hash_table_values(ioopm_hash_table_t *ht);
+/// @return a linked list of values for hash table h
+ioopm_list_t *ioopm_hash_table_values(ioopm_hash_table_t *ht);
 
 /// @brief check if a hash table has an entry with a given key
 /// @param ht hash table operated upon

@@ -65,7 +65,6 @@ static entry_t *entry_create(elem_t key, elem_t value, entry_t *next)
 
 static entry_t *find_previous_entry_for_key(entry_t *bucket, elem_t key)
 {
- 
   entry_t *prev = bucket;
   entry_t *current = bucket->next;
 
@@ -76,7 +75,6 @@ static entry_t *find_previous_entry_for_key(entry_t *bucket, elem_t key)
   }
 
   return prev;
-    
 }
 
 void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
@@ -150,7 +148,6 @@ elem_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key)
   {
     //error handeling
     removed_value.string = "key does not have an entry";
-    //removed_value = -1; 
   }
 
   free(lookup_result);
@@ -163,7 +160,6 @@ size_t ioopm_hash_table_size(ioopm_hash_table_t *ht)
   for (int i = 0; i < No_Buckets; i++) // CHEAT/TODO: hardcoded, implement something general //*ht != NULL
   {
     entry_t *cursor = &ht->buckets[i]; 
-    counter++; 
     while (cursor->next != NULL)
     {
       counter++; 
@@ -189,7 +185,7 @@ bool ioopm_hash_table_is_empty(ioopm_hash_table_t *ht)
 
 void ioopm_hash_table_clear(ioopm_hash_table_t *ht)
 {
-  for (int i = 0; i < No_Buckets; i++) // CHEAT/TODO: hardcoded, implement something general //*ht != NULL
+  for (int i = 0; i < No_Buckets; i++) 
   {
     entry_destroy((&ht->buckets[i])->next);
     ht->buckets[i].next = NULL; //reset all dangling pointers 
@@ -217,24 +213,21 @@ ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
   return list;  
 }
 
-char **ioopm_hash_table_values(ioopm_hash_table_t *ht)
+//functions the same as hash_table_keys, only difference is the name
+ioopm_list_t *ioopm_hash_table_values(ioopm_hash_table_t *ht)
 {
-  char **array_of_values = calloc(1, sizeof(char *) * ioopm_hash_table_size(ht)); 
-  int index = 0; 
+  ioopm_list_t *list = ioopm_linked_list_create(bool_eq_fun); 
 
   for (int i = 0; i < No_Buckets; i++) 
   {
     entry_t *current = (&ht->buckets[i])->next; 
     while (current != NULL)
     {
-      array_of_values[index] = current->value.string; 
+      ioopm_linked_list_append(list, current->value); 
       current = current->next; 
-      index++; 
     }
   }
-  array_of_values[index] = NULL; //last pointer to use as an end marker
-
-  return array_of_values;   
+  return list;   
 }
 
 bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, elem_t key)

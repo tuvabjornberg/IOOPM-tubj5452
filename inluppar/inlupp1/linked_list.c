@@ -97,7 +97,11 @@ void ioopm_linked_list_insert(ioopm_list_t *list, int index, elem_t value)
     int counter = 0;
     size_t linked_list_size = ioopm_linked_list_size(list);
 
-    if (index == 0)
+    if (index < 0 || index > linked_list_size)
+    {
+        return; 
+    }
+    else if (index == 0)
     {
         ioopm_linked_list_prepend(list, value);
     }
@@ -132,8 +136,12 @@ elem_t ioopm_linked_list_remove(ioopm_list_t *list, int index)
 
     if (list != NULL)
     {
+        if (index < 0 || index >= linked_list_size)
+        {
+            return value; 
+        }
         // first index
-        if (index == 0)
+        else if (index == 0)
         {
             value = list->first->value;
             link_t *tmp = list->first->next;
@@ -275,7 +283,7 @@ void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function
 
     while (current != NULL)
     {
-        fun(&(current->value), extra);
+        fun(&current->value, extra);
         current = current->next;
     }
 }

@@ -2,6 +2,9 @@
 //#define __COMMON__
 #include <stdbool.h>
 
+#define int_elem(x) (elem_t) { .integer=(x) }
+#define str_elem(x) (elem_t) { .string=(x) }
+
 typedef union elem elem_t;
 
 union elem

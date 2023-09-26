@@ -29,10 +29,6 @@ static void insert_set_elements(ioopm_hash_table_t *ht, elem_t *arr_keys, elem_t
 {
     for (int i = 0; i < length; ++i) 
     {
-        //ioopm_int_str_ht_insert(ht, arr_keys[i], arr_values[i]); 
-        //ioopm_hash_table_insert(ht, arr_keys[i].integer, arr_values[i]->string);
-        //ioopm_hash_table_insert(ht, int_elem(arr_keys[i]), str_elem(arr_values[i]->string));
-        //ioopm_hash_table_insert(ht, int_elem(arr_keys[i].integer), str_elem((*arr_values[i]).string)); 
         ioopm_hash_table_insert(ht, arr_keys[i], arr_values[i]);
     }
 }
@@ -99,14 +95,7 @@ void test_remove_entry()
     ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int);
 
     elem_t key[] = {{.integer = 1}, {.integer = 18}, {.integer = 35}, {.integer = 52}}; 
-    elem_t value[] = {{.string = "value1"}, {.string = "value2"}, {.string = "value3"}, {.string = "value4"}}; 
-
-    //elem_t key[] = {{1}, {18}, {35}, {53}}; 
-    //elem_t value[] = {"value1", "value2", "value3", "value4"}; 
-    //ioopm_hash_table_insert(ht, key1, value1);
-    //ioopm_hash_table_insert(ht, key[1], value[1]);
-
-    //ioopm_hash_table_insert(ht, int_elem(1), str_elem("value1")); 
+    elem_t value[] = {{.string = "value1"}, {.string = "value2"}, {.string = "value3"}, {.string = "value4"}};  
 
     insert_set_elements(ht, key, value, 4); 
 
@@ -144,16 +133,16 @@ void test_remove_entry()
 void test_size_hash_table()
 {
     ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int); 
-    CU_ASSERT_EQUAL(17, ioopm_hash_table_size(ht)); 
+    CU_ASSERT_EQUAL(0, ioopm_hash_table_size(ht)); 
 
     elem_t key[] = {{.integer = 1}, {.integer = 2}, {.integer = 18}}; 
     elem_t value[] = {{.string = "value1"}, {.string = "value2"}, {.string = "value3"}}; 
     insert_set_elements(ht, key, value, 3);
 
-    CU_ASSERT_EQUAL(20, ioopm_hash_table_size(ht)); 
+    CU_ASSERT_EQUAL(3, ioopm_hash_table_size(ht)); 
 
     ioopm_hash_table_clear(ht); 
-    CU_ASSERT_EQUAL(17, ioopm_hash_table_size(ht)); 
+    CU_ASSERT_EQUAL(0, ioopm_hash_table_size(ht)); 
     
     ioopm_hash_table_destroy(ht); 
 }
@@ -163,10 +152,11 @@ void test_is_empty_hash_table()
     ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int); 
     CU_ASSERT_TRUE(ioopm_hash_table_is_empty(ht)); 
 
-    elem_t key1 = {.integer = 1};
-    elem_t value1 = {.string = "value1"}; 
-    ioopm_hash_table_insert(ht, key1, value1);
+    ioopm_int_str_ht_insert(ht, 1, "value1"); 
     CU_ASSERT_FALSE(ioopm_hash_table_is_empty(ht)); 
+
+    ioopm_hash_table_clear(ht); 
+    CU_ASSERT_TRUE(ioopm_hash_table_is_empty(ht)); 
 
     ioopm_hash_table_destroy(ht); 
 }
@@ -186,7 +176,7 @@ void test_clear_hash_table()
     CU_ASSERT_TRUE(Unsuccessful((*lookup_result)));
     free(lookup_result);
 
-    CU_ASSERT_EQUAL(17, ioopm_hash_table_size(ht)); 
+    CU_ASSERT_EQUAL(0, ioopm_hash_table_size(ht)); 
 
     ioopm_hash_table_destroy(ht); 
 }
@@ -245,12 +235,12 @@ void test_table_values()
     insert_set_elements(ht, keys_to_test, values_to_test, 5); 
 
     ioopm_list_t *keys_from_ht = ioopm_hash_table_keys(ht);
-    char **values_from_ht = ioopm_hash_table_values(ht);
+    ioopm_list_t *values_from_ht = ioopm_hash_table_values(ht);
 
     //Iterate over the reuslting array 
     for (int i = 0; i < 5; i++)
     {
-        char *value = values_from_ht[i]; 
+        //char *value = values_from_ht[i]; 
         
         bool key_found = false;
         bool value_found = false;  
@@ -262,7 +252,7 @@ void test_table_values()
             {
                 key_found = true; 
 
-                if (values_to_test[j].string == value) 
+                if (values_to_test[j].string == ioopm_linked_list_get(values_from_ht, i).string) 
                 {
                     value_found = true; 
                 }
@@ -288,7 +278,7 @@ void test_table_values()
         CU_ASSERT_TRUE(found[i]); 
     }
 
-    free(values_from_ht);
+    ioopm_linked_list_destroy(values_from_ht);  
     ioopm_linked_list_destroy(keys_from_ht);  
     ioopm_hash_table_destroy(ht); 
 }
@@ -397,13 +387,6 @@ static void add_version_value(elem_t key_ignored, elem_t *value, void *arg)
     // update the value in the hash table
     value->string = new_value;
 }
-/*
-static void make_str_smaller(elem_t key_ignored, elem_t value, void *arg)
-{
-    char *version = (char *)arg; 
-    value.string = version[0];     
-}
-*/
 
 void test_ht_apply_to_all()
 {
@@ -417,13 +400,14 @@ void test_ht_apply_to_all()
     insert_set_elements(ht, key, value, 3);
 
     ioopm_hash_table_apply_to_all(ht, add_version_value, version); 
-
-    char **array_of_applied = ioopm_hash_table_values(ht); 
+    
+    //ioopm_hash_table_insert(ht, int_elem(1), str_elem("extra")); //TODO: will give error when inserted in this state of the program
+    ioopm_list_t *array_of_applied = ioopm_hash_table_values(ht); 
 
     for (int i = 0; i < 3; i++)
     {
-        char *value_after_apply = array_of_applied[i]; 
-        bool value_updated = false;  
+        bool value_updated = false;
+        char *value_after_apply = ioopm_linked_list_get(array_of_applied, i).string;     
 
         if (!strcmp(value_after_apply, expected_values[i]))
         {
@@ -438,17 +422,15 @@ void test_ht_apply_to_all()
         {
             found[i] = true; 
         }
-
-        free(array_of_applied[i]);
+        free(value_after_apply); 
     } 
 
     for (int i = 0; i < 3; i++)
     {
-
         CU_ASSERT_TRUE(found[i]); 
     }
     
-    free(array_of_applied); 
+    ioopm_linked_list_destroy(array_of_applied); 
     ioopm_hash_table_destroy(ht); 
 }
 

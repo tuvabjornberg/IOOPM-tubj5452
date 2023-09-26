@@ -2,6 +2,10 @@
 #include <stdbool.h>
 #include "common.h"
 
+#define ioopm_int_ll_append(list, value) ioopm_linked_list_append(list, int_elem(value))
+#define ioopm_int_ll_prepend(list, value) ioopm_linked_list_prepend(list, int_elem(value))
+#define ioopm_int_ll_insert(list, index, value) ioopm_linked_list_insert(list, index, int_elem(value))
+
 typedef struct list ioopm_list_t; 
 typedef struct iter ioopm_list_iterator_t;
 
