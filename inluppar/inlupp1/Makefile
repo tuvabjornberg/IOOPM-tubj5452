@@ -14,7 +14,7 @@ driver: hash_table.o linked_list.o
 hash_test: hash_table_tests.o hash_table.o linked_list.o 
 	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) 
 
-list_test: linked_list_tests.o linked_list.o
+list_test: linked_list_tests.o linked_list.o 
 	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) 
 
 test: hash_test list_test

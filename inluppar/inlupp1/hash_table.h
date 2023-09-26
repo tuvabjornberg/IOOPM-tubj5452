@@ -1,10 +1,18 @@
 #pragma once
 
 #include <stdbool.h>
+#include "common.h"
 #include "linked_list.h"
+
+#define No_Buckets 17 //set only for debugging purposes
 
 #define Successful(o) (o.success == true)
 #define Unsuccessful(o) (o.success == false)
+
+#define int_elem(x) (elem_t) { .integer=(x) }
+#define str_elem(x) (elem_t) { .string=(x) }
+
+#define ioopm_int_str_ht_insert(ht, i, s) ioopm_hash_table_insert(ht, int_elem(i), str_elem(s))
 
 /**
  * @file hash_table.h
@@ -19,21 +27,22 @@
  * @see $CANVAS_OBJECT_REFERENCE$/assignments/gb54499f3b7b264e3af3b68c756090f52
  */
 
+typedef bool(ioopm_predicate)(elem_t key, elem_t value, void *extra);
+typedef void(*ioopm_apply_function)(elem_t key, elem_t value, void *extra);
+
 typedef struct hash_table ioopm_hash_table_t;
 typedef struct option option_t;
-
-typedef bool(*ioopm_predicate)(int key, char *value, void *extra);
-typedef void(*ioopm_apply_function)(int key, char **value, void *extra);
 
 struct option
 {
   bool success;
-  char *value;
+  elem_t value;
 };
 
 /// @brief create a new hash table
+/// @param hash_fun a hash function
 /// @return a new empty hash table
-ioopm_hash_table_t *ioopm_hash_table_create(void);
+ioopm_hash_table_t *ioopm_hash_table_create(ioopm_hash_function hash_fun);
 
 /// @brief delete a hash table and free its memory
 /// @param ht a hash table to be deleted
@@ -43,19 +52,19 @@ void ioopm_hash_table_destroy(ioopm_hash_table_t *ht);
 /// @param ht hash table operated upon
 /// @param key key to insert
 /// @param value value to insert
-void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value);
+void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value);
 
 /// @brief lookup value for key in hash table ht
 /// @param ht hash table operated upon
 /// @param key key to lookup
 /// @return an option with an is found bool and a value
-option_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key);
+option_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, elem_t key);
 
 /// @brief remove any mapping from key to a value
 /// @param ht hash table operated upon
 /// @param key key to remove
 /// @return the value of the removed entry from ht with key
-char *ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key);
+elem_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key);
 
 /// @brief returns the number of key => value entries in the hash table
 /// @param ht hash table operated upon
@@ -84,12 +93,12 @@ char **ioopm_hash_table_values(ioopm_hash_table_t *ht);
 /// @brief check if a hash table has an entry with a given key
 /// @param ht hash table operated upon
 /// @param key the key sought
-bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, int key);
+bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, elem_t key);
 
 /// @brief check if a hash table has an entry with a given value
 /// @param ht hash table operated upon
 /// @param value the value sought
-bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value);
+bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, elem_t value);
 
 /// @brief check if a predicate is satisfied by any entry in a hash table
 /// @param ht hash table operated upon

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "linked_list.h"
 #include "iterator.h"
+#include "common.h"
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
@@ -9,7 +10,7 @@ typedef struct link link_t;
 
 struct link
 {
-    int value;
+    elem_t value;
     struct link *next;
 };
 struct list
@@ -17,6 +18,7 @@ struct list
     link_t *first;
     link_t *last;
     size_t size;
+    ioopm_eq_function eq_fun; 
 };
 
 struct iter
@@ -25,9 +27,11 @@ struct iter
     ioopm_list_t *list;
 };
 
-ioopm_list_t *ioopm_linked_list_create()
+ioopm_list_t *ioopm_linked_list_create(ioopm_eq_function eq_fun)
 {
-    return calloc(1, sizeof(struct list));
+    ioopm_list_t *list = calloc(1, sizeof(struct list));
+    list->eq_fun = eq_fun; 
+    return list; 
 }
 
 void ioopm_linked_list_destroy(ioopm_list_t *list)
@@ -39,7 +43,7 @@ void ioopm_linked_list_destroy(ioopm_list_t *list)
     free(list);
 }
 
-static link_t *link_create(int value, link_t *next)
+static link_t *link_create(elem_t value, link_t *next)
 {
     link_t *new_link = calloc(1, sizeof(link_t));
     new_link->value = value;
@@ -47,7 +51,7 @@ static link_t *link_create(int value, link_t *next)
     return new_link;
 }
 
-void ioopm_linked_list_append(ioopm_list_t *list, int value)
+void ioopm_linked_list_append(ioopm_list_t *list, elem_t value)
 {
     link_t *new_link = link_create(value, NULL);
 
@@ -69,7 +73,7 @@ void ioopm_linked_list_append(ioopm_list_t *list, int value)
     }
 }
 
-void ioopm_linked_list_prepend(ioopm_list_t *list, int value)
+void ioopm_linked_list_prepend(ioopm_list_t *list, elem_t value)
 {
     link_t *new_link = link_create(value, list->first);
 
@@ -87,7 +91,7 @@ void ioopm_linked_list_prepend(ioopm_list_t *list, int value)
     }
 }
 
-void ioopm_linked_list_insert(ioopm_list_t *list, int index, int value)
+void ioopm_linked_list_insert(ioopm_list_t *list, int index, elem_t value)
 {
     link_t *current = list->first;
     int counter = 0;
@@ -119,12 +123,12 @@ void ioopm_linked_list_insert(ioopm_list_t *list, int index, int value)
     }
 }
 
-int ioopm_linked_list_remove(ioopm_list_t *list, int index)
+elem_t ioopm_linked_list_remove(ioopm_list_t *list, int index)
 {
     link_t *current = list->first;
     int counter = 0;
     size_t linked_list_size = ioopm_linked_list_size(list);
-    int value = -1;
+    elem_t value = {.string = "invalid input"};
 
     if (list != NULL)
     {
@@ -169,7 +173,7 @@ int ioopm_linked_list_remove(ioopm_list_t *list, int index)
     return value;
 }
 
-int ioopm_linked_list_get(ioopm_list_t *list, int index)
+elem_t ioopm_linked_list_get(ioopm_list_t *list, int index)
 {
     link_t *current = list->first;
     int counter = 0;
@@ -186,17 +190,18 @@ int ioopm_linked_list_get(ioopm_list_t *list, int index)
     else
     {
         // invalid input
-        return -1;
+        elem_t invalid_out = {.string = "invalid input"}; 
+        return invalid_out;
     }
 }
 
-bool ioopm_linked_list_contains(ioopm_list_t *list, int element)
+bool ioopm_linked_list_contains(ioopm_list_t *list, elem_t element)
 {
     link_t *current = list->first;
 
     while (current != NULL)
     {
-        if (current->value == element)
+        if (list->eq_fun(current->value, element)) // current->value == element)
         {
             return true;
         }
@@ -253,7 +258,7 @@ bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_int_predicate prop, void *e
 
     while (current != NULL)
     {
-        if (prop(current->value, extra))
+        if (prop(current->value, extra)) 
         {
             return true;
         }
@@ -295,11 +300,12 @@ bool ioopm_iterator_has_next(ioopm_list_iterator_t *iter)
     return iter->current != NULL;
 }
 
-int ioopm_iterator_next(ioopm_list_iterator_t *iter)
+elem_t ioopm_iterator_next(ioopm_list_iterator_t *iter)
 {
     if (!ioopm_iterator_has_next(iter))
     {
-        return 0;
+        elem_t error_out = {.string = "has no next element"}; 
+        return error_out;
     }
 
     iter->current = iter->current->next;
@@ -329,7 +335,7 @@ void ioopm_iterator_reset(ioopm_list_iterator_t *iter)
     }
 }
 
-int ioopm_iterator_current(ioopm_list_iterator_t *iter)
+elem_t ioopm_iterator_current(ioopm_list_iterator_t *iter)
 {
     if (iter->current != NULL)
     {
@@ -337,7 +343,8 @@ int ioopm_iterator_current(ioopm_list_iterator_t *iter)
     }
     else
     {
-        return 0;
+        elem_t error_out = {.string = "no current element"}; 
+        return error_out;
     }
 }
 void ioopm_iterator_destroy(ioopm_list_iterator_t *iter)
