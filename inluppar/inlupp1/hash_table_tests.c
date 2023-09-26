@@ -22,7 +22,7 @@ int clean_suite(void)
 //hash function
 static int hash_fun_key_int(elem_t key)
 {
-  return key.integer; 
+  return key.integer % 17; 
 }
 
 static void insert_set_elements(ioopm_hash_table_t *ht, elem_t *arr_keys, elem_t *arr_values, int length)
@@ -207,7 +207,7 @@ void test_table_keys()
     ioopm_list_t *keys_from_ht = ioopm_hash_table_keys(ht);
 
     //Iterate over the reuslting array 
-    for (int i = 0; i < No_Buckets; i++)
+    for (int i = 0; i < 5; i++)
     {
         //For each key, find the  index of the key in keys and set that index to true in found.
         for (int j = 0; j < 5; j++)
@@ -248,7 +248,7 @@ void test_table_values()
     char **values_from_ht = ioopm_hash_table_values(ht);
 
     //Iterate over the reuslting array 
-    for (int i = 0; i < No_Buckets; i++)
+    for (int i = 0; i < 5; i++)
     {
         char *value = values_from_ht[i]; 
         
@@ -368,7 +368,7 @@ void test_ht_has_all()
 {
     ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int);
 
-    elem_t key[] = {{.integer = 1}, {.integer = 18}, {.integer = 27}}; 
+    elem_t key[] = {{.integer = 1}, {.integer = 18}, {.integer = 35}}; 
     elem_t value[] = {{.string = "value1"}, {.string = "value2"}, {.string = "value3"}}; 
     insert_set_elements(ht, key, value, 3);
     
@@ -383,19 +383,27 @@ void test_ht_has_all()
     ioopm_hash_table_destroy(ht); 
 }
 
-static void add_version_value(elem_t key_ignored, elem_t value, void *arg) {
+static void add_version_value(elem_t key_ignored, elem_t *value, void *arg) 
+{
     char *version = (char *)arg; 
-    //char *original_value = value.string;
+    char *original_value = value->string;
 
     // allocate memory for the new value, since new value has more characters than the original
-    elem_t new_value = {.void_ptr = calloc(1, strlen(version) + strlen(value.string) + 1)}; // +1 for null-terminator
+    char *new_value = calloc(1, strlen(version) + strlen(original_value) + 1); // +1 for null-terminator
 
-    strcpy(new_value.string, version);
-    strcat(new_value.string, value.string);
+    strcpy(new_value, version);
+    strcat(new_value, original_value);
 
     // update the value in the hash table
-    value = new_value;
+    value->string = new_value;
 }
+/*
+static void make_str_smaller(elem_t key_ignored, elem_t value, void *arg)
+{
+    char *version = (char *)arg; 
+    value.string = version[0];     
+}
+*/
 
 void test_ht_apply_to_all()
 {
@@ -431,11 +439,12 @@ void test_ht_apply_to_all()
             found[i] = true; 
         }
 
-        free(value_after_apply); //caller of apply_func needs to be observant of freeing mem if ex. exteding value
+        free(array_of_applied[i]);
     } 
 
     for (int i = 0; i < 3; i++)
     {
+
         CU_ASSERT_TRUE(found[i]); 
     }
     

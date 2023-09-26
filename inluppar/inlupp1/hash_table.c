@@ -63,49 +63,20 @@ static entry_t *entry_create(elem_t key, elem_t value, entry_t *next)
   return new_entry;
 }
 
-static entry_t *find_previous_entry_for_key(entry_t *bucket, int key)
+static entry_t *find_previous_entry_for_key(entry_t *bucket, elem_t key)
 {
+ 
   entry_t *prev = bucket;
   entry_t *current = bucket->next;
 
-  while (current != NULL && current->key.integer != key)
+  while (current != NULL && current->key.integer != key.integer)
   {
     prev = current;
     current = current->next;
   }
 
   return prev;
-
-/*
-
-  if (*address == NULL)
-    {
-      return NULL;
-    }
-  else
-    {
-      entry_t *first_entry = *address;
-      entry_t *next_entry = first_entry->next;
-      entry_t **result = address;
-      
-      if (compare_key(key, (elem_t) {.void_ptr = NULL}, &first_entry->key))
-        {
-          return result;
-        }
-      
-      while (next_entry != NULL)
-        {
-          if (compare_key(key, (elem_t) {.void_ptr = NULL}, &next_entry->key))
-            {
-              return result;
-            }
-          result = &next_entry;
-          next_entry = next_entry->next;
-        }
-      
-      return NULL;
-    }
-    */
+    
 }
 
 void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
@@ -114,7 +85,7 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
   int bucket_index = key.integer < 0 ? 0 : ht->hash_fun(key);;
 
   /// Search for an existing entry for a key
-  entry_t *entry = find_previous_entry_for_key(&ht->buckets[bucket_index], key.integer);
+  entry_t *entry = find_previous_entry_for_key(&ht->buckets[bucket_index], key);
   entry_t *next = entry->next;
 
   /// Check if the next entry should be updated or not
@@ -133,7 +104,7 @@ option_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, elem_t key)
   int bucket_index = key.integer < 0 ? 0 : ht->hash_fun(key);;
 
   option_t *lookup_result = calloc(1, sizeof(option_t));
-  entry_t *prev = find_previous_entry_for_key(&ht->buckets[bucket_index], key.integer);
+  entry_t *prev = find_previous_entry_for_key(&ht->buckets[bucket_index], key);
   entry_t *current = prev->next;
 
   if (current != NULL)
@@ -146,19 +117,6 @@ option_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, elem_t key)
   }
 
   return lookup_result;
-
-  //  int bucket = ht->hash_function(key);
-  //modulo(&bucket, ht->buckets_size);
-  
-  //entry_t **entry = find_previous_entry_for_key(&ht->buckets[bucket], key, ht->compare_key_func);
-  //if (entry == NULL)
-  //  {
-  //    return NULL;
-  //  }
-  //else
-  //  {
-  //    return &(*entry)->value;
-  //  }
 }
 
 elem_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key)
@@ -167,7 +125,7 @@ elem_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key)
 
   option_t *lookup_result = ioopm_hash_table_lookup(ht, key);
 
-  entry_t *prev = find_previous_entry_for_key(&ht->buckets[bucket_index], key.integer);
+  entry_t *prev = find_previous_entry_for_key(&ht->buckets[bucket_index], key);
   entry_t *current = prev->next;
   elem_t removed_value; 
 
@@ -363,7 +321,7 @@ void ioopm_hash_table_apply_to_all(ioopm_hash_table_t *ht, ioopm_apply_function 
   
   while (current != NULL) 
   {
-    apply_fun(current->key, current->value, arg); // address of value to apply function
+    apply_fun(current->key, &current->value, arg); // address of value to apply function
     current = current->next;
     }
   }

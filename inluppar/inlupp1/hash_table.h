@@ -28,7 +28,7 @@
  */
 
 typedef bool(ioopm_predicate)(elem_t key, elem_t value, void *extra);
-typedef void(*ioopm_apply_function)(elem_t key, elem_t value, void *extra);
+typedef void(*ioopm_apply_function)(elem_t key, elem_t *value, void *extra);
 
 typedef struct hash_table ioopm_hash_table_t;
 typedef struct option option_t;
