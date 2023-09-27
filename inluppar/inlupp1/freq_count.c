@@ -31,10 +31,10 @@ void sort_keys(char *keys[], size_t no_keys)
 
 void process_word(char *word, ioopm_hash_table_t *ht)
 {
-    // FIXME: error-handling, etc. //Rewrite to match your own interface,
+    elem_t lookup_word = {.string = word}; 
     int freq =
-        ioopm_hash_table_has_key(ht, (elem_t) {.string = word}) ?
-        (ioopm_hash_table_lookup(ht, (elem_t) {.string = word}))->value.integer :
+        ioopm_hash_table_has_key(ht, lookup_word) ?
+        (ioopm_hash_table_lookup(ht, lookup_word))->value.integer :
         0;
     ioopm_hash_table_insert(ht, (elem_t) {.string = strdup(word)}, (elem_t) {.integer = freq + 1});
 }
@@ -77,7 +77,7 @@ int string_sum_hash(elem_t e)
         result += *str;
     }
     while (*++str != '\0');
-    return result;
+    return result % 17; //////we only want 17 buckets, only for testing
 }
 
 bool string_eq(elem_t e1, elem_t e2)
@@ -99,9 +99,9 @@ int main(int argc, char *argv[])
 
         // FIXME: If the keys are returned as a list, transfer them into 
         // an array to use `sort_keys` (perhaps using an iterator?)
-        //char **keys = (char **) ioopm_hash_table_keys(ht);
+        ioopm_list_t *list = ioopm_hash_table_keys(ht);
 
-        ioopm_list_iterator_t *iter = ioopm_hash_table_iterator(ht);
+        ioopm_list_iterator_t *iter = ioopm_list_iterator(list);
         char **keys = (char **)calloc(1, size * sizeof(char *));
         size_t i = 0;
 
@@ -110,20 +110,17 @@ int main(int argc, char *argv[])
             elem_t value = ioopm_iterator_next(iter);
             keys[i++] = value.string;
         }
+        
 
         sort_keys(keys, size);
 
         ioopm_iterator_destroy(iter);
-
-
-
 
         int size = ioopm_hash_table_size(ht);
         sort_keys(keys, size);
 
         for (int i = 0; i < size; ++i)
         {
-            // FIXME: Update to match your own interface, error handling, etc.
             int freq = (ioopm_hash_table_lookup(ht, (elem_t) {.string = keys[i]}))->value.integer;
             printf("%s: %d\n", keys[i], freq);
         }
@@ -137,4 +134,5 @@ int main(int argc, char *argv[])
     // being allocated, and then insert code here to free it.
     ioopm_hash_table_destroy(ht);
 }   
+
 
