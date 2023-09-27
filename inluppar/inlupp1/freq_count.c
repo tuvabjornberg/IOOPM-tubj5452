@@ -88,8 +88,7 @@ bool string_eq(elem_t e1, elem_t e2)
 int main(int argc, char *argv[])
 {
     ioopm_hash_table_t *ht = ioopm_hash_table_create((ioopm_hash_function) string_sum_hash, string_eq);
-    size_t size = ioopm_hash_table_size(ht);
-
+    
     if (argc > 1)
     {   
         for (int i = 1; i < argc; ++i)
@@ -100,26 +99,23 @@ int main(int argc, char *argv[])
         // FIXME: If the keys are returned as a list, transfer them into 
         // an array to use `sort_keys` (perhaps using an iterator?)
         ioopm_list_t *list = ioopm_hash_table_keys(ht);
-
+        size_t ht_size = ioopm_hash_table_size(ht); 
         ioopm_list_iterator_t *iter = ioopm_list_iterator(list);
-        char **keys = (char **)calloc(1, size * sizeof(char *));
-        size_t i = 0;
 
-        while (ioopm_iterator_has_next(iter))
+        char **keys = (char **)calloc(1, ht_size * sizeof(char *));
+        size_t list_size = ioopm_linked_list_size(list);
+        elem_t value = ioopm_iterator_current(iter);
+
+        for (int i = 0; i < list_size; i++)
         {
-            elem_t value = ioopm_iterator_next(iter);
-            keys[i++] = value.string;
+            keys[i] = value.string;
+            value = ioopm_iterator_next(iter);
         }
-        
-
-        sort_keys(keys, size);
-
+           
+        sort_keys(keys, ht_size);
         ioopm_iterator_destroy(iter);
 
-        int size = ioopm_hash_table_size(ht);
-        sort_keys(keys, size);
-
-        for (int i = 0; i < size; ++i)
+        for (int i = 0; i < ht_size; i++)
         {
             int freq = (ioopm_hash_table_lookup(ht, (elem_t) {.string = keys[i]}))->value.integer;
             printf("%s: %d\n", keys[i], freq);

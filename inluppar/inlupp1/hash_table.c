@@ -65,12 +65,12 @@ static entry_t *entry_create(elem_t key, elem_t value, entry_t *next)
   return new_entry;
 }
 
-static entry_t *find_previous_entry_for_key(entry_t *bucket, elem_t key)
+static entry_t *find_previous_entry_for_key(entry_t *bucket, elem_t key, ioopm_eq_function eq_fun)
 {
   entry_t *prev = bucket;
   entry_t *current = bucket->next;
 
-  while (current != NULL && current->key.integer != key.integer)
+  while (current != NULL && !(eq_fun(current->key, key)))
   {
     prev = current;
     current = current->next;
@@ -85,7 +85,7 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
   int bucket_index = key.integer < 0 ? 0 : ht->hash_fun(key);;
 
   /// Search for an existing entry for a key
-  entry_t *entry = find_previous_entry_for_key(&ht->buckets[bucket_index], key);
+  entry_t *entry = find_previous_entry_for_key(&ht->buckets[bucket_index], key, ht->eq_fun);
   entry_t *next = entry->next;
 
   /// Check if the next entry should be updated or not
@@ -104,7 +104,7 @@ option_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, elem_t key)
   int bucket_index = key.integer < 0 ? 0 : ht->hash_fun(key);;
 
   option_t *lookup_result = calloc(1, sizeof(option_t));
-  entry_t *prev = find_previous_entry_for_key(&ht->buckets[bucket_index], key);
+  entry_t *prev = find_previous_entry_for_key(&ht->buckets[bucket_index], key, ht->eq_fun);
   entry_t *current = prev->next;
 
   if (current != NULL)
@@ -125,7 +125,7 @@ elem_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key)
 
   option_t *lookup_result = ioopm_hash_table_lookup(ht, key);
 
-  entry_t *prev = find_previous_entry_for_key(&ht->buckets[bucket_index], key);
+  entry_t *prev = find_previous_entry_for_key(&ht->buckets[bucket_index], key, ht->eq_fun);
   entry_t *current = prev->next;
   elem_t removed_value; 
 
