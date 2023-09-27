@@ -25,6 +25,11 @@ static int hash_fun_key_int(elem_t key)
   return key.integer % 17; 
 }
 
+static bool bool_eq_fun(elem_t a, elem_t b) 
+{
+    return b.integer == a.integer; 
+}
+
 static void insert_set_elements(ioopm_hash_table_t *ht, elem_t *arr_keys, elem_t *arr_values, int length)
 {
     for (int i = 0; i < length; ++i) 
@@ -35,14 +40,14 @@ static void insert_set_elements(ioopm_hash_table_t *ht, elem_t *arr_keys, elem_t
 
 void test_create_destroy()
 {
-    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int);
+    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int, bool_eq_fun);
     CU_ASSERT_PTR_NOT_NULL(ht);
     ioopm_hash_table_destroy(ht);
 }
 
 void test_insert_once()
 {
-    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int);
+    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int, bool_eq_fun);
     elem_t invalid_key = {.integer = -1};
 
     elem_t key[] = {{.integer = 1}, {.integer = 18}}; 
@@ -73,7 +78,7 @@ void test_insert_once()
 
 void test_lookup_empty() //TODO: check that it's actually working (not null/null)
 {
-    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int);
+    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int, bool_eq_fun);
     for (elem_t i = {.integer = 0}; i.integer < No_Buckets; ++i.integer) /// 18 is a bit magical and should be changed depending on buckets
     {
         option_t *lookup_result = ioopm_hash_table_lookup(ht, i);
@@ -92,7 +97,7 @@ void test_remove_entry()
 {
     // Write tests both for removing things you have inserted
     // and for (trying to) remove things you have not inserted.
-    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int);
+    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int, bool_eq_fun);
 
     elem_t key[] = {{.integer = 1}, {.integer = 18}, {.integer = 35}, {.integer = 52}}; 
     elem_t value[] = {{.string = "value1"}, {.string = "value2"}, {.string = "value3"}, {.string = "value4"}};  
@@ -132,7 +137,7 @@ void test_remove_entry()
 
 void test_size_hash_table()
 {
-    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int); 
+    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int, bool_eq_fun); 
     CU_ASSERT_EQUAL(0, ioopm_hash_table_size(ht)); 
 
     elem_t key[] = {{.integer = 1}, {.integer = 2}, {.integer = 18}}; 
@@ -149,7 +154,7 @@ void test_size_hash_table()
 
 void test_is_empty_hash_table() 
 {
-    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int); 
+    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int, bool_eq_fun); 
     CU_ASSERT_TRUE(ioopm_hash_table_is_empty(ht)); 
 
     ioopm_int_str_ht_insert(ht, 1, "value1"); 
@@ -163,7 +168,7 @@ void test_is_empty_hash_table()
 
 void test_clear_hash_table() 
 {
-    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int); 
+    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int, bool_eq_fun); 
     
     elem_t key[] = {{.integer = 1}, {.integer = 2}, {.integer = 18}}; 
     elem_t value[] = {{.string = "value1"}, {.string = "value2"}, {.string = "value3"}}; 
@@ -187,7 +192,7 @@ void test_table_keys()
     bool found[5] = {false}; 
     elem_t not_important_str = {.string = "not important"}; 
         
-    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int); 
+    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int, bool_eq_fun); 
 
     for (int i = 0; i < 5; i++)
     {
@@ -230,7 +235,7 @@ void test_table_values()
                                 {.string = "zero"}, {.string = "ninetynine"}}; 
     bool found[5] = {false}; 
         
-    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int); 
+    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int, bool_eq_fun); 
 
     insert_set_elements(ht, keys_to_test, values_to_test, 5); 
 
@@ -285,7 +290,7 @@ void test_table_values()
 
 void test_ht_has_key()
 {
-    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int);
+    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int, bool_eq_fun);
 
     elem_t key[] = {{.integer = 1}, {.integer = 2}, {.integer = 18}}; 
     elem_t value[] = {{.string = "value1"}, {.string = "value2"}, {.string = "value3"}}; 
@@ -299,7 +304,7 @@ void test_ht_has_key()
 
 void test_ht_has_value() 
 {
-    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int);
+    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int, bool_eq_fun);
 
     elem_t key[] = {{.integer = 1}, {.integer = 18}}; 
     elem_t value[] = {{.string = "value1"}, {.string = "value2"}, {.string = "value3"}}; 
@@ -325,7 +330,7 @@ static bool value_equiv(elem_t key_ignored, elem_t value, void *x)
 
 void test_ht_has_any()
 {
-    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int);
+    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int, bool_eq_fun);
 
     elem_t key[] = {{.integer = 1}, {.integer = 18}, {.integer = 27}}; 
     elem_t value[] = {{.string = "value1"}, {.string = "value2"}, {.string = "value3"}}; 
@@ -356,7 +361,7 @@ static bool starts_with_char(elem_t key, elem_t value, void *arg) {
 
 void test_ht_has_all()
 {
-    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int);
+    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int, bool_eq_fun);
 
     elem_t key[] = {{.integer = 1}, {.integer = 18}, {.integer = 35}}; 
     elem_t value[] = {{.string = "value1"}, {.string = "value2"}, {.string = "value3"}}; 
@@ -390,7 +395,7 @@ static void add_version_value(elem_t key_ignored, elem_t *value, void *arg)
 
 void test_ht_apply_to_all()
 {
-    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int);
+    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int, bool_eq_fun);
     char *version = "version 2: ";
     char *expected_values[3] =  {"version 2: value1", "version 2: value2", "version 2: value3"}; 
     bool found[3] = {false}; 

@@ -37,7 +37,7 @@ struct option
 /// @brief create a new hash table, with a hash-function
 /// @param hash_fun a hash function
 /// @return a new empty hash table
-ioopm_hash_table_t *ioopm_hash_table_create(ioopm_hash_function hash_fun);
+ioopm_hash_table_t *ioopm_hash_table_create(ioopm_hash_function hash_fun, ioopm_eq_function eq_fun);
 
 /// @brief delete a hash table and free its memory
 /// @param ht a hash table to be deleted

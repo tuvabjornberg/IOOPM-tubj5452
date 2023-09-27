@@ -25,14 +25,16 @@ struct hash_table
 {
   entry_t buckets[No_Buckets];
   ioopm_hash_function hash_fun;
+  ioopm_eq_function eq_fun; 
 };
 
-ioopm_hash_table_t *ioopm_hash_table_create(ioopm_hash_function hash_fun)
+ioopm_hash_table_t *ioopm_hash_table_create(ioopm_hash_function hash_fun, ioopm_eq_function eq_fun)
 {
   /// Allocate space for a ioopm_hash_table_t = No_Buckets (17) pointers to
   /// entry_t's, which will be set to NULL
   ioopm_hash_table_t *ht = calloc(1, sizeof(ioopm_hash_table_t));
   ht->hash_fun = hash_fun;
+  ht->eq_fun = eq_fun; 
   return ht;
 }
 
