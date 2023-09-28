@@ -9,7 +9,7 @@ CUNIT_LINK     = -lcunit
 	$(C_COMPILER) $(C_OPTIONS) $^ -c 
 
 driver: hash_table.o linked_list.o freq_count.o
-	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@
+	$(C_COMPILER) $(C_LINK_OPTIONS) $(C_OPTIONS) $^ -o $@
 
 hash_test: hash_table_tests.o hash_table.o linked_list.o 
 	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) 

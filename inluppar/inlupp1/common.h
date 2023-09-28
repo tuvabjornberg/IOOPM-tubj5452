@@ -18,4 +18,4 @@ union elem
 
 typedef bool(*ioopm_eq_function)(elem_t a, elem_t b);
 
-typedef int(*ioopm_hash_function)(elem_t key);
+typedef unsigned int(*ioopm_hash_function)(elem_t key);

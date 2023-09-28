@@ -29,10 +29,10 @@ void sort_keys(char *keys[], size_t no_keys)
     qsort(keys, no_keys, sizeof(char *), cmp_stringp);
 }
 
-//static void free_keys(elem_t key, elem_t *value_ignored, void *extra)
-//{
-//    free(key.string); 
-//}
+static void free_keys(elem_t key, elem_t *value_ignored, void *extra)
+{
+    free(key.string); 
+}
 
 void process_word(char *word, ioopm_hash_table_t *ht)
 {
@@ -43,8 +43,16 @@ void process_word(char *word, ioopm_hash_table_t *ht)
         lookup_result->value.integer :
         0;
 
-    ioopm_hash_table_insert(ht, (elem_t) {.string = strdup(word)}, (elem_t) {.integer = freq + 1}); //
-     
+    if (lookup_result->success)
+    {
+        ioopm_hash_table_insert(ht, (elem_t) {.string = word}, (elem_t) {.integer = freq + 1}); // (elem_t) {.string = strdup(word)}
+    }
+    else
+    {
+        char *dup_word = strdup(word); 
+        ioopm_hash_table_insert(ht, (elem_t) {.string = dup_word}, (elem_t) {.integer = freq + 1}); // (elem_t) {.string = strdup(word)}
+    }
+
     free(lookup_result);
 }
 
@@ -77,10 +85,11 @@ void process_file(char *filename, ioopm_hash_table_t *ht)
     fclose(f);
 }
 
-int string_sum_hash(elem_t e)
+
+unsigned string_sum_hash(elem_t e)
 {
     char *str = e.string;
-    int result = 0;
+    unsigned result = 0;
     do
     {
         result += *str;
@@ -135,9 +144,14 @@ int main(int argc, char *argv[])
             free(lookup_result); 
         }
 
-        //ioopm_hash_table_apply_to_all(ht, free_keys, NULL);
-        ioopm_iterator_destroy(iter);
+        //for (int i = 0; i < ht_size; i++)
+        //{
+        //    free(keys[i]); 
+        //}
+
+        ioopm_hash_table_apply_to_all(ht, free_keys, NULL);
         ioopm_linked_list_destroy(list); 
+        ioopm_iterator_destroy(iter);
     }   
     else
     {
@@ -146,6 +160,7 @@ int main(int argc, char *argv[])
 
     // FIXME: Leaks memory! Use valgrind to find out where that memory is 
     // being allocated, and then insert code here to free it.
+
     ioopm_hash_table_destroy(ht);
 }   
 

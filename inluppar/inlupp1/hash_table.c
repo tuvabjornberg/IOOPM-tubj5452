@@ -30,7 +30,7 @@ struct hash_table
 
 static unsigned get_bucket_index(ioopm_hash_table_t *ht, ioopm_hash_function hash_fun, elem_t key)
 {
-  return key.integer < 0 ? 0 : ht->hash_fun(key) % No_Buckets; 
+  return ht->hash_fun(key) % No_Buckets; 
 }
 
 ioopm_hash_table_t *ioopm_hash_table_create(ioopm_hash_function hash_fun, ioopm_eq_function eq_fun)
