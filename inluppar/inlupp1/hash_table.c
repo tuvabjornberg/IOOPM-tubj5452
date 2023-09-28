@@ -31,7 +31,6 @@ struct hash_table
 static unsigned get_bucket_index(ioopm_hash_table_t *ht, ioopm_hash_function hash_fun, elem_t key)
 {
   return key.integer < 0 ? 0 : ht->hash_fun(key) % No_Buckets; 
-  //int bucket_index = key.integer < 0 ? 0 : ht->hash_fun(key);;
 }
 
 ioopm_hash_table_t *ioopm_hash_table_create(ioopm_hash_function hash_fun, ioopm_eq_function eq_fun)
@@ -95,14 +94,16 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
   entry_t *next = entry->next;
 
   /// Check if the next entry should be updated or not
-  if (next != NULL && next->key.integer == key.integer)
-  {
-    next->value = value;
-  }
-  else
+
+  if (next == NULL)
   {
     entry->next = entry_create(key, value, next);
   }
+  else 
+  {
+    next->value = value;
+  }
+
 }
 
 option_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, elem_t key)

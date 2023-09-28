@@ -29,19 +29,28 @@ void sort_keys(char *keys[], size_t no_keys)
     qsort(keys, no_keys, sizeof(char *), cmp_stringp);
 }
 
+//static void free_keys(elem_t key, elem_t *value_ignored, void *extra)
+//{
+//    free(key.string); 
+//}
+
 void process_word(char *word, ioopm_hash_table_t *ht)
 {
-    elem_t lookup_word = {.string = word}; 
+    option_t *lookup_result = ioopm_hash_table_lookup(ht, (elem_t) {.string = word}); 
+
     int freq =
-        ioopm_hash_table_has_key(ht, lookup_word) ?
-        (ioopm_hash_table_lookup(ht, lookup_word))->value.integer :
+        ioopm_hash_table_has_key(ht, (elem_t) {.string = word}) ?
+        lookup_result->value.integer :
         0;
-    ioopm_hash_table_insert(ht, (elem_t) {.string = strdup(word)}, (elem_t) {.integer = freq + 1});
+
+    ioopm_hash_table_insert(ht, (elem_t) {.string = strdup(word)}, (elem_t) {.integer = freq + 1}); //
+     
+    free(lookup_result);
 }
 
 void process_file(char *filename, ioopm_hash_table_t *ht)
 {
-    FILE *f = fopen(filename, "r"); //!!!!!!!!!!!!!!
+    FILE *f = fopen(filename, "r"); 
     
     while (true)
     {
@@ -77,7 +86,7 @@ int string_sum_hash(elem_t e)
         result += *str;
     }
     while (*++str != '\0');
-    return result; // % 17; //////we only want 17 buckets, only for testing
+    return result; 
 }
 
 bool string_eq(elem_t e1, elem_t e2)
@@ -98,13 +107,15 @@ int main(int argc, char *argv[])
 
         // FIXME: If the keys are returned as a list, transfer them into 
         // an array to use `sort_keys` (perhaps using an iterator?)
-        ioopm_list_t *list = ioopm_hash_table_keys(ht);
         size_t ht_size = ioopm_hash_table_size(ht); 
-        ioopm_list_iterator_t *iter = ioopm_list_iterator(list);
 
-        char **keys = (char **)calloc(1, ht_size * sizeof(char *));
+        ioopm_list_t *list = ioopm_hash_table_keys(ht);
         size_t list_size = ioopm_linked_list_size(list);
+
+        ioopm_list_iterator_t *iter = ioopm_list_iterator(list);
         elem_t value = ioopm_iterator_current(iter);
+   
+        char *keys[list_size]; 
 
         for (int i = 0; i < list_size; i++)
         {
@@ -113,13 +124,20 @@ int main(int argc, char *argv[])
         }
            
         sort_keys(keys, ht_size);
-        ioopm_iterator_destroy(iter);
 
         for (int i = 0; i < ht_size; i++)
         {
-            int freq = (ioopm_hash_table_lookup(ht, (elem_t) {.string = keys[i]}))->value.integer;
+            option_t *lookup_result = ioopm_hash_table_lookup(ht, (elem_t) {.string = keys[i]}); 
+            
+            int freq = lookup_result->value.integer;        
             printf("%s: %d\n", keys[i], freq);
+            
+            free(lookup_result); 
         }
+
+        //ioopm_hash_table_apply_to_all(ht, free_keys, NULL);
+        ioopm_iterator_destroy(iter);
+        ioopm_linked_list_destroy(list); 
     }   
     else
     {

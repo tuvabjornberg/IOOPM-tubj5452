@@ -52,7 +52,7 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value);
 /// @brief lookup value for key in hash table ht
 /// @param ht hash table operated upon
 /// @param key key to lookup
-/// @return an option with an truth-value and a value
+/// @return a heap allocated option with an truth-value and a value
 option_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, elem_t key);
 
 /// @brief remove any mapping from key to a value
