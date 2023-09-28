@@ -71,12 +71,12 @@ static entry_t *entry_create(elem_t key, elem_t value, entry_t *next)
   return new_entry;
 }
 
-static entry_t *find_previous_entry_for_key(entry_t *bucket, elem_t key, ioopm_eq_function eq_fun) ///ADD EQ_FUN????
+static entry_t *find_previous_entry_for_key(entry_t *bucket, elem_t key, ioopm_eq_function eq_fun)
 {
   entry_t *prev = bucket;
   entry_t *current = bucket->next;
 
-  while (current != NULL && !eq_fun(current->key, key))
+  while (current != NULL && !(eq_fun(current->key, key)))
   {
     prev = current;
     current = current->next;
