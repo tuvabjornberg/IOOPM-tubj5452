@@ -22,7 +22,7 @@ int clean_suite(void)
 //hash function
 static int hash_fun_key_int(elem_t key)
 {
-  return key.integer % 17; 
+  return key.integer; // % 17; 
 }
 
 static bool bool_eq_fun(elem_t a, elem_t b) 

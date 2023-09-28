@@ -305,14 +305,15 @@ ioopm_list_iterator_t *ioopm_list_iterator(ioopm_list_t *list)
 
 bool ioopm_iterator_has_next(ioopm_list_iterator_t *iter)
 {
-    return iter->current != NULL;
+    return iter->current->next != NULL;
 }
 
 elem_t ioopm_iterator_next(ioopm_list_iterator_t *iter)
 {
     if (!ioopm_iterator_has_next(iter))
     {
-        elem_t error_out = {.string = "has no next element"}; 
+        //elem_t error_out = {.string = "has no next element"}; 
+        elem_t error_out = {.integer = 0}; 
         return error_out;
     }
 
@@ -351,8 +352,10 @@ elem_t ioopm_iterator_current(ioopm_list_iterator_t *iter)
     }
     else
     {
-        elem_t error_out = {.string = "no current element"}; 
-        return error_out;
+        elem_t error_out = {.integer = 0}; 
+        return error_out; 
+        //elem_t error_out = {.string = "no current element"}; 
+        //return error_out;
     }
 }
 void ioopm_iterator_destroy(ioopm_list_iterator_t *iter)
