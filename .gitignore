@@ -52,8 +52,6 @@ Mkfile.old
 dkms.conf
 
 # Others
-*test1
-*test2
 *hash_test
 *list_test
 *driver

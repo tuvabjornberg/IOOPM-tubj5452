@@ -1,5 +1,5 @@
-#include <CUnit/Basic.h>
 #include "hash_table.h"
+#include <CUnit/Basic.h>
 #include "linked_list.h"
 #include "common.h"
 #include <stdbool.h>
@@ -20,7 +20,7 @@ int clean_suite(void)
 }
 
 //hash function
-static int hash_fun_key_int(elem_t key)
+static unsigned hash_fun_key_int(elem_t key)
 {
   return key.integer; // % 17; 
 }

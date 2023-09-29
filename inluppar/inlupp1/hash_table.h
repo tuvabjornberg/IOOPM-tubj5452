@@ -2,6 +2,7 @@
 
 #include <stdbool.h>
 #include "common.h"
+#include <stdlib.h> 
 #include "linked_list.h"
 
 #define No_Buckets 17 //set only for debugging purposes

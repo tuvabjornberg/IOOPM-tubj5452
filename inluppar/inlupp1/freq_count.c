@@ -85,7 +85,6 @@ void process_file(char *filename, ioopm_hash_table_t *ht)
     fclose(f);
 }
 
-
 unsigned string_sum_hash(elem_t e)
 {
     char *str = e.string;
@@ -113,9 +112,7 @@ int main(int argc, char *argv[])
         {
             process_file(argv[i], ht);
         }
-
-        // FIXME: If the keys are returned as a list, transfer them into 
-        // an array to use `sort_keys` (perhaps using an iterator?)
+        
         size_t ht_size = ioopm_hash_table_size(ht); 
 
         ioopm_list_t *list = ioopm_hash_table_keys(ht);
@@ -140,14 +137,10 @@ int main(int argc, char *argv[])
             
             int freq = lookup_result->value.integer;        
             printf("%s: %d\n", keys[i], freq);
-            
             free(lookup_result); 
         }
-
-        //for (int i = 0; i < ht_size; i++)
-        //{
-        //    free(keys[i]); 
-        //}
+        
+        printf("\n%ld\n", list_size); 
 
         ioopm_hash_table_apply_to_all(ht, free_keys, NULL);
         ioopm_linked_list_destroy(list); 
@@ -163,5 +156,3 @@ int main(int argc, char *argv[])
 
     ioopm_hash_table_destroy(ht);
 }   
-
-

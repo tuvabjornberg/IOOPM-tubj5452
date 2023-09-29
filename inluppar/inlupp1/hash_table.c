@@ -75,7 +75,7 @@ static entry_t *find_previous_entry_for_key(entry_t *bucket, elem_t key, ioopm_e
   entry_t *prev = bucket;
   entry_t *current = bucket->next;
 
-  while (current != NULL && !(eq_fun(current->key, key)))
+  while (current != NULL && !eq_fun(current->key, key))
   {
     prev = current;
     current = current->next;
@@ -103,7 +103,6 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
   {
     next->value = value;
   }
-
 }
 
 option_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, elem_t key)

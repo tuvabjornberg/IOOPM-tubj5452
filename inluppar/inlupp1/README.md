@@ -144,7 +144,7 @@ As seen with 100 buckes the time improved significantly. Because we don't have a
    #### Top functions used: 
    ```
    $ make clean
-   $ make driver
+   $ make freq_count
    $ ./driver filename.txt
    $ gprof driver gmon.out > output
    ```

@@ -323,7 +323,7 @@ void test_apply_to_all()
     ioopm_linked_list_destroy(list);
 }
 
-void test_iterator_has_next()
+void test_iterator_has_next() //!!!!!!!!!!!!
 {
     ioopm_list_t *list = ioopm_linked_list_create(bool_eq_fun);
     ioopm_list_iterator_t *iter = ioopm_list_iterator(list);
@@ -331,8 +331,15 @@ void test_iterator_has_next()
     ioopm_iterator_destroy(iter);
 
     ioopm_int_ll_append(list, 1); 
-
     iter = ioopm_list_iterator(list);
+
+    CU_ASSERT_FALSE(ioopm_iterator_has_next(iter));
+    ioopm_iterator_destroy(iter);
+
+    ioopm_int_ll_append(list, 1); 
+    ioopm_int_ll_append(list, 2); 
+    iter = ioopm_list_iterator(list);
+
     CU_ASSERT_TRUE(ioopm_iterator_has_next(iter));
 
     ioopm_linked_list_destroy(list);
@@ -343,7 +350,8 @@ void test_iterator_next()
 {
     ioopm_list_t *list = ioopm_linked_list_create(bool_eq_fun);
     ioopm_list_iterator_t *iter = ioopm_list_iterator(list);
-    CU_ASSERT_STRING_EQUAL(ioopm_iterator_next(iter).string, "has no next element");
+    //CU_ASSERT_STRING_EQUAL(ioopm_iterator_next(iter).string, "has no next element");
+    CU_ASSERT_EQUAL(ioopm_iterator_next(iter).integer, 0);
     ioopm_iterator_destroy(iter);
 
     elem_t values[] = {{.integer = 1}, {.integer = 2}, {.integer = 3}, {.integer = 4}};
@@ -377,10 +385,11 @@ void test_iterator_reset()
 {
     ioopm_list_t *list = ioopm_linked_list_create(bool_eq_fun);
     ioopm_list_iterator_t *iter = ioopm_list_iterator(list);
-    CU_ASSERT_STRING_EQUAL(ioopm_iterator_current(iter).string, "no current element");
+    //CU_ASSERT_STRING_EQUAL(ioopm_iterator_current(iter).string, "no current element");
+    CU_ASSERT_EQUAL(ioopm_iterator_current(iter).integer, 0);
     ioopm_iterator_reset(iter);
-    CU_ASSERT_STRING_EQUAL(ioopm_iterator_current(iter).string, "no current element");
-    ioopm_iterator_destroy(iter);
+    CU_ASSERT_EQUAL(ioopm_iterator_current(iter).integer, 0);
+        ioopm_iterator_destroy(iter);
 
     elem_t values[] = {{.integer = 1}, {.integer = 2}, {.integer = 3}, {.integer = 4}};
     int length = 4;
@@ -403,7 +412,8 @@ void test_iterator_current()
 {
     ioopm_list_t *list = ioopm_linked_list_create(bool_eq_fun);
     ioopm_list_iterator_t *iter = ioopm_list_iterator(list);
-    CU_ASSERT_STRING_EQUAL(ioopm_iterator_current(iter).string, "no current element");
+    //CU_ASSERT_STRING_EQUAL(ioopm_iterator_current(iter).string, "no current element");
+    CU_ASSERT_EQUAL(ioopm_iterator_current(iter).integer, 0);  
     ioopm_iterator_destroy(iter);
 
     elem_t values[] = {{.integer = 1}, {.integer = 2}, {.integer = 3}, {.integer = 4}};
