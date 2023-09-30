@@ -4,6 +4,15 @@
 #define int_elem(x) (elem_t) { .integer=(x) }
 #define str_elem(x) (elem_t) { .string=(x) }
 
+/**
+ * @file common.h
+ * @author Tuva Björnberg & Gustav Fridén
+ * @date 11/09-2023
+ * @brief 
+ *
+ *
+ */
+
 typedef union elem elem_t;
 
 union elem

@@ -197,7 +197,7 @@ elem_t ioopm_linked_list_get(ioopm_list_t *list, int index)
     }
     else
     {
-        // invalid input
+        // invalid input TODO: error handeling
         elem_t invalid_out = {.string = "invalid input"}; 
         return invalid_out;
     }
@@ -209,7 +209,7 @@ bool ioopm_linked_list_contains(ioopm_list_t *list, elem_t element)
 
     while (current != NULL)
     {
-        if (list->eq_fun(current->value, element)) // current->value == element)
+        if (list->eq_fun(current->value, element)) 
         {
             return true;
         }
@@ -319,6 +319,7 @@ elem_t ioopm_iterator_next(ioopm_list_iterator_t *iter)
 {
     if (!ioopm_iterator_has_next(iter))
     {
+        // invalid input TODO: error handeling
         elem_t error_out = {.integer = 0}; 
         return error_out;
     }
@@ -347,6 +348,7 @@ elem_t ioopm_iterator_current(ioopm_list_iterator_t *iter)
     }
     else
     {
+        // invalid input TODO: error handeling
         elem_t error_out = {.integer = 0}; 
         return error_out; 
     }

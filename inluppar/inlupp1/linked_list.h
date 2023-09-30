@@ -6,6 +6,16 @@
 #define ioopm_int_ll_prepend(list, value) ioopm_linked_list_prepend(list, int_elem(value))
 #define ioopm_int_ll_insert(list, index, value) ioopm_linked_list_insert(list, index, int_elem(value))
 
+/**
+ * @file linked_list.h
+ * @author Tuva Björnberg & Gustav Fridén
+ * @date 11/09-2023
+ * @brief 
+ *
+ * Create, insert, remove and genereral management of a linked list. 
+ *
+ */
+
 typedef struct list ioopm_list_t; 
 typedef struct iter ioopm_list_iterator_t;
 

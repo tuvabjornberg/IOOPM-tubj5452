@@ -7,22 +7,17 @@
 
 int init_suite(void)
 {
-    // Change this function if you want to do something *before* you
-    // run a test suite
     return 0;
 }
 
 int clean_suite(void)
 {
-    // Change this function if you want to do something *after* you
-    // run a test suite
     return 0;
 }
 
-//hash function
 static unsigned hash_fun_key_int(elem_t key)
 {
-  return key.integer; // % 17; 
+  return key.integer;
 }
 
 static bool bool_eq_fun(elem_t a, elem_t b) 
@@ -76,10 +71,10 @@ void test_insert_once()
     ioopm_hash_table_destroy(ht);
 }
 
-void test_lookup_empty() //TODO: check that it's actually working (not null/null)
+void test_lookup_empty() 
 {
     ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int, bool_eq_fun);
-    for (elem_t i = {.integer = 0}; i.integer < No_Buckets; ++i.integer) /// 18 is a bit magical and should be changed depending on buckets
+    for (elem_t i = {.integer = 0}; i.integer < No_Buckets; ++i.integer) 
     {
         option_t *lookup_result = ioopm_hash_table_lookup(ht, i);
         CU_ASSERT_FALSE(lookup_result->success);
@@ -95,8 +90,6 @@ void test_lookup_empty() //TODO: check that it's actually working (not null/null
 
 void test_remove_entry()
 {
-    // Write tests both for removing things you have inserted
-    // and for (trying to) remove things you have not inserted.
     ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int, bool_eq_fun);
 
     elem_t key[] = {{.integer = 1}, {.integer = 18}, {.integer = 35}, {.integer = 52}}; 
@@ -201,10 +194,10 @@ void test_table_keys()
 
     ioopm_list_t *keys_from_ht = ioopm_hash_table_keys(ht);
 
-    //Iterate over the reuslting array 
+    // iterate over the reuslting array 
     for (int i = 0; i < 5; i++)
     {
-        //For each key, find the  index of the key in keys and set that index to true in found.
+        // for each key, find the  index of the key in keys and set that index to true in found.
         for (int j = 0; j < 5; j++)
         {
             if (keys_to_test[j].integer == ioopm_linked_list_get(keys_from_ht, i).integer)
@@ -242,17 +235,15 @@ void test_table_values()
     ioopm_list_t *keys_from_ht = ioopm_hash_table_keys(ht);
     ioopm_list_t *values_from_ht = ioopm_hash_table_values(ht);
 
-    //Iterate over the reuslting array 
+    // iterate over the reuslting array 
     for (int i = 0; i < 5; i++)
-    {
-        //char *value = values_from_ht[i]; 
-        
+    {        
         bool key_found = false;
         bool value_found = false;  
 
         for (int j = 0; j < 5; j++)
         {
-            //For each key and value at the same index, separated for debugging
+            // for each key and value at the same index, separated for debugging
             if (keys_to_test[j].integer == ioopm_linked_list_get(keys_from_ht, i).integer)
             {
                 key_found = true; 
@@ -339,8 +330,8 @@ void test_ht_has_any()
     elem_t false_key = {.integer = 17};     
     elem_t false_value = {.string = "no"}; 
 
-    CU_ASSERT_TRUE(ioopm_hash_table_any(ht, key_equiv, &key[1]));  // TODO: ????
-    CU_ASSERT_FALSE(ioopm_hash_table_any(ht, key_equiv, &false_key)); //TODO: ????
+    CU_ASSERT_TRUE(ioopm_hash_table_any(ht, key_equiv, &key[1]));  
+    CU_ASSERT_FALSE(ioopm_hash_table_any(ht, key_equiv, &false_key)); 
 
     CU_ASSERT_TRUE(ioopm_hash_table_all(ht, value_equiv, value[0].void_ptr))
     CU_ASSERT_FALSE(ioopm_hash_table_all(ht, value_equiv, false_value.void_ptr));
@@ -389,7 +380,6 @@ static void add_version_value(elem_t key_ignored, elem_t *value, void *arg)
     strcpy(new_value, version);
     strcat(new_value, original_value);
 
-    // update the value in the hash table
     value->string = new_value;
 }
 

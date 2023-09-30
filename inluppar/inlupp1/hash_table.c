@@ -94,7 +94,6 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
   entry_t *next = entry->next;
 
   /// Check if the next entry should be updated or not
-
   if (next == NULL)
   {
     entry->next = entry_create(key, value, next);
@@ -165,7 +164,7 @@ elem_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key)
 size_t ioopm_hash_table_size(ioopm_hash_table_t *ht) 
 {
   int counter = 0; 
-  for (int i = 0; i < No_Buckets; i++) // CHEAT/TODO: hardcoded, implement something general //*ht != NULL
+  for (int i = 0; i < No_Buckets; i++) 
   {
     entry_t *cursor = &ht->buckets[i]; 
     while (cursor->next != NULL)
@@ -200,14 +199,9 @@ void ioopm_hash_table_clear(ioopm_hash_table_t *ht)
   }
 }
 
-static bool bool_eq_fun(elem_t a, elem_t b) 
-{
-    return b.integer == a.integer; 
-}
-
 ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
 {
-  ioopm_list_t *list = ioopm_linked_list_create(bool_eq_fun);
+  ioopm_list_t *list = ioopm_linked_list_create(ht->eq_fun);
 
   for (int i = 0; i < No_Buckets; i++) 
   {
@@ -224,7 +218,7 @@ ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
 //functions the same as hash_table_keys, only difference is the name
 ioopm_list_t *ioopm_hash_table_values(ioopm_hash_table_t *ht)
 {
-  ioopm_list_t *list = ioopm_linked_list_create(bool_eq_fun); 
+  ioopm_list_t *list = ioopm_linked_list_create(ht->eq_fun); 
 
   for (int i = 0; i < No_Buckets; i++) 
   {

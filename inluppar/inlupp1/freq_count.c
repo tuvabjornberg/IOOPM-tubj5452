@@ -7,16 +7,6 @@
 #include "common.h"
 #include "iterator.h"
 
-//1. Create an empty hash table
-//2. For each file argument, read each word in the file
-//   2.1 If the word is not in the hash table
-//       2.1.1 Put it there, and give it the value 1
-//   2.2 Otherwise
-//       2.2.1 Increments its current value by 1
-//3. Print the outputs in lexicographic order on the keys
-//4. Tear down the hash table, free all resources, close all files
-
-
 #define Delimiters "+-#@()[]{}.,:;!? \t\n\r"
 
 static int cmp_stringp(const void *p1, const void *p2)
@@ -45,12 +35,12 @@ void process_word(char *word, ioopm_hash_table_t *ht)
 
     if (lookup_result->success)
     {
-        ioopm_hash_table_insert(ht, (elem_t) {.string = word}, (elem_t) {.integer = freq + 1}); // (elem_t) {.string = strdup(word)}
+        ioopm_hash_table_insert(ht, (elem_t) {.string = word}, (elem_t) {.integer = freq + 1}); 
     }
     else
     {
         char *dup_word = strdup(word); 
-        ioopm_hash_table_insert(ht, (elem_t) {.string = dup_word}, (elem_t) {.integer = freq + 1}); // (elem_t) {.string = strdup(word)}
+        ioopm_hash_table_insert(ht, (elem_t) {.string = dup_word}, (elem_t) {.integer = freq + 1}); 
     }
 
     free(lookup_result);
@@ -140,8 +130,6 @@ int main(int argc, char *argv[])
             free(lookup_result); 
         }
         
-        printf("\n%ld\n", list_size); 
-
         ioopm_hash_table_apply_to_all(ht, free_keys, NULL);
         ioopm_linked_list_destroy(list); 
         ioopm_iterator_destroy(iter);
@@ -150,9 +138,6 @@ int main(int argc, char *argv[])
     {
         puts("Usage: freq-count file1 ... filen");
     }
-
-    // FIXME: Leaks memory! Use valgrind to find out where that memory is 
-    // being allocated, and then insert code here to free it.
 
     ioopm_hash_table_destroy(ht);
 }   
