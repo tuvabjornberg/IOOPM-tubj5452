@@ -7,19 +7,14 @@
 
 int init_suite(void)
 {
-    // Change this function if you want to do something *before* you
-    // run a test suite
     return 0;
 }
 
 int clean_suite(void)
 {
-    // Change this function if you want to do something *after* you
-    // run a test suite
     return 0;
 }
 
-//checks if equal
 static bool bool_eq_fun(elem_t a, elem_t b) 
 {
     return b.integer == a.integer; 
@@ -323,7 +318,7 @@ void test_apply_to_all()
     ioopm_linked_list_destroy(list);
 }
 
-void test_iterator_has_next() //!!!!!!!!!!!!
+void test_iterator_has_next() 
 {
     ioopm_list_t *list = ioopm_linked_list_create(bool_eq_fun);
     ioopm_list_iterator_t *iter = ioopm_list_iterator(list);
@@ -368,18 +363,6 @@ void test_iterator_next()
 
     ioopm_linked_list_destroy(list);
 }
-
-/*
-void test_iterator_remove()
-{
-    
-}
-
-void test_iterator_insert()
-{
-
-}
-*/
 
 void test_iterator_reset()
 {

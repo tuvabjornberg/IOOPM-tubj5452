@@ -2,6 +2,15 @@
 #include <stdbool.h>
 #include "linked_list.h"
 
+/**
+ * @file iterator.h
+ * @author Tuva Björnberg & Gustav Fridén
+ * @date 11/09-2023
+ * @brief
+ *
+ *
+ */
+
 /// @brief Create an iterator for a given list
 /// @param list the list to be iterated over
 /// @return an iteration positioned at the start of list

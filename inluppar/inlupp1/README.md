@@ -1,9 +1,53 @@
+ # To build
+   #### Build: 
+   ```
+   $ make clean
+   $ make freq_count.out
+   ```
+   #### Run tests:
+   ```
+   $ make clean
+   $ make tests
+   ```
+   #### Memory tests:
+   ```
+   $ make clean
+   $ make mem_tests
+   or
+   $ make mem_freq_count ARGS="filename.txt"
+   ```
+
+   #### Run word processing:
+   ```
+   $ make clean
+   $ make freq_count.out
+   $ ./freq_count.out filename.txt
+   ```
+   #### Coverage tests:
+   ```
+   $ make clean
+   $ make !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   ```
+   
+   #### Performace tests:
+   ```
+   $ make clean
+   $ make prof
+   ```
+
+   #### Time: 
+   ```
+   $ make clean
+   $ make freq_count.out
+   $ command time --verbose ./freq_count.out filename.txt
+   ```
  # Initial Profiling Results 
    ## small.txt
    **Most used functions:** \
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. find_previous_entry_for_key\
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. get_bucket_index\
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3. ioopm_hash_table_lookup
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. string_eq\
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. find_previous_entry_for_key\
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. get_bucket_index\
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. string_sum_hash
 
    **Time average (of 10):**
    - real    0m0.005s
@@ -14,40 +58,43 @@
 
    ## 1k-long-words.txt
    **Most used functions:** \
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. find_previous_entry_for_key\
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. get_bucket_index\
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3. ioopm_hash_table_lookup
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. string_eq\
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. find_previous_entry_for_key\
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. get_bucket_index\
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. string_sum_hash
    
    **Time average:**
-   - real    0m0.005s
-   - user    0m0.001s
-   - sys     0m0.004s
+   - real    0m0.002s
+   - user    0m0.002s
+   - sys     0m0.000s
    
    Percent of CPU this job got: 100%
 
    ## 10k-words.txt
    **Most used functions:** \
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. find_previous_entry_for_key\
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. get_bucket_index\
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3. ioopm_hash_table_lookup
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. string_eq\
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. find_previous_entry_for_key\
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. get_bucket_index\
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. string_sum_hash
    
    **Time average:**
-   - real    0m0.015s
-   - user    0m0.001s
-   - sys     0m0.013s
+   - real    0m0.006s
+   - user    0m0.005s
+   - sys     0m0.000s
    
    Percent of CPU this job got: 88%
 
    ## 16k-words.txt
    **Most used functions:** \
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. find_previous_entry_for_key\
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. get_bucket_index\
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3. ioopm_hash_table_lookup
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. string_eq\
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. find_previous_entry_for_key\
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. get_bucket_index\
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. string_sum_hash
    
    **Time average:**
-   - real    0m0.113s
-   - user    0m0.085s
-   - sys     0m0.019s
+   - real    0m0.035s
+   - user    0m0.027s
+   - sys     0m0.001s
    
    Percent of CPU this job got: 95%
       
@@ -60,6 +107,7 @@
 
    `get_bucket_index` is used as many times as `find_previous_entry_for_key` because it is also used in every insert-, lookup- and has_key-functions. Though time spent in this function is dependent on how long the words are, and so far our long words are still not up to a measurable threshold.
 
+   `string_eq` is used the most because in every `find_previous_entry_for_key` we will run the fuction each iteration meaning for every one time we run find_previous we run `string_eq` as many times as we have entried in that specific bucket. It is used similarly in some linked_list functions meaning we have doubble troubble. 
 
    While 1k-long-words did not use as much time as 10k-words and 16k-words it had worse performance (used most of the CPU to get the job done). It was unexpected but also logical. Longer words will spend more time in our hashing function since it adds the values of each character. Compare-functions will also take longer because there are more characters to compare with each other before we can determine that they are in fact identical or not.
 
@@ -69,68 +117,82 @@
 
    Based on the results we would need to find a better solution to find the previous key for an entry. Best case would be to find a constant time solution for it or implement another method for inserting, removing etc.
    A short-term solution would be to increase our buckets so these linear functions have better conditions for their search through the buckets. With more buckets we can spread the elements across and have fewer elements in each. This will take a larger amount of memory but time-wise the performance would improve.
+   While string_eq is the most called function time-wise it does not affect the program significantly. Which is why it can be left, for now. 
 
 
 The 16k-words was the only input which spent mesurable amount of time in each functions.\
 **17 Buckets:**                               
-| % time |  cumulative seconds   |self seconds   | calls |  self ns/call | total ns/call | name  |  
+Each sample counts as 0.01 seconds.
+| % time |  cumulative seconds   |self seconds   | calls |  self ns/call | total ns/call | name  |    
 |------|------------|----------|-------|----------|---------|--------------------------------|
-|100.00|      0.02  |   0.02   | 55346 |   361.36 |  361.36 | find_previous_entry_for_key    |
-|  0.00|      0.02  |   0.00   | 55346 |     0.00 |    0.00 | get_bucket_index               |
-|  0.00|      0.02  |   0.00   | 38354 |     0.00 |  361.36 | ioopm_hash_table_lookup        |
-|  0.00|      0.02  |   0.00   | 16992 |     0.00 |  361.36 | ioopm_hash_table_has_key       |
-|  0.00|      0.02  |   0.00   | 16992 |     0.00 |  361.36 | ioopm_hash_table_insert        |
-|  0.00|      0.02  |   0.00   |  4370 |     0.00 |    0.00 | entry_create                   |
-|  0.00|      0.02  |   0.00   |  4370 |     0.00 |    0.00 | ioopm_iterator_has_next        |
-|  0.00|      0.02  |   0.00   |  4370 |     0.00 |    0.00 | ioopm_iterator_next            |
-|  0.00|      0.02  |   0.00   |  4370 |     0.00 |    0.00 | ioopm_linked_list_append       |
-|  0.00|      0.02  |   0.00   |  4370 |     0.00 |    0.00 | link_create                    |
-|  0.00|      0.02  |   0.00   |    17 |     0.00 |    0.00 | entry_destroy                  |
-|  0.00|      0.02  |   0.00   |     1 |     0.00 |    0.00 | ioopm_hash_table_apply_to_all  |   
-|  0.00|      0.02  |   0.00   |     1 |     0.00 |    0.00 | ioopm_hash_table_clear         |   
-|  0.00|      0.02  |   0.00   |     1 |     0.00 |    0.00 | ioopm_hash_table_create        |   
-|  0.00|      0.02  |   0.00   |     1 |     0.00 |    0.00 | ioopm_hash_table_destroy       |
-|  0.00|      0.02  |   0.00   |     1 |     0.00 |    0.00 | ioopm_hash_table_keys          |   
-|  0.00|      0.02  |   0.00   |     1 |     0.00 |    0.00 | ioopm_hash_table_size          |
-|  0.00|      0.02  |   0.00   |     1 |     0.00 |    0.00 | ioopm_iterator_current         |   
-|  0.00|      0.02  |   0.00   |     1 |     0.00 |    0.00 | ioopm_iterator_destroy         |   
-|  0.00|      0.02  |   0.00   |     1 |     0.00 |    0.00 | ioopm_linked_list_clear        |   
-|  0.00|      0.02  |   0.00   |     1 |     0.00 |    0.00 | ioopm_linked_list_create       |   
-|  0.00|      0.02  |   0.00   |     1 |     0.00 |    0.00 | ioopm_linked_list_destroy      |      
-|  0.00|      0.02  |   0.00   |     1 |     0.00 |    0.00 | ioopm_linked_list_is_empty     |            
-|  0.00|      0.02  |   0.00   |     1 |     0.00 |    0.00 | ioopm_linked_list_size         |            
-|  0.00|      0.02  |   0.00   |     1 |     0.00 |    0.00 | ioopm_list_iterator            |   
+|100.00  |    0.01 |    0.01 |  55346  |   0.00  |   0.00 | find_previous_entry_for_key       |       
+|  0.00  |    0.01 |    0.00 |  4304460 |   0.00  |   0.00 | string_eq    |    
+|  0.00  |    0.01 |    0.00 |   55346  |   0.00  |   0.00 | get_bucket_index               |       
+|  0.00  |    0.01 |    0.00 |   55346  |   0.00  |   0.00 | string_sum_hash                |          
+|  0.00  |    0.01 |    0.00 |   38354  |   0.00  |   0.00 | ioopm_hash_table_lookup        |             
+|  0.00  |    0.01 |    0.00 |   16992  |   0.00  |   0.00 | ioopm_hash_table_has_key       |             
+|  0.00  |    0.01 |    0.00 |   16992  |   0.00  |   0.00 | ioopm_hash_table_insert        |             
+|  0.00  |    0.01 |    0.00 |   16992  |   0.00  |   0.00 | process_word                   |    
+|  0.00  |    0.01 |    0.00 |    4370  |   0.00  |   0.00 | entry_create                   |    
+|  0.00  |    0.01 |    0.00 |    4370  |   0.00  |   0.00 | free_keys                      |    
+|  0.00  |    0.01 |    0.00 |    4370  |   0.00  |   0.00 | ioopm_iterator_has_next        |          
+|  0.00  |    0.01 |    0.00 |    4370  |   0.00  |   0.00 | ioopm_iterator_next            |       
+|  0.00  |    0.01 |    0.00 |    4370  |   0.00  |   0.00 | ioopm_linked_list_append       |                      
+|  0.00  |    0.01 |    0.00 |    4370  |   0.00  |   0.00 | link_create                    |                
+|  0.00  |    0.01 |    0.00 |      17  |   0.00  |   0.00 | entry_destroy                  |          
+|  0.00  |    0.01 |    0.00 |       1  |   0.00  |   0.00 | ioopm_hash_table_apply_to_all  |             
+|  0.00  |    0.01 |    0.00 |       1  |   0.00  |   0.00 | ioopm_hash_table_clear         |             
+|  0.00  |    0.01 |    0.00 |       1  |   0.00  |   0.00 | ioopm_hash_table_create        |             
+|  0.00  |    0.01 |    0.00 |       1  |   0.00  |   0.00 | ioopm_hash_table_destroy       |          
+|  0.00  |    0.01 |    0.00 |       1  |   0.00  |   0.00 | ioopm_hash_table_keys          |          
+|  0.00  |    0.01 |    0.00 |       1  |   0.00  |   0.00 | ioopm_hash_table_size          |                
+|  0.00  |    0.01 |    0.00 |       1  |   0.00  |   0.00 | ioopm_iterator_current         |             
+|  0.00  |    0.01 |    0.00 |       1  |   0.00  |   0.00 | ioopm_iterator_destroy         |             
+|  0.00  |    0.01 |    0.00 |       1  |   0.00  |   0.00 | ioopm_linked_list_clear        |                
+|  0.00  |    0.01 |    0.00 |       1  |   0.00  |   0.00 | ioopm_linked_list_create       |                
+|  0.00  |    0.01 |    0.00 |       1  |   0.00  |   0.00 | ioopm_linked_list_destroy      |             
+|  0.00  |    0.01 |    0.00 |       1  |   0.00  |   0.00 | ioopm_linked_list_is_empty     |                   
+|  0.00  |    0.01 |    0.00 |       1  |   0.00  |   0.00 | ioopm_linked_list_size         |             
+|  0.00  |    0.01 |    0.00 |       1  |   0.00  |   0.00 | ioopm_list_iterator            |                
+|  0.00  |    0.01 |    0.00 |       1  |   0.00  |   9.21 | process_file                   |          
+|  0.00  |    0.01 |    0.00 |       1  |   0.00  |   0.00 | sort_keys                      |          
 
 
 **100 Buckets:**  
-| % time |  cumulative seconds   |self seconds   | calls |  self ns/call | total ns/call | name  |  
+Each sample counts as 0.01 seconds.
+| % time |  cumulative seconds   |self seconds   | calls |  self ns/call | total ns/call | name  |    
 |------|------------|----------|-------|----------|---------|--------------------------------|
-|  0.00|      0.00  |   0.00   | 55346   |     0.00 |  0.00 | get_bucket_index
-|  0.00|      0.00  |   0.00   | 38354   |     0.00 |  0.00 | ioopm_hash_table_lookup
-|  0.00|      0.00  |   0.00   | 16992   |     0.00 |  0.00 | ioopm_hash_table_has_key
-|  0.00|      0.00  |   0.00   | 16992   |     0.00 |  0.00 | ioopm_hash_table_insert
-|  0.00|      0.00  |   0.00   |  4370   |     0.00 |  0.00 | entry_create
-|  0.00|      0.00  |   0.00   |  4370   |     0.00 |    0.00| ioopm_iterator_has_next                   |
-|  0.00|      0.00  |   0.00   |  4370   |     0.00 |    0.00| ioopm_iterator_next        |
-|  0.00|      0.00  |   0.00   |  4370   |     0.00 |    0.00| ioopm_linked_list_append            |
-|  0.00|      0.00  |   0.00   |  4370   |     0.00 |    0.00| link_create       |
-|  0.00|      0.00  |   0.00   |   100   |     0.00 |    0.00| entry_destroy                    |
-|  0.00|      0.00  |   0.00   |     1   |     0.00 |    0.00| ioopm_hash_table_apply_to_all                  |
-|  0.00|      0.00  |   0.00   |     1   |     0.00 |    0.00| ioopm_hash_table_clear  |   
-|  0.00|      0.00  |   0.00   | 55346   |     0.00 |    0.00| find_previous_entry_for_key         |   
-|  0.00|      0.00  |   0.00   |     1   |     0.00 |    0.00| ioopm_hash_table_create        |   
-|  0.00|      0.00  |   0.00   |     1   |     0.00 |    0.00| ioopm_hash_table_destroy       |
-|  0.00|      0.00  |   0.00   |     1   |     0.00 |    0.00| ioopm_hash_table_keys          |   
-|  0.00|      0.00  |   0.00   |     1   |     0.00 |    0.00| ioopm_hash_table_size          |
-|  0.00|      0.00  |   0.00   |     1   |     0.00 |    0.00| ioopm_iterator_current         |   
-|  0.00|      0.00  |   0.00   |     1   |     0.00 |    0.00| ioopm_iterator_destroy         |   
-|  0.00|      0.00  |   0.00   |     1   |     0.00 |    0.00| ioopm_linked_list_clear        |   
-|  0.00|      0.00  |   0.00   |     1   |     0.00 |    0.00| ioopm_linked_list_create       |   
-|  0.00|      0.00  |   0.00   |     1   |     0.00 |    0.00| ioopm_linked_list_destroy      |      
-|  0.00|      0.00  |   0.00   |     1   |     0.00 |    0.00| ioopm_linked_list_is_empty     |            
-|  0.00|      0.00  |   0.00   |     1   |     0.00 |    0.00| ioopm_linked_list_size         |            
-|  0.00|      0.00  |   0.00   |     1   |     0.00 |    0.00| ioopm_list_iterator            |   
-
+|  0.00  |    0.00 |    0.00 |  768415  |   0.00  |   0.00 | string_eq       |       
+|  0.00  |    0.00 |    0.00 |  55346 |   0.00  |   0.00 | find_previous_entry_for_key    |    
+|  0.00  |    0.00 |    0.00 |   55346  |   0.00  |   0.00 | get_bucket_index               |       
+|  0.00  |    0.00 |    0.00 |   55346  |   0.00  |   0.00 | string_sum_hash                |          
+|  0.00  |    0.00 |    0.00 |   38354  |   0.00  |   0.00 | ioopm_hash_table_lookup        |             
+|  0.00  |    0.00 |    0.00 |   16992  |   0.00  |   0.00 | ioopm_hash_table_has_key       |             
+|  0.00  |    0.00 |    0.00 |   16992  |   0.00  |   0.00 | ioopm_hash_table_insert        |             
+|  0.00  |    0.00 |    0.00 |   16992  |   0.00  |   0.00 | process_word                   |    
+|  0.00  |    0.00 |    0.00 |    4370  |   0.00  |   0.00 | entry_create                   |    
+|  0.00  |    0.00 |    0.00 |    4370  |   0.00  |   0.00 | free_keys                      |    
+|  0.00  |    0.00 |    0.00 |    4370  |   0.00  |   0.00 | ioopm_iterator_has_next        |          
+|  0.00  |    0.00 |    0.00 |    4370  |   0.00  |   0.00 | ioopm_iterator_next            |       
+|  0.00  |    0.00 |    0.00 |    4370  |   0.00  |   0.00 | ioopm_linked_list_append       |                      
+|  0.00  |    0.00 |    0.00 |    4370  |   0.00  |   0.00 | link_create                    |                
+|  0.00  |    0.00 |    0.00 |      17  |   0.00  |   0.00 | entry_destroy                  |          
+|  0.00  |    0.00 |    0.00 |       1  |   0.00  |   0.00 | ioopm_hash_table_apply_to_all  |             
+|  0.00  |    0.00 |    0.00 |       1  |   0.00  |   0.00 | ioopm_hash_table_clear         |             
+|  0.00  |    0.00 |    0.00 |       1  |   0.00  |   0.00 | ioopm_hash_table_create        |             
+|  0.00  |    0.00 |    0.00 |       1  |   0.00  |   0.00 | ioopm_hash_table_destroy       |          
+|  0.00  |    0.00 |    0.00 |       1  |   0.00  |   0.00 | ioopm_hash_table_keys          |          
+|  0.00  |    0.00 |    0.00 |       1  |   0.00  |   0.00 | ioopm_hash_table_size          |                
+|  0.00  |    0.00 |    0.00 |       1  |   0.00  |   0.00 | ioopm_iterator_current         |             
+|  0.00  |    0.00 |    0.00 |       1  |   0.00  |   0.00 | ioopm_iterator_destroy         |             
+|  0.00  |    0.00 |    0.00 |       1  |   0.00  |   0.00 | ioopm_linked_list_clear        |                
+|  0.00  |    0.00 |    0.00 |       1  |   0.00  |   0.00 | ioopm_linked_list_create       |                
+|  0.00  |    0.00 |    0.00 |       1  |   0.00  |   0.00 | ioopm_linked_list_destroy      |             
+|  0.00  |    0.00 |    0.00 |       1  |   0.00  |   0.00 | ioopm_linked_list_is_empty     |                   
+|  0.00  |    0.00 |    0.00 |       1  |   0.00  |   0.00 | ioopm_linked_list_size         |             
+|  0.00  |    0.00 |    0.00 |       1  |   0.00  |   0.00 | ioopm_list_iterator            |                
+|  0.00  |    0.00 |    0.00 |       1  |   0.00  |   0.00 | process_file                   |          
+|  0.00  |    0.00 |    0.00 |       1  |   0.00  |   0.00 | sort_keys                      |
 
 - real    0m0.034s
 - user    0m0.008s
@@ -138,27 +200,3 @@ The 16k-words was the only input which spent mesurable amount of time in each fu
 
 As seen with 100 buckes the time improved significantly. Because we don't have as many elements in each buckets to search through before we find what we want. 
 
-
-   ## How results were obtained: 
-      
-   #### Top functions used: 
-   ```
-   $ make clean
-   $ make freq_count
-   $ ./driver filename.txt
-   $ gprof driver gmon.out > output
-   ```
-
-   #### Time:  
-   ```
-   $ make clean
-   $ make driver
-   $ command time --verbose ./driver filename.txt
-   ```
-
-   #### Extended time: 
-   ```
-   $ make clean
-   $ make driver
-   $ command time --verbose ./driver filename.txt
-   ```

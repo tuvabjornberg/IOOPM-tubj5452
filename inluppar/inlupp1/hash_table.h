@@ -20,7 +20,6 @@
  *
  * Create, insert, remove and genereral management of a hash_table. 
  *
- * @see $CANVAS_OBJECT_REFERENCE$/assignments/gb54499f3b7b264e3af3b68c756090f52
  */
 
 typedef bool(ioopm_predicate)(elem_t key, elem_t value, void *extra);

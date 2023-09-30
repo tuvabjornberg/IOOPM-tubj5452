@@ -164,7 +164,7 @@ elem_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key)
 size_t ioopm_hash_table_size(ioopm_hash_table_t *ht) 
 {
   int counter = 0; 
-  for (int i = 0; i < No_Buckets; i++) // CHEAT/TODO: hardcoded, implement something general //*ht != NULL
+  for (int i = 0; i < No_Buckets; i++) 
   {
     entry_t *cursor = &ht->buckets[i]; 
     while (cursor->next != NULL)
@@ -198,7 +198,6 @@ void ioopm_hash_table_clear(ioopm_hash_table_t *ht)
     ht->buckets[i].next = NULL; //reset all dangling pointers 
   }
 }
-
 
 ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
 {
