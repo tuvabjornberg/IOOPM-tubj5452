@@ -91,8 +91,8 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
 
   if (next == NULL)
   {
-    entry->next = entry_create(key, value, next);
-  }
+    entry->next = entry_create(key, value, next); 
+  } 
   else 
   {
     next->value = value;

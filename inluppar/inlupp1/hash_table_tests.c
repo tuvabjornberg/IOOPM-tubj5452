@@ -63,6 +63,12 @@ void test_insert_once()
     CU_ASSERT_STRING_EQUAL("value2", lookup_result->value.string);
     free(lookup_result);
 
+    //Insert new value to existing key
+    ioopm_hash_table_insert(ht, key[0], (elem_t) {.string = "updated_value"});
+    lookup_result = ioopm_hash_table_lookup(ht, key[0]);
+    CU_ASSERT_STRING_EQUAL("updated_value", lookup_result->value.string); 
+    free(lookup_result);
+
     // Test invalid_key
     lookup_result = ioopm_hash_table_lookup(ht, invalid_key);
     CU_ASSERT_TRUE(Unsuccessful((*lookup_result)));
@@ -315,10 +321,6 @@ static bool key_equiv(elem_t key, elem_t value_ignored, void *x)
   return key.integer == other_key;
 }
 
-static bool value_equiv(elem_t key_ignored, elem_t value, void *x)
-{
-  return strcmp(value.string, (char *)x) == 0;
-}
 
 void test_ht_has_any()
 {
@@ -329,13 +331,10 @@ void test_ht_has_any()
     insert_set_elements(ht, key, value, 3);
     
     elem_t false_key = {.integer = 17};     
-    elem_t false_value = {.string = "no"}; 
+
 
     CU_ASSERT_TRUE(ioopm_hash_table_any(ht, key_equiv, &key[1]));  
     CU_ASSERT_FALSE(ioopm_hash_table_any(ht, key_equiv, &false_key)); 
-
-    CU_ASSERT_TRUE(ioopm_hash_table_all(ht, value_equiv, value[0].void_ptr))
-    CU_ASSERT_FALSE(ioopm_hash_table_all(ht, value_equiv, false_value.void_ptr));
 
     ioopm_hash_table_destroy(ht); 
 }

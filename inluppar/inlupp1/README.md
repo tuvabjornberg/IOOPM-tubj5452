@@ -28,16 +28,16 @@
    ```
    _Coverage tests done with gcov_\
    `hash_table.c`: 
-   - Lines executed: 99.28% of 138
-   - Branches executed: 100.00% of 60
-   - Taken at least once: 95.00% of 60
-   - Calls executed: 100.00% of 20
+  - Lines executed: 100.00% of 138
+  - Branches executed: 100.00% of 60
+  - Taken at least once: 96.67% of 60
+  - Calls executed: 100.00% of 20
 
    `linked_list.c`: 
-   - Lines executed: 100.00% of 159
-   - Branches executed:97.44% of 78
-   - Taken at least once:82.05% of 78
-   - Calls executed:100.00% of 15
+   - Lines executed: 100.00% of 148
+   - Branches executed: 100.00% of 72
+   - Taken at least once: 86.11% of 72
+   - Calls executed: 100.00% of 15
    
    #### Performace tests:
    ```
@@ -223,5 +223,5 @@ Each sample counts as 0.01 seconds.
 - user    0m0.008s
 - sys     0m0.022s
 
-As seen with 100 buckes the time improved significantly. Because we don't have as many elements in each buckets to search through before we find what we want. 
+As seen with 100 buckes the time improved a bit, because we don't have as many elements in each buckets to search through before we find what we want. The number of calls to string_eq has decresed significantly bacuse we don't have as many elements in eahc bucket to iterate over. Though the amount of calls to `find_previous_entry_for_key`, `get_bucket_index` and `string_sum_hash` will stay the same since during the calls they are not dependant on the length of each bucket, only how many lookups, has_key and inserts we need to do (amount of elements in the input file). 
 

@@ -2,8 +2,8 @@ C_COMPILER     = gcc
 C_OPTIONS      = -Wall -pedantic -g
 C_LINK_OPTIONS = -lm 
 CUNIT_LINK     = -lcunit
-PG_OPT		   = -pg
-C_COV	   = -fprofile-arcs -ftest-coverage
+C_PROF		   = -pg
+C_GCOV	   	   = -fprofile-arcs -ftest-coverage
 
 %.o:  %.c 
 	$(C_COMPILER) $(C_OPTIONS) $^ -c 
@@ -12,7 +12,7 @@ freq_count.out: hash_table.o linked_list.o freq_count.o
 	$(C_COMPILER) $(C_LINK_OPTIONS) $(C_OPTIONS) $^ -o $@ 
 
 freq_count_prof.out: freq_count.c hash_table.c linked_list.c
-	$(C_COMPILER) $(C_OPTIONS) $^ -o $@ $(PG_OPT)
+	$(C_COMPILER) $(C_OPTIONS) $^ -o $@ $(C_PROF)
 
 
 hash_test.out: hash_table_tests.o hash_table.o linked_list.o 
@@ -27,9 +27,9 @@ tests: hash_test.out list_test.out
 
 
 hash_test_coverage.out: hash_table_tests.o hash_table.c linked_list.o 
-	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) $(C_COV)
+	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) $(C_GCOV)
 list_test_coverage.out: linked_list_tests.o hash_table.o linked_list.c 
-	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) $(C_COV)
+	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) $(C_GCOV)
 
 cov: hash_test_coverage.out list_test_coverage.out
 	./hash_test_coverage.out

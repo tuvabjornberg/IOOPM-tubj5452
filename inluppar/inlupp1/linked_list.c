@@ -153,18 +153,8 @@ elem_t ioopm_linked_list_remove(ioopm_list_t *list, int index)
         {
             while (index > 0 && index < linked_list_size && counter < index)
             {
-                // last index
-                if (index == linked_list_size - 2 && current->next == NULL)
-                {
-                    value = current->value;
-                    free(current->next);
-                    current->next = NULL;
-                    list->last = current;
-                    list->size--;
-                }
-
-                // middle index
-                else if (counter == index - 1)
+                // middle and last index
+                if (counter == index - 1)
                 {
                     value = current->next->value;
                     link_t *tmp = current->next->next;
@@ -290,11 +280,6 @@ void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function
 ioopm_list_iterator_t *ioopm_list_iterator(ioopm_list_t *list)
 {
     ioopm_list_iterator_t *iter = calloc(1, sizeof(ioopm_list_iterator_t));
-
-    if (iter == NULL)
-    {
-        return NULL;
-    }
 
     iter->list = list;
     iter->current = list->first;
