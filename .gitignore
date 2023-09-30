@@ -50,8 +50,3 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
-
-# Others
-*hash_test
-*list_test
-*driver

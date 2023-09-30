@@ -84,7 +84,7 @@ void test_insert()
     // insert invalid index
     ioopm_linked_list_insert(list, 2, value_insert);
     CU_ASSERT_FALSE(ioopm_linked_list_contains(list, value_insert));
-    CU_ASSERT_STRING_EQUAL(ioopm_linked_list_get(list, 2).string, "invalid input");
+    CU_ASSERT_PTR_NULL(ioopm_linked_list_get(list, 2).void_ptr); 
 
     append_ints_to_list(list, values, length);
 
@@ -113,7 +113,7 @@ void test_remove()
 
     // remove from invalid index
     elem_t return_value = ioopm_linked_list_remove(list, 3);
-    CU_ASSERT_STRING_EQUAL(return_value.string, "invalid input");
+    CU_ASSERT_PTR_NULL(return_value.void_ptr); 
 
     elem_t values[] = {{.integer = 1}, {.integer = 2}, {.integer = 3}, {.integer = 4}, {.integer = 5}, 
                         {.integer = 6}, {.integer = 7}, {.integer = 8}};
@@ -157,7 +157,7 @@ void test_get()
 {
     ioopm_list_t *list = ioopm_linked_list_create(bool_eq_fun);
 
-    CU_ASSERT_STRING_EQUAL(ioopm_linked_list_get(list, 2).string, "invalid input");
+    CU_ASSERT_PTR_NULL(ioopm_linked_list_get(list, 2).void_ptr); 
 
     elem_t values[] = {{.integer = 9}, {.integer = 8}, {.integer = 7}, {.integer = 6}};
     elem_t value_insert = {.integer = 5}; 
@@ -345,8 +345,7 @@ void test_iterator_next()
 {
     ioopm_list_t *list = ioopm_linked_list_create(bool_eq_fun);
     ioopm_list_iterator_t *iter = ioopm_list_iterator(list);
-    //CU_ASSERT_STRING_EQUAL(ioopm_iterator_next(iter).string, "has no next element");
-    CU_ASSERT_EQUAL(ioopm_iterator_next(iter).integer, 0);
+    CU_ASSERT_PTR_NULL(ioopm_iterator_next(iter).void_ptr); 
     ioopm_iterator_destroy(iter);
 
     elem_t values[] = {{.integer = 1}, {.integer = 2}, {.integer = 3}, {.integer = 4}};
@@ -368,8 +367,7 @@ void test_iterator_reset()
 {
     ioopm_list_t *list = ioopm_linked_list_create(bool_eq_fun);
     ioopm_list_iterator_t *iter = ioopm_list_iterator(list);
-    //CU_ASSERT_STRING_EQUAL(ioopm_iterator_current(iter).string, "no current element");
-    CU_ASSERT_EQUAL(ioopm_iterator_current(iter).integer, 0);
+    CU_ASSERT_PTR_NULL(ioopm_iterator_current(iter).void_ptr); 
     ioopm_iterator_reset(iter);
     CU_ASSERT_EQUAL(ioopm_iterator_current(iter).integer, 0);
         ioopm_iterator_destroy(iter);
@@ -395,8 +393,7 @@ void test_iterator_current()
 {
     ioopm_list_t *list = ioopm_linked_list_create(bool_eq_fun);
     ioopm_list_iterator_t *iter = ioopm_list_iterator(list);
-    //CU_ASSERT_STRING_EQUAL(ioopm_iterator_current(iter).string, "no current element");
-    CU_ASSERT_EQUAL(ioopm_iterator_current(iter).integer, 0);  
+    CU_ASSERT_PTR_NULL(ioopm_iterator_current(iter).void_ptr); 
     ioopm_iterator_destroy(iter);
 
     elem_t values[] = {{.integer = 1}, {.integer = 2}, {.integer = 3}, {.integer = 4}};
@@ -428,7 +425,7 @@ int main()
 
     // We then create an empty test suite and specify the name and
     // the init and cleanup functions
-    CU_pSuite my_test_suite = CU_add_suite("My awesome test suite", init_suite, clean_suite);
+    CU_pSuite my_test_suite = CU_add_suite("Tests for linked_list.c", init_suite, clean_suite);
     if (my_test_suite == NULL)
     {
         // If the test suite could not be added, tear down CUnit and exit
@@ -457,10 +454,6 @@ int main()
          CU_add_test(my_test_suite, "Test for apply to all in list", test_apply_to_all) == NULL ||
          CU_add_test(my_test_suite, "If iterator has more elements to go over", test_iterator_has_next) == NULL ||
          CU_add_test(my_test_suite, "The next element for iterator to go over", test_iterator_next) == NULL ||
-
-         // CU_add_test(my_test_suite, "Test for remove current element", test_iterator_remove) == NULL ||
-         // CU_add_test(my_test_suite, "Test for insert current element", test_iterator_insert) == NULL ||
-
          CU_add_test(my_test_suite, "Reposition iterator to start of list", test_iterator_reset) == NULL ||
          CU_add_test(my_test_suite, "Current element iterator goes over", test_iterator_current) == NULL))
     {

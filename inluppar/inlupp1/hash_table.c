@@ -35,8 +35,6 @@ static unsigned get_bucket_index(ioopm_hash_table_t *ht, ioopm_hash_function has
 
 ioopm_hash_table_t *ioopm_hash_table_create(ioopm_hash_function hash_fun, ioopm_eq_function eq_fun)
 {
-  /// Allocate space for a ioopm_hash_table_t = No_Buckets (17) pointers to
-  /// entry_t's, which will be set to NULL
   ioopm_hash_table_t *ht = calloc(1, sizeof(ioopm_hash_table_t));
   ht->hash_fun = hash_fun;
   ht->eq_fun = eq_fun; 
@@ -86,14 +84,11 @@ static entry_t *find_previous_entry_for_key(entry_t *bucket, elem_t key, ioopm_e
 
 void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
 {
-  /// Calculate the bucket for this entry
   unsigned bucket_index = get_bucket_index(ht, ht->hash_fun, key); 
 
-  /// Search for an existing entry for a key
   entry_t *entry = find_previous_entry_for_key(&ht->buckets[bucket_index], key, ht->eq_fun);
   entry_t *next = entry->next;
 
-  /// Check if the next entry should be updated or not
   if (next == NULL)
   {
     entry->next = entry_create(key, value, next);
@@ -154,7 +149,7 @@ elem_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key)
   else
   {
     //error handeling
-    removed_value.string = "key does not have an entry";
+    removed_value.void_ptr = NULL; 
   }
 
   free(lookup_result);

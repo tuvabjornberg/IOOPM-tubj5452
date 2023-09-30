@@ -55,7 +55,7 @@ void ioopm_linked_list_append(ioopm_list_t *list, elem_t value)
 {
     link_t *new_link = link_create(value, NULL);
 
-    if (new_link != NULL) // check if mem was allocated correctly
+    if (new_link != NULL) 
     {
         if (list->last == NULL)
         {
@@ -77,7 +77,7 @@ void ioopm_linked_list_prepend(ioopm_list_t *list, elem_t value)
 {
     link_t *new_link = link_create(value, list->first);
 
-    if (new_link != NULL) // check if mem was allocated correctly
+    if (new_link != NULL) 
     {
         list->first = new_link;
 
@@ -99,7 +99,7 @@ void ioopm_linked_list_insert(ioopm_list_t *list, int index, elem_t value)
 
     if (index < 0 || index > linked_list_size)
     {
-        return; 
+        return;
     }
     else if (index == 0)
     {
@@ -132,13 +132,13 @@ elem_t ioopm_linked_list_remove(ioopm_list_t *list, int index)
     link_t *current = list->first;
     int counter = 0;
     size_t linked_list_size = ioopm_linked_list_size(list);
-    elem_t value = {.string = "invalid input"};
+    elem_t value = {.void_ptr = NULL};
 
     if (list != NULL)
     {
         if (index < 0 || index >= linked_list_size)
         {
-            return value; 
+            return (elem_t){.void_ptr = NULL};
         }
         // first index
         else if (index == 0)
@@ -185,7 +185,8 @@ elem_t ioopm_linked_list_get(ioopm_list_t *list, int index)
 {
     link_t *current = list->first;
     int counter = 0;
-    if (index >= 0 && index < ioopm_linked_list_size(list)) // if correct index input
+    // if correct index input
+    if (index >= 0 && index < ioopm_linked_list_size(list)) 
     {
         while (counter != index)
         {
@@ -197,9 +198,7 @@ elem_t ioopm_linked_list_get(ioopm_list_t *list, int index)
     }
     else
     {
-        // invalid input TODO: error handeling
-        elem_t invalid_out = {.string = "invalid input"}; 
-        return invalid_out;
+        return (elem_t){.void_ptr = NULL};
     }
 }
 
@@ -319,9 +318,7 @@ elem_t ioopm_iterator_next(ioopm_list_iterator_t *iter)
 {
     if (!ioopm_iterator_has_next(iter))
     {
-        // invalid input TODO: error handeling
-        elem_t error_out = {.integer = 0}; 
-        return error_out;
+        return (elem_t){.void_ptr = NULL};
     }
 
     iter->current = iter->current->next;
@@ -348,9 +345,7 @@ elem_t ioopm_iterator_current(ioopm_list_iterator_t *iter)
     }
     else
     {
-        // invalid input TODO: error handeling
-        elem_t error_out = {.integer = 0}; 
-        return error_out; 
+        return (elem_t){.void_ptr = NULL};
     }
 }
 void ioopm_iterator_destroy(ioopm_list_iterator_t *iter)

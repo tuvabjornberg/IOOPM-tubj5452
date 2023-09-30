@@ -15,11 +15,22 @@
 /**
  * @file hash_table.h
  * @author Tuva Björnberg & Gustav Fridén
- * @date 11/09-2023
+ * @date 29/09-2023
  * @brief Simple hash table that maps integer keys to string values.
  *
- * Create, insert, remove and genereral management of a hash_table. 
- *
+ * The hash table is implemented using a fixed number of buckets (No_Buckets) 
+ * and separate chaining to handle collisions. The program includes functions 
+ * to create and destroy a hash table, insert and lookup key-value pairs, remove 
+ * entries, retrieve the size, check if empty, and more. 
+ * 
+ * The hash table assumes a suitable hash_function (hash_fun) and equality function 
+ * to fit the ioopm_eq_function in common.h 
+ * 
+ * It is assumed that the user ensures proper memory management when using the hash 
+ * table, including freeing the memory allocated for keys and values.
+ * 
+ * In certain edge-cases functions will return void pointer to NULL if either imput-value is invalid or 
+ * have reach a NULL element. Which functions with this behavior is mentioned below. 
  */
 
 typedef bool(ioopm_predicate)(elem_t key, elem_t value, void *extra);
@@ -58,7 +69,7 @@ option_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, elem_t key);
 /// @brief remove any mapping from key to a value
 /// @param ht hash table operated upon
 /// @param key key to remove
-/// @return the value of the removed entry from ht with key
+/// @return the value of the removed entry from ht with key or a void pointer to NULL if key has no entry
 elem_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key);
 
 /// @brief returns the number of key => value entries in the hash table

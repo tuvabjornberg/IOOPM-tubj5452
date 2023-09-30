@@ -9,11 +9,19 @@
 /**
  * @file linked_list.h
  * @author Tuva Björnberg & Gustav Fridén
- * @date 11/09-2023
- * @brief 
+ * @date 29/09-2023
+ * @brief The program includes functions to create and destroy a linked list, perform various operations. 
  *
- * Create, insert, remove and genereral management of a linked list. 
- *
+ * The linked list is implemented using a singly linked structure (`link_t`) with a `list_t` 
+ * structure holding the first and last links, the size, and an equality function. 
+ * 
+ * The linked list assumes a suitable equality function to fit the ioopm_eq_function in common.h 
+ * 
+ * It is also assumed that the user ensures proper memory management when using the 
+ * linked list, including freeing the memory allocated for elements.
+ * 
+ * In certain edge-cases functions will return void pointer to NULL if either imput-value is invalid or 
+ * have reach a NULL element. Which functions with this behavior is mentioned below. 
  */
 
 typedef struct list ioopm_list_t; 
@@ -63,7 +71,7 @@ elem_t ioopm_linked_list_remove(ioopm_list_t *list, int index);
 /// where 0 means the first element and n-1 means the last element.
 /// @param list the linked list that will be extended
 /// @param index the position in the list
-/// @return the value at the given position
+/// @return the value at the given position or a void pointer to NULL if invalid index
 elem_t ioopm_linked_list_get(ioopm_list_t *list, int index);
 
 /// @brief Test if an element is in the list

@@ -1,8 +1,9 @@
- # To build
-   #### Build: 
+ # Make commands
+   #### Build and run word processing: 
    ```
    $ make clean
    $ make freq_count.out
+   $ ./freq_count.out filename.txt
    ```
    #### Run tests:
    ```
@@ -12,27 +13,43 @@
    #### Memory tests:
    ```
    $ make clean
+
+   for hash_test and list_test:
    $ make mem_tests
-   or
+   
+   for freq_count:
    $ make mem_freq_count ARGS="filename.txt"
    ```
 
-   #### Run word processing:
-   ```
-   $ make clean
-   $ make freq_count.out
-   $ ./freq_count.out filename.txt
-   ```
    #### Coverage tests:
    ```
    $ make clean
-   $ make !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   $ make cov
    ```
+   _Coverage tests done with gcov_\
+   `hash_table.c`: 
+   - Lines executed: 99.28% of 138
+   - Branches executed: 100.00% of 60
+   - Taken at least once: 95.00% of 60
+   - Calls executed: 100.00% of 20
+
+   `linked_list.c`: 
+   - Lines executed: 100.00% of 159
+   - Branches executed:97.44% of 78
+   - Taken at least once:82.05% of 78
+   - Calls executed:100.00% of 15
    
    #### Performace tests:
    ```
    $ make clean
+
+   for all included .txt files: 
    $ make prof
+
+   for a single prof: 
+   $ make freq_count_prof.out
+   $ ./freq_count_prof.out filename.txt
+   $ gprof freq_count_prof.out gmon.out > output
    ```
 
    #### Time: 
@@ -41,6 +58,14 @@
    $ make freq_count.out
    $ command time --verbose ./freq_count.out filename.txt
    ```
+
+ # Notes and error handling
+
+  - Errors and edge-cases are handled, mostly, by returning a void pointer to NULL. This void pointer is a part of an element with the type elem_t. The type is declared in common.h.  
+  - The functions in hash_table assumes a suitable hash_function (hash_fun) and equality function (eq_fun) to fit the elem_t type ioopm_eq_function as seen in common.h. 
+  - The functions in linked_list assumes a suitable equality function (eq_fun) to fit the elem_t type ioopm_eq_function as seen in common.h. 
+  - It is assumed that the user ensures proper memory management when using the hash_table, linked_list and iterator, including freeing the allocated for keys, values, lists, iterators and options after use. 
+
  # Initial Profiling Results 
    ## small.txt
    **Most used functions:** \

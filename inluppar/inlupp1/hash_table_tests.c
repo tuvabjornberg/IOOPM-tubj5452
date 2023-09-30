@@ -121,7 +121,8 @@ void test_remove_entry()
     // Remove for not inserted item
     value_removed = ioopm_hash_table_remove(ht, key[0]);
     lookup_result = ioopm_hash_table_lookup(ht, key[0]);
-    CU_ASSERT_STRING_EQUAL("key does not have an entry", value_removed.string);
+    CU_ASSERT_PTR_NULL(value_removed.void_ptr); 
+    //CU_ASSERT_STRING_EQUAL("key does not have an entry", value_removed.string);
     CU_ASSERT_TRUE(Unsuccessful((*lookup_result)));
     free(lookup_result);
 
@@ -396,7 +397,6 @@ void test_ht_apply_to_all()
 
     ioopm_hash_table_apply_to_all(ht, add_version_value, version); 
     
-    //ioopm_hash_table_insert(ht, int_elem(1), str_elem("extra")); //TODO: will give error when inserted in this state of the program
     ioopm_list_t *array_of_applied = ioopm_hash_table_values(ht); 
 
     for (int i = 0; i < 3; i++)
@@ -437,7 +437,7 @@ int main()
 
     // We then create an empty test suite and specify the name and
     // the init and cleanup functions
-    CU_pSuite my_test_suite = CU_add_suite("My awesome test suite", init_suite, clean_suite);
+    CU_pSuite my_test_suite = CU_add_suite("Tests for hash_table.c", init_suite, clean_suite);
     if (my_test_suite == NULL)
     {
         // If the test suite could not be added, tear down CUnit and exit
@@ -460,8 +460,9 @@ int main()
          CU_add_test(my_test_suite, "Clearing a hash_table", test_clear_hash_table) == NULL ||
          CU_add_test(my_test_suite, "Test on a generated array of keys", test_table_keys) == NULL ||
          CU_add_test(my_test_suite, "Test on a generated array of values", test_table_values) == NULL ||
-         CU_add_test(my_test_suite, "If hash table has key, with any test", test_ht_has_key) == NULL ||
-         CU_add_test(my_test_suite, "Predicate function that satisfies any antry", test_ht_has_value) == NULL ||
+         CU_add_test(my_test_suite, "If hash table has key", test_ht_has_key) == NULL ||
+         CU_add_test(my_test_suite, "If hash table has value", test_ht_has_value) == NULL ||
+         CU_add_test(my_test_suite, "Predicate function that satisfies any antry", test_ht_has_any) == NULL ||
          CU_add_test(my_test_suite, "Predicate function that satisfies all entries", test_ht_has_all) == NULL ||
          CU_add_test(my_test_suite, "Apply function on all entries", test_ht_apply_to_all) == NULL
         )
