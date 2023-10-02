@@ -128,7 +128,7 @@ void test_remove_entry()
     value_removed = ioopm_hash_table_remove(ht, key[0]);
     lookup_result = ioopm_hash_table_lookup(ht, key[0]);
     CU_ASSERT_PTR_NULL(value_removed.void_ptr); 
-    //CU_ASSERT_STRING_EQUAL("key does not have an entry", value_removed.string);
+
     CU_ASSERT_TRUE(Unsuccessful((*lookup_result)));
     free(lookup_result);
 

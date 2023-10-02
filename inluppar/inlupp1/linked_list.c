@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include <assert.h>
 
 typedef struct link link_t;
 
@@ -303,6 +304,7 @@ elem_t ioopm_iterator_next(ioopm_list_iterator_t *iter)
 {
     if (!ioopm_iterator_has_next(iter))
     {
+        
         return (elem_t){.void_ptr = NULL};
     }
 
