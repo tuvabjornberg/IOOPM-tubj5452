@@ -17,11 +17,33 @@ void sort_keys(char *keys[], size_t no_keys)
     qsort(keys, no_keys, sizeof(char *), cmp_stringp);
 }
 
+static char *exist_check(merch_table_t *store, char *prompt)
+{
+    if (store_is_empty(store)) 
+    {
+        printf("\nThe store is empty, no merch to %s", prompt); 
+        return; 
+    }
+
+    char *user_input = ask_question_string("\nWrite the name of the merch: "); 
+
+    while (!merch_exists(store, user_input))
+    {
+        char *choice = ask_question_string("\nThe merch doesn't exist, do you want t write another one (y)? "); 
+        if (toupper(choice) == 'Y')
+        {
+            user_input = ask_question_string("\nWrite the name of the merch: "); 
+        }
+    }
+    return user_input; 
+}
+
 merch_t input_merch(void)
 {
     char *name = ask_question_string("\nWrite the name of the merch: "); 
     char *description = ask_question_string("\nWrite a description of the merch: "); 
     int price = ask_question_int("\nWrite the price of the merch: ");
+    int stock = get_stock_of_merch(*name); 
     return create_item(name, description, price, stock); 
 }
 
@@ -85,29 +107,14 @@ void list_merch(merch_table_t *store)
 
 void remove_merch(merch_table_t *store)
 {
-    if (store_is_empty(store)) 
-    {
-        printf("\nThe store is empty, no merch to remove"); 
-        return; 
-    } 
-
-    char *name_to_remove = ask_question_string("\nWrite the name of the merch to remove: "); 
-
-    while (!merch_exists(store, name_to_remove))
-    {
-        char *choice = ask_question_string("\nThe merch doesn't exist, do you want to remove another one (y)? "); 
-        if (toupper(choice) == 'Y')
-        {
-            name_to_remove = ask_question_string("\nWrite the name of the merch to remove: "); 
-        }
-    }
+    char *user_input_to_remove = exist_check(store, "remove"); 
 
     char *remove_confirmation = ask_qustion_string("\nAre you sure you want to remove:\n"); 
-    print_merch(name_to_remove); 
+    print_merch(user_input_to_remove); 
 
     if (toupper(*remove_confirmation) == 'Y')
     {
-        merch_t merch_to_remove = get_merch_from_store(store, name_to_remove); 
+        merch_t merch_to_remove = get_merch_from_store(store, user_input_to_remove); 
         remove_merch_from_store(store, merch_to_remove); 
     }
 
@@ -115,11 +122,51 @@ void remove_merch(merch_table_t *store)
 
 void edit_merch(merch_table_t *store)
 {
+    char *user_input_to_edit = exist_check(store, "edit"); 
+
+    char *edit_confirmation = ask_qustion_string("\nAre you sure you want to edit:\n"); 
+    print_merch(user_input_to_edit); 
+
+    if (!toupper(*edit_confirmation) == 'Y')
+    {
+        return; 
+    }
+    
+    merch_t merch_to_edit = get_merch_from_store(store, user_input_to_edit); 
+    char *user_edit_input = ask_question_string("\nChoose what you want to edit:\n[A] Edit name\n[B] Edit description\n[C] Edit price\n"); 
+
+    //TODO: does not handle not affect stock, if name is changed the key is also changed
+    //make adjustments!!
+    switch (toupper(*user_edit_input)) 
+    {
+        case 'A':
+            char *new_name = ask_question_string("\nWrite the new name: "); 
+            set_name(merch_to_edit, *new_name); 
+            break; 
+        case 'B': 
+            char *new_description = ask_question_string("\nWrite the new decription: "); 
+            set_description(merch_to_edit, *new_description); 
+            break; 
+        case 'C': 
+            char *new_price = ask_question_string("\nWrite the new price: "); 
+            set_price(merch_to_edit, *new_price); 
+            break; 
+        default:
+            user_edit_input = ask_question_string("Try again with a valid input\n");
+    } 
 
 }
 
 void show_stock(merch_table_t *store)
 {
+
+    /*
+    List all the storage locations for a particular merch, along with the quantities stored on each location. 
+    Storage locations should preferably be listed in alphabetical order (e.g., A20 before B01 and C01 before C10).
+    Names of storage locations follow this format always: one capital letter (A-Z) followed by two digits (0-9).
+    The action code should be "S. The action should read the name of the merch.
+
+*/
 
 }
 
@@ -158,7 +205,6 @@ void checkout_cart(merch_table_t *store)
 
 }
 
-//FIXME: OBS! print_menu, ask_question_menu, main from store.c (lab 5), with modifications
 
 void print_menu(void) 
 {
@@ -267,8 +313,8 @@ void event_loop(merch_table_t *store, int store_size)
 }
 
 int main() { 
-    merch_table_t *store = ioopm_hash_table_create(hash_fun, eq_fun); 
-    int store_siz = 0; // Antalet varor i arrayen just nu
+    merch_table_t *store = ioopm_hash_table_create(hash_fun, cmp_stringp); 
+    int store_siz = get_store_size(store); // Antalet varor i arrayen just nu
     event_loop(store, store_siz); 
     return 0;
 }
