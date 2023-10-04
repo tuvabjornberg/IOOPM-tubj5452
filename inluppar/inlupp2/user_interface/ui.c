@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "utils.h"
 #include "merch_storage.h"
+#include "linked_list.h"
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
@@ -17,34 +18,35 @@ void sort_keys(char *keys[], size_t no_keys)
     qsort(keys, no_keys, sizeof(char *), cmp_stringp);
 }
 
-static char *exist_check(merch_table_t *store, char *prompt)
+/*
+typedef bool(fun)(merch_table_t *store, char *name);
+static char *valid_merch(merch_table_t *store, char *name, fun exist_fun) //TODO: abstarction
 {
-    if (store_is_empty(store)) 
+    while (!fun(store, name))
     {
-        printf("\nThe store is empty, no merch to %s", prompt); 
-        return; 
-    }
-
-    char *user_input = ask_question_string("\nWrite the name of the merch: "); 
-
-    while (!merch_exists(store, user_input))
-    {
-        char *choice = ask_question_string("\nThe merch doesn't exist, do you want t write another one (y)? "); 
-        if (toupper(choice) == 'Y')
+        char *new_alt = ask_question_string("\nThe merch doesn't exist, do you want t write another one (y)? "); 
+        if (toupper(new_alt) == 'Y')
         {
-            user_input = ask_question_string("\nWrite the name of the merch: "); 
+            name = ask_question_string("\nWrite the name of the merch: "); 
+        }
+        else
+        {
+            return; 
         }
     }
-    return user_input; 
+    return name; 
+
 }
+*/
 
 merch_t input_merch(void)
 {
     char *name = ask_question_string("\nWrite the name of the merch: "); 
     char *description = ask_question_string("\nWrite a description of the merch: "); 
     int price = ask_question_int("\nWrite the price of the merch: ");
+    char *shelf = ask_question_shelf("\nWrite the shelf (Format: 'A36')"); 
     int stock = get_stock_of_merch(*name); 
-    return create_item(name, description, price, stock); 
+    return create_merch(name, description, price, shelf, stock); 
 }
 
 void add_merch(merch_table_t *store)
@@ -53,8 +55,8 @@ void add_merch(merch_table_t *store)
 
     while (merch_exists(store, input.name))
     {
-        char *choice = ask_question_string("\nThe merch already exists, do you want to add another one (y)? "); 
-        if (toupper(choice) == 'Y')
+        char *new_alt = ask_question_string("\nThe merch already exists, do you want to add another one (y)? "); 
+        if (toupper(new_alt) == 'Y')
         {
             input = input_merch();  
         }
@@ -64,7 +66,7 @@ void add_merch(merch_table_t *store)
         }
     }
 
-    add_merch_to_store(store, input); 
+    store_add(store, input); 
 
 }
 
@@ -76,18 +78,17 @@ void list_merch(merch_table_t *store)
         return; 
     } 
 
-    int store_size = get_store_size(store);
-    int fist_print_size = store_size < 20 ? store_size : 20; 
+    size_t st_size = store_size(store);
+    int fist_print_size = st_size < 20 ? st_size : 20; 
 
-    int current = 0; 
-
-    char *arr_of_names[store_size]; 
-    get_merch_in_arr(store, arr_of_names); 
-    sort_keys(arr_of_names, store_size); 
+    char *names[st_size]; 
+    get_names_in_arr(store, names); 
+    sort_keys(names, st_size); 
 
     for (int i; i < fist_print_size; i++)
     {   
-        print_merch(arr_of_names[i]); 
+        merch_t merch = get_merch(store, names[i]); 
+        print_merch(get_merch(store, names[i])); 
     }
 
     char *continue_list = ask_qustion_string("\nPress 'N' to return to menu, press anywhere to continue list ");
@@ -97,9 +98,10 @@ void list_merch(merch_table_t *store)
     }
     else 
     {
-        for (int i = fist_print_size; i < store_size; i++)
+        for (int i = fist_print_size; i < st_size; i++)
         {
-            print_merch(arr_of_names[i]); 
+            merch_t merch = get_merch(store, names[i]); 
+            print_merch(merch); 
         }
     }
 
@@ -107,71 +109,176 @@ void list_merch(merch_table_t *store)
 
 void remove_merch(merch_table_t *store)
 {
-    char *user_input_to_remove = exist_check(store, "remove"); 
+    char *input_name = ask_question_string("\nWrite the name of the merch you want to remove: "); 
 
-    char *remove_confirmation = ask_qustion_string("\nAre you sure you want to remove:\n"); 
-    print_merch(user_input_to_remove); 
-
-    if (toupper(*remove_confirmation) == 'Y')
+    if (store_is_empty(store)) 
     {
-        merch_t merch_to_remove = get_merch_from_store(store, user_input_to_remove); 
-        remove_merch_from_store(store, merch_to_remove); 
+        puts("\nThe store is empty, please add items first"); 
+        return; 
     }
 
+    while (!merch_exists(store, input_name))
+    {
+        char *new_alt = ask_question_string("\nThe merch doesn't exist, do you want t write another one (y)? "); 
+        if (toupper(new_alt) == 'Y')
+        {
+            input_name = ask_question_string("\nWrite the name of the merch you want to remove: "); 
+        }
+        else
+        {
+            return; 
+        }
+    }
+
+    char *conf_remove = ask_qustion_string("\nAre you sure you want to remove this merch? \n"); 
+
+    if (toupper(*conf_remove) == 'Y')
+    {
+        merch_t merch = get_merch(store, input_name); 
+        store_remove(store, merch); 
+    }
+    return; 
 }
 
 void edit_merch(merch_table_t *store)
 {
-    char *user_input_to_edit = exist_check(store, "edit"); 
+    char *input_name = ask_question_string("\nWrite the name of the merch you want to edit: "); 
 
-    char *edit_confirmation = ask_qustion_string("\nAre you sure you want to edit:\n"); 
-    print_merch(user_input_to_edit); 
+    if (store_is_empty(store)) 
+    {
+        puts("\nThe store is empty, please add items first"); 
+        return; 
+    }
 
-    if (!toupper(*edit_confirmation) == 'Y')
+    while (!merch_exists(store, input_name))
+    {
+        char *new_alt = ask_question_string("\nThe merch doesn't exist, do you want t write another one (y)? "); 
+        if (toupper(new_alt) == 'Y')
+        {
+            input_name = ask_question_string("\nWrite the name of the merch you want to edit: "); 
+        }
+        else
+        {
+            return; 
+        }
+    }
+
+    char *conf_edit = ask_qustion_string("\nAre you sure you want to edit this merch? "); 
+
+    if (!toupper(*conf_edit) == 'Y')
     {
         return; 
     }
     
-    merch_t merch_to_edit = get_merch_from_store(store, user_input_to_edit); 
-    char *user_edit_input = ask_question_string("\nChoose what you want to edit:\n[A] Edit name\n[B] Edit description\n[C] Edit price\n"); 
+    merch_t merch = get_merch(store, input_name); 
+    char *alt_edit = ask_question_string("\nChoose what you want to edit:\n[A] Edit name\n[B] Edit description\n[C] Edit price\n"); 
 
     //TODO: does not handle not affect stock, if name is changed the key is also changed
     //make adjustments!!
-    switch (toupper(*user_edit_input)) 
+    switch (toupper(*alt_edit)) 
     {
         case 'A':
             char *new_name = ask_question_string("\nWrite the new name: "); 
-            set_name(merch_to_edit, *new_name); 
+            set_name(merch, *new_name); 
             break; 
         case 'B': 
             char *new_description = ask_question_string("\nWrite the new decription: "); 
-            set_description(merch_to_edit, *new_description); 
+            set_description(merch, *new_description); 
             break; 
         case 'C': 
             char *new_price = ask_question_string("\nWrite the new price: "); 
-            set_price(merch_to_edit, *new_price); 
+            set_price(merch, *new_price); 
             break; 
         default:
-            user_edit_input = ask_question_string("Try again with a valid input\n");
+            alt_edit = ask_question_string("Try again with a valid input \n");
     } 
 
 }
 
 void show_stock(merch_table_t *store)
 {
+    char *input_name = ask_question_string("\nWrite the name of the merch whose stock you want listed: "); 
 
-    /*
-    List all the storage locations for a particular merch, along with the quantities stored on each location. 
-    Storage locations should preferably be listed in alphabetical order (e.g., A20 before B01 and C01 before C10).
-    Names of storage locations follow this format always: one capital letter (A-Z) followed by two digits (0-9).
-    The action code should be "S. The action should read the name of the merch.
+    if (store_is_empty(store)) 
+    {
+        puts("\nThe store is empty, please add items first"); 
+        return; 
+    }
 
-*/
+    while (!merch_exists(store, input_name))
+    {
+        char *new_alt = ask_question_string("\nThe merch doesn't exist, do you want t write another one (y)? "); 
+        if (toupper(new_alt) == 'Y')
+        {
+            input_name = ask_question_string("\nWrite the name of the merch whose stock you want listed: "); 
+        }
+        else
+        {
+            return; 
+        }
+    }
+
+    merch_t merch = get_merch(store, input_name); 
+
+    print_stock(merch); 
 
 }
 
 void replenish_stock(merch_table_t *store)
 {
+    char *input_name = ask_question_string("\nWrite the name of the merch whose stock you want replenished: "); 
+
+    if (store_is_empty(store)) 
+    {
+        puts("\nThe store is empty, please add items first"); 
+        return; 
+    }
+
+    while (!merch_exists(store, input_name))
+    {
+        char *new_alt = ask_question_string("\nThe merch doesn't exist, do you want t write another one (y)? "); 
+        if (toupper(new_alt) == 'Y')
+        {
+            input_name = ask_question_string("\nWrite the name of the merch whose stock you want replenished: "); 
+        }
+        else
+        {
+            return; 
+        }
+    }
+
+    merch_t merch = get_merch(store, input_name); 
+
+    printf("\nYou selected this merch:\n"); 
+    print_merch(merch); 
+
+    char *input_shelf = ask_question_shelf("\nEnter the storage location you want to replenish: "); 
+
+    //while (!shelf_exists(store, input_name, input_shelf))
+    //{
+    //    char *new_alt = ask_question_string("\nThe shelf doesn't exist, do you want t write another one (y)? "); 
+    //    if (toupper(new_alt) == 'Y')
+    //    {
+    //        input_name = ask_question_string("\nWrite the name of the merch whose stock you want replenished: "); 
+    //    }
+    //    else
+    //    {
+    //        return; 
+    //    }
+    //}
+
+
+
+/*
+
+    Increases the stock of a merch by at least one.
+    You can replenish on an existing storage location or a new one.
+    The stock for a merch is the sum of all items on all storage locations holding that merch.
+    A storage location stocks items of one (type of) merch, never more.
+    For simplicity, there is no limit to the amount of storage locations nor is there a limit on the number of items a location can hold.
+    The action code should be "P". The action should read the id of the storage location, the name of the merch and the number of items to add.
+
+*/
 
 }
 
