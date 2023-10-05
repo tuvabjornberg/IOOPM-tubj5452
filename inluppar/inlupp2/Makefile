@@ -4,11 +4,12 @@ C_LINK_OPTIONS = -lm
 CUNIT_LINK     = -lcunit
 C_PROF		   = -pg
 C_GCOV	   	   = -fprofile-arcs -ftest-coverage
+VPATH		   = user_interface : data_structures : utils : tests : logic
 
 %.o:  %.c 
 	$(C_COMPILER) $(C_OPTIONS) $^ -c 
 
-ui.out: hash_table.o linked_list.o shop_cart.o merch_storage.o utils.o
+ui.out: ui.o hash_table.o linked_list.o utils.o merch_storage.o 
 	$(C_COMPILER) $(C_LINK_OPTIONS) $(C_OPTIONS) $^ -o $@ 
 
 #ui.out: hash_table.c linked_list.c
