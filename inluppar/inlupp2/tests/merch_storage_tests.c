@@ -50,6 +50,7 @@ void store_add_test()
     store_add(store, apple); 
 
     CU_ASSERT_TRUE(merch_exists(store, name)); 
+    CU_ASSERT_EQUAL(get_merch(store, name), apple); 
     
     merch_destroy(apple);  
     store_destroy(store); 

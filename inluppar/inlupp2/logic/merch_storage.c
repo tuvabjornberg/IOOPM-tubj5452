@@ -4,21 +4,22 @@
 
 merch_table_t *store_create(ioopm_hash_function hash_fun, ioopm_eq_function eq_fun)
 {
-    ioopm_hash_table_create(hash_fun, eq_fun); 
+    return ioopm_hash_table_create(hash_fun, eq_fun); 
 }
 
 merch_t *merch_create(char *name, char *description, int price, char *shelf)
 {
-    merch_t *new_merch = calloc(1, sizeof(merch_t));
-    new_merch->name = name;
-    new_merch->description = description;
-    new_merch->price = price;
-
-    //ioopm_linked_list_create()
-    //new_merch->location = 
-    new_merch->stock = 0; 
-
-    return new_merch;
+    //merch_t *new_merch = calloc(1, sizeof(merch_t));
+    //new_merch->name = name;
+    //new_merch->description = description;
+    //new_merch->price = price;
+//
+    ////ioopm_linked_list_create()
+    ////new_merch->location = 
+    //new_merch->stock = 0; 
+//
+    //return new_merch;
+    return (merch_t *) (NULL); 
 }
 
 void store_add(merch_table_t *store, merch_t *merch)
@@ -62,7 +63,7 @@ size_t store_size(merch_table_t *store)
 
 merch_t *get_merch(merch_table_t *store, char *name)
 {
-    return; 
+    return (merch_t *) (NULL); 
 }
 
 void get_names_in_arr(merch_table_t *store, char *arr_of_names[])
