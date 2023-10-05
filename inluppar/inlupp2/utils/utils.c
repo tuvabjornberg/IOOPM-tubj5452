@@ -24,6 +24,15 @@ bool is_number(char *str)
   return true;
 }
 
+bool check_shelf(char *shelf) {
+    if (isalpha(shelf[0]) && !islower(shelf[0]) && (strlen(shelf) > 1) && is_number(++shelf)) {
+        return true; 
+    }
+    else {
+        return false;
+    }
+}
+
 int read_string(char *buf, int buf_size)
 {
   if (!fgets(buf, buf_size, stdin))
@@ -42,6 +51,7 @@ int read_string(char *buf, int buf_size)
   return strlen(buf);
 }
 
+//TODO: why malloc? could this be done static?
 answer_t ask_question(char *question, check_func check, convert_func convert)
 {
   char *answer = malloc(BUF_SIZE);
@@ -72,4 +82,8 @@ char *ask_question_string(char *question)
 int ask_question_int(char *question)
 {
   return ask_question(question, is_number, (convert_func)atoi).int_value;
+}
+
+char *ask_question_shelf(char *question) {
+    return ask_question(question, check_shelf, NULL).string_value; 
 }
