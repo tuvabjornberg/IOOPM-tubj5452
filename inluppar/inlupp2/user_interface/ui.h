@@ -1,4 +1,5 @@
-
+#include "../logic/merch_storage.h"
+#include "../data_structures/common.h"
 
 
 
@@ -9,3 +10,5 @@
  * @brief  
  *
  */
+
+typedef bool(*ioopm_exist_function)(merch_table_t *a, char *b);

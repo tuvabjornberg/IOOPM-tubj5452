@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include "utils.h"
-#include "merch_storage.h"
-#include "linked_list.h"
+#include "../utils/utils.h"
+#include "../data_structures/linked_list.h"
+#include "../data_structures/hash_table.h"
+#include "ui.h"
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
@@ -18,26 +19,41 @@ void sort_keys(char *keys[], size_t no_keys)
     qsort(keys, no_keys, sizeof(char *), cmp_stringp);
 }
 
-/*
-typedef bool(fun)(merch_table_t *store, char *name);
-static char *valid_merch(merch_table_t *store, char *name, fun exist_fun) //TODO: abstarction
+bool string_eq(elem_t e1, elem_t e2)
 {
-    while (!fun(store, name))
+    return (strcmp(e1.string, e2.string) == 0);
+}
+
+unsigned string_sum_hash(elem_t e)
+{
+    char *str = e.string;
+    unsigned result = 0;
+    do
     {
-        char *new_alt = ask_question_string("\nThe merch doesn't exist, do you want t write another one (y)? "); 
-        if (toupper(new_alt) == 'Y')
+        result += *str;
+    }
+    while (*++str != '\0');
+    return result; 
+}
+
+static char *input_name_check(ioopm_exist_function exist_fun, merch_table_t *store)
+{
+    char *input_name = ask_question_string("\nWrite the name of the merch: "); 
+
+    while (!exist_fun(store, input_name))
+    {
+        char *new_alt = ask_question_string("\nThe merch doesn't exist, do you want to write another one (y/n)? "); 
+        if (toupper(*new_alt) == 'Y')
         {
-            name = ask_question_string("\nWrite the name of the merch: "); 
+            input_name = ask_question_string("\nWrite the name of the merch: "); 
         }
         else
         {
-            return; 
+            return NULL;    
         }
     }
-    return name; 
-
+    return input_name; 
 }
-*/
 
 merch_t input_merch(void)
 {
@@ -45,7 +61,7 @@ merch_t input_merch(void)
     char *description = ask_question_string("\nWrite a description of the merch: "); 
     int price = ask_question_int("\nWrite the price of the merch: ");
     char *shelf = ask_question_shelf("\nWrite the shelf (Format: 'A36')"); 
-    int stock = get_stock_of_merch(*name); 
+    int stock = get_stock(name); 
     return create_merch(name, description, price, shelf, stock); 
 }
 
@@ -55,8 +71,8 @@ void add_merch(merch_table_t *store)
 
     while (merch_exists(store, input.name))
     {
-        char *new_alt = ask_question_string("\nThe merch already exists, do you want to add another one (y)? "); 
-        if (toupper(new_alt) == 'Y')
+        char *new_alt = ask_question_string("\nThe merch already exists, do you want to add another one (y/n)? "); 
+        if (toupper(*new_alt) == 'Y')
         {
             input = input_merch();  
         }
@@ -88,10 +104,10 @@ void list_merch(merch_table_t *store)
     for (int i; i < fist_print_size; i++)
     {   
         merch_t merch = get_merch(store, names[i]); 
-        print_merch(get_merch(store, names[i])); 
+        print_merch(merch); 
     }
 
-    char *continue_list = ask_qustion_string("\nPress 'N' to return to menu, press anywhere to continue list ");
+    char *continue_list = ask_question_string("\nPress 'N' to return to menu, press anywhere to continue list ");
     if (toupper(*continue_list) == 'N' ) 
     {   
         return; 
@@ -109,32 +125,20 @@ void list_merch(merch_table_t *store)
 
 void remove_merch(merch_table_t *store)
 {
-    char *input_name = ask_question_string("\nWrite the name of the merch you want to remove: "); 
-
     if (store_is_empty(store)) 
     {
         puts("\nThe store is empty, please add items first"); 
         return; 
     }
 
-    while (!merch_exists(store, input_name))
-    {
-        char *new_alt = ask_question_string("\nThe merch doesn't exist, do you want t write another one (y)? "); 
-        if (toupper(new_alt) == 'Y')
-        {
-            input_name = ask_question_string("\nWrite the name of the merch you want to remove: "); 
-        }
-        else
-        {
-            return; 
-        }
-    }
+    char *name = input_name_check(merch_exists, store);
+    if (name == NULL) return; 
 
-    char *conf_remove = ask_qustion_string("\nAre you sure you want to remove this merch? \n"); 
+    char *conf_remove = ask_question_string("\nAre you sure you want to remove this merch? \n"); 
 
     if (toupper(*conf_remove) == 'Y')
     {
-        merch_t merch = get_merch(store, input_name); 
+        merch_t merch = get_merch(store, name); 
         store_remove(store, merch); 
     }
     return; 
@@ -142,52 +146,42 @@ void remove_merch(merch_table_t *store)
 
 void edit_merch(merch_table_t *store)
 {
-    char *input_name = ask_question_string("\nWrite the name of the merch you want to edit: "); 
-
     if (store_is_empty(store)) 
     {
         puts("\nThe store is empty, please add items first"); 
         return; 
     }
 
-    while (!merch_exists(store, input_name))
-    {
-        char *new_alt = ask_question_string("\nThe merch doesn't exist, do you want t write another one (y)? "); 
-        if (toupper(new_alt) == 'Y')
-        {
-            input_name = ask_question_string("\nWrite the name of the merch you want to edit: "); 
-        }
-        else
-        {
-            return; 
-        }
-    }
+    char *name = input_name_check(merch_exists, store);
+    if (name == NULL) return; 
 
-    char *conf_edit = ask_qustion_string("\nAre you sure you want to edit this merch? "); 
+    char *conf_edit = ask_question_string("\nAre you sure you want to edit this merch? "); 
 
-    if (!toupper(*conf_edit) == 'Y')
+    if (!(toupper(*conf_edit) == 'Y'))
     {
         return; 
     }
     
-    merch_t merch = get_merch(store, input_name); 
+    merch_t merch = get_merch(store, name); 
     char *alt_edit = ask_question_string("\nChoose what you want to edit:\n[A] Edit name\n[B] Edit description\n[C] Edit price\n"); 
 
-    //TODO: does not handle not affect stock, if name is changed the key is also changed
-    //make adjustments!!
+    char *new_name; 
+    char *new_description; 
+    int new_price; 
+
     switch (toupper(*alt_edit)) 
     {
         case 'A':
-            char *new_name = ask_question_string("\nWrite the new name: "); 
-            set_name(merch, *new_name); 
+            new_name = ask_question_string("\nWrite the new name: "); 
+            set_name(merch, new_name); 
             break; 
         case 'B': 
-            char *new_description = ask_question_string("\nWrite the new decription: "); 
-            set_description(merch, *new_description); 
+            new_description = ask_question_string("\nWrite the new decription: "); 
+            set_description(merch, new_description); 
             break; 
         case 'C': 
-            char *new_price = ask_question_string("\nWrite the new price: "); 
-            set_price(merch, *new_price); 
+            new_price = ask_question_int("\nWrite the new price: "); 
+            set_price(merch, new_price); 
             break; 
         default:
             alt_edit = ask_question_string("Try again with a valid input \n");
@@ -197,28 +191,16 @@ void edit_merch(merch_table_t *store)
 
 void show_stock(merch_table_t *store)
 {
-    char *input_name = ask_question_string("\nWrite the name of the merch whose stock you want listed: "); 
-
     if (store_is_empty(store)) 
     {
         puts("\nThe store is empty, please add items first"); 
         return; 
     }
 
-    while (!merch_exists(store, input_name))
-    {
-        char *new_alt = ask_question_string("\nThe merch doesn't exist, do you want t write another one (y)? "); 
-        if (toupper(new_alt) == 'Y')
-        {
-            input_name = ask_question_string("\nWrite the name of the merch whose stock you want listed: "); 
-        }
-        else
-        {
-            return; 
-        }
-    }
+    char *name = input_name_check(merch_exists, store);
+    if (name == NULL) return; 
 
-    merch_t merch = get_merch(store, input_name); 
+    merch_t merch = get_merch(store, name); 
 
     print_stock(merch); 
 
@@ -226,64 +208,39 @@ void show_stock(merch_table_t *store)
 
 void replenish_stock(merch_table_t *store)
 {
-    char *input_name = ask_question_string("\nWrite the name of the merch whose stock you want replenished: "); 
-
     if (store_is_empty(store)) 
     {
         puts("\nThe store is empty, please add items first"); 
         return; 
     }
 
-    while (!merch_exists(store, input_name))
-    {
-        char *new_alt = ask_question_string("\nThe merch doesn't exist, do you want t write another one (y)? "); 
-        if (toupper(new_alt) == 'Y')
-        {
-            input_name = ask_question_string("\nWrite the name of the merch whose stock you want replenished: "); 
-        }
-        else
-        {
-            return; 
-        }
-    }
+    char *name = input_name_check(merch_exists, store);
+    if (name == NULL) return; 
 
-    merch_t merch = get_merch(store, input_name); 
+    merch_t merch = get_merch(store, name); 
 
     printf("\nYou selected this merch:\n"); 
     print_merch(merch); 
 
-    char *input_shelf = ask_question_shelf("\nEnter the storage location you want to replenish: "); 
+    int input_replenish = ask_question_int("\nEnter the amount to increase the stock: "); 
+    while (input_replenish < 1)
+    {
+        input_replenish = ask_question_int("\nEnter at least 1: "); 
+    }
 
-    //while (!shelf_exists(store, input_name, input_shelf))
-    //{
-    //    char *new_alt = ask_question_string("\nThe shelf doesn't exist, do you want t write another one (y)? "); 
-    //    if (toupper(new_alt) == 'Y')
-    //    {
-    //        input_name = ask_question_string("\nWrite the name of the merch whose stock you want replenished: "); 
-    //    }
-    //    else
-    //    {
-    //        return; 
-    //    }
-    //}
-
-
-
-/*
-
-    Increases the stock of a merch by at least one.
-    You can replenish on an existing storage location or a new one.
-    The stock for a merch is the sum of all items on all storage locations holding that merch.
-    A storage location stocks items of one (type of) merch, never more.
-    For simplicity, there is no limit to the amount of storage locations nor is there a limit on the number of items a location can hold.
-    The action code should be "P". The action should read the id of the storage location, the name of the merch and the number of items to add.
-
-*/
+    for (int i = 0; i < input_replenish; i++)
+    {
+        char *input_shelf = ask_question_shelf("\nEnter the shelf to add stock to: "); 
+        location_add(merch, input_shelf); 
+        stock_add(merch, 1); 
+    }
 
 }
 
 void create_cart(merch_table_t *store)
 {
+
+
 
 }   
 
@@ -359,6 +316,7 @@ char ask_question_menu(void)
 void event_loop(merch_table_t *store, int store_size) 
 {
     bool running = true; 
+    char *quit_confirmation; 
 
     do 
     {
@@ -401,13 +359,13 @@ void event_loop(merch_table_t *store, int store_size)
                 checkout_cart(store); 
                 break; 
             case 'Q':
-                char *quit_confirmation = ask_qustion_string("Press 'Y' if you really want to quit");
+                quit_confirmation = ask_question_string("Press 'Y' if you really want to quit");
 
                 if (toupper(*quit_confirmation) == 'Y')
                 {
                     running = false; 
                 } 
-                break;
+                break; 
             default:
                 break;
         }
@@ -420,8 +378,8 @@ void event_loop(merch_table_t *store, int store_size)
 }
 
 int main() { 
-    merch_table_t *store = ioopm_hash_table_create(hash_fun, cmp_stringp); 
-    int store_siz = get_store_size(store); // Antalet varor i arrayen just nu
+    merch_table_t *store = ioopm_hash_table_create(string_sum_hash, string_eq); 
+    int store_siz = store_size(store); // Antalet varor i arrayen just nu
     event_loop(store, store_siz); 
     return 0;
 }
