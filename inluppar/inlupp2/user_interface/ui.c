@@ -55,21 +55,20 @@ static char *input_name_check(ioopm_exist_function exist_fun, merch_table_t *sto
     return input_name; 
 }
 
-merch_t input_merch(void)
+merch_t *input_merch(void)
 {
     char *name = ask_question_string("\nWrite the name of the merch: "); 
     char *description = ask_question_string("\nWrite a description of the merch: "); 
     int price = ask_question_int("\nWrite the price of the merch: ");
     char *shelf = ask_question_shelf("\nWrite the shelf (Format: 'A36')"); 
-    int stock = get_stock(name); 
-    return create_merch(name, description, price, shelf, stock); 
+    return merch_create(name, description, price, shelf); 
 }
 
 void add_merch(merch_table_t *store)
 {    
-    merch_t input = input_merch(); 
+    merch_t *input = input_merch(); 
 
-    while (merch_exists(store, input.name))
+    while (merch_exists(store, input->name))
     {
         char *new_alt = ask_question_string("\nThe merch already exists, do you want to add another one (y/n)? "); 
         if (toupper(*new_alt) == 'Y')
@@ -103,7 +102,7 @@ void list_merch(merch_table_t *store)
 
     for (int i; i < fist_print_size; i++)
     {   
-        merch_t merch = get_merch(store, names[i]); 
+        merch_t *merch = get_merch(store, names[i]); 
         print_merch(merch); 
     }
 
@@ -116,7 +115,7 @@ void list_merch(merch_table_t *store)
     {
         for (int i = fist_print_size; i < st_size; i++)
         {
-            merch_t merch = get_merch(store, names[i]); 
+            merch_t *merch = get_merch(store, names[i]); 
             print_merch(merch); 
         }
     }
@@ -138,7 +137,7 @@ void remove_merch(merch_table_t *store)
 
     if (toupper(*conf_remove) == 'Y')
     {
-        merch_t merch = get_merch(store, name); 
+        merch_t *merch = get_merch(store, name); 
         store_remove(store, merch); 
     }
     return; 
@@ -162,7 +161,7 @@ void edit_merch(merch_table_t *store)
         return; 
     }
     
-    merch_t merch = get_merch(store, name); 
+    merch_t *merch = get_merch(store, name); 
     char *alt_edit = ask_question_string("\nChoose what you want to edit:\n[A] Edit name\n[B] Edit description\n[C] Edit price\n"); 
 
     char *new_name; 
@@ -200,7 +199,7 @@ void show_stock(merch_table_t *store)
     char *name = input_name_check(merch_exists, store);
     if (name == NULL) return; 
 
-    merch_t merch = get_merch(store, name); 
+    merch_t *merch = get_merch(store, name); 
 
     print_stock(merch); 
 
@@ -217,7 +216,7 @@ void replenish_stock(merch_table_t *store)
     char *name = input_name_check(merch_exists, store);
     if (name == NULL) return; 
 
-    merch_t merch = get_merch(store, name); 
+    merch_t *merch = get_merch(store, name); 
 
     printf("\nYou selected this merch:\n"); 
     print_merch(merch); 
@@ -378,7 +377,7 @@ void event_loop(merch_table_t *store, int store_size)
 }
 
 int main() { 
-    merch_table_t *store = ioopm_hash_table_create(string_sum_hash, string_eq); 
+    merch_table_t *store = store_create(string_sum_hash, string_eq); 
     int store_siz = store_size(store); // Antalet varor i arrayen just nu
     event_loop(store, store_siz); 
     return 0;
