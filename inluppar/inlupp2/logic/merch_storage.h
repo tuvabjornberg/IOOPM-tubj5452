@@ -1,5 +1,5 @@
-#include "hash_table.h"
-#include "linked_list.h"
+#include "../data_structures/hash_table.h"
+#include "../data_structures/linked_list.h"
 
 
 /**
@@ -35,6 +35,16 @@ void store_add(merch_table_t *store, merch_t merch);
 /// @brief 
 /// @param
 /// @return
+void stock_add(merch_t merch, int to_add); 
+
+/// @brief 
+/// @param
+/// @return
+void location_add(merch_t merch, char *shelf); 
+
+/// @brief 
+/// @param
+/// @return
 void store_remove(merch_table_t *store, merch_t merch); 
 
 /// @brief 
@@ -62,7 +72,7 @@ void get_names_in_arr(merch_table_t *store, char *arr_of_names[]);
 /// @return
 int get_stock(char *name); 
 
-/// @brief 
+/// @brief may need to insert again to get a valid hashing TODO: edit to better breif
 /// @param
 /// @return
 void set_name(merch_t merch, char *new_name); 
@@ -75,7 +85,7 @@ void set_description(merch_t merch, char *new_description);
 /// @brief 
 /// @param
 /// @return
-void set_price(merch_t merch, char *new_price); 
+void set_price(merch_t merch, int new_price); 
 
 /// @brief 
 /// @param
