@@ -4,7 +4,10 @@
 
 store_t *store_create(ioopm_hash_function hash_fun, ioopm_eq_function eq_fun)
 {
-    return ioopm_hash_table_create(hash_fun, eq_fun); 
+  store_t new_store;
+  new_store.merch_names = calloc(100, sizeof(char*));
+  new_store.merch_details = ioopm_hash_table_create(hash_fun, eq_fun);
+  return new_store;
 }
 
 merch_t *merch_create(char *name, char *description, int price, char *shelf)

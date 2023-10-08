@@ -23,7 +23,10 @@ typedef struct {
   int quantity;
 } location_t;
 
-typedef ioopm_hash_table_t store_t;
+typedef struct {
+  char **merch_names;
+  ioopm_hash_table_t *merch_details;
+} store_t;
 
 /// @brief 
 /// @param
