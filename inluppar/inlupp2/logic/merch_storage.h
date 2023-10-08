@@ -62,7 +62,17 @@ void store_remove(store_t *store, merch_t *merch);
 /// @brief 
 /// @param
 /// @return
+void location_remove(merch_t *merch, char *shelf); 
+
+/// @brief 
+/// @param
+/// @return
 bool merch_exists(store_t *store, char *name); 
+
+/// @brief 
+/// @param
+/// @return
+bool shelf_exists(merch_t *merch, char *shelf); 
 
 /// @brief 
 /// @param
@@ -73,6 +83,22 @@ size_t store_size(store_t *store);
 /// @param
 /// @return
 merch_t *get_merch(store_t *store, char *name); 
+merch_t get_merch_dummy(store_t *store, char *name); 
+
+/// @brief 
+/// @param
+/// @return
+char *get_name(merch_t *merch); 
+
+/// @brief 
+/// @param
+/// @return
+char *get_description(merch_t *merch);
+
+/// @brief 
+/// @param
+/// @return
+int get_price(merch_t *merch); 
 
 /// @brief 
 /// @param
@@ -117,7 +143,7 @@ bool store_is_empty(store_t *store);
 /// @brief 
 /// @param
 /// @return
-void merch_destroy(merch_t *merch); 
+//void merch_destroy(merch_t *merch); 
 
 /// @brief 
 /// @param

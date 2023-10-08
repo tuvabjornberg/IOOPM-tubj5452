@@ -60,12 +60,15 @@ merch_t *input_merch(void)
     char *name = ask_question_string("\nWrite the name of the merch: "); 
     char *description = ask_question_string("\nWrite a description of the merch: "); 
     int price = ask_question_int("\nWrite the price of the merch: ");
-    char *shelf = ask_question_shelf("\nWrite the shelf (Format: 'A36')"); 
+    int stock = ask_question_int("\nWrite the stock amount you want to add: "); 
+    char *shelf = ask_question_shelf("\nWrite the shelf: (Format: 'A36') "); 
+
     return merch_create(name, description, price, shelf); 
 }
 
 void add_merch(merch_table_t *store)
 {    
+    //what happens if identical locations?? only checking for merch exists
     merch_t *input = input_merch(); 
 
     while (merch_exists(store, input->name))
