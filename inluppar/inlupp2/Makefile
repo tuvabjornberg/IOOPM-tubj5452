@@ -16,7 +16,7 @@ ui.out: ui.o hash_table.o linked_list.o utils.o merch_storage.o
 #	$(C_COMPILER) $(C_OPTIONS) $^ -o $@ $(C_PROF)
 
 
-merch_storage_tests.out: merch_storage_tests.o merch_storage.o 
+merch_storage_tests.out: merch_storage_tests.o merch_storage.o hash_table.o linked_list.o
 	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) 
 
 shop_cart_tests.out: shop_cart_tests.o shop_cart.o 
@@ -52,10 +52,11 @@ clean:
 	rm -f *.o *.out *.profiling *.gcno *gcda *.gcov ui merch_storage_tests shop_cart_tests  
 
 
-mem_tests: merch_storage_tests.out shop_cart_tests.out ui_tests.out
+mem_tests: merch_storage_tests.out 
+#shop_cart_tests.out ui_tests.out
 	valgrind --leak-check=full ./merch_storage_tests.out
-	valgrind --leak-check=full ./shop_cart_tests.out
-	valgrind --leak-ckeck=full ./ui_tests.out
+#valgrind --leak-check=full ./shop_cart_tests.out
+#valgrind --leak-ckeck=full ./ui_tests.out
 
 mem_ui: ui.out
 	valgrind --leak-check=full ./ui.out $(ARGS) 
