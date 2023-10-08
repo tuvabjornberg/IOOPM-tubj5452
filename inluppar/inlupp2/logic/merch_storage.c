@@ -1,6 +1,8 @@
 #include "../data_structures/hash_table.h"
 #include "../data_structures/linked_list.h"
+#include "../data_structures/iterator.h"
 #include "merch_storage.h"
+#include <stdio.h>
 
 store_t *store_create(ioopm_hash_function hash_fun, ioopm_eq_function eq_fun)
 {
@@ -19,41 +21,42 @@ merch_t *merch_create(char *name, char *description, int price, char *shelf)
     //new_merch->locations = 
 
     return new_merch;
-    //return (merch_t *) (NULL); 
 }
 
 
 void store_add(store_t *store, merch_t *merch)
 {
-    elem_t elem_key = {.string = merch->name};
-    elem_t elem_value = {.void_ptr = merch};
-    ioopm_hash_table_insert(store, elem_key, elem_value); 
+    ioopm_hash_table_insert(store, str_elem(merch->name), void_elem(merch)); 
 }
 
 void stock_add(merch_t *merch, int to_add)
 {
     return; 
 }
-
+//same?? ^ v
 void location_add(merch_t *merch, char *shelf)
 {
+    //ioopm_linked_list_append(merch->locations, str_elem(shelf)); 
     return; 
 }
 
-void store_remove(store_t *store, merch_t *merch)
+void store_remove(store_t *store, char *name)
 {
+    free(get_merch(store, name)); 
+    ioopm_hash_table_remove(store, str_elem(name)); 
     return; 
 } 
 
 void location_remove(merch_t *merch, char *shelf)
 {
     return; 
+    //return ioopm_linked_list_remove(merch->locations, INDEX) 
 }
 
 
 bool merch_exists(store_t *store, char *name)
 {
-    return false; 
+    return ioopm_hash_table_has_key(store, str_elem(name)); 
 }
 
 bool shelf_exists(merch_t *merch, char *shelf)
@@ -69,26 +72,31 @@ bool store_is_empty(store_t *store)
 
 size_t store_size(store_t *store)
 {
+    return ioopm_hash_table_size(store);  
+}
+
+size_t locations_size(merch_t *merch)
+{
+    //return ioopm_linked_list_size(merch->locations); 
     return 0; 
 }
 
 
-
 merch_t *get_merch(store_t *store, char *name)
 {
-    //return ioopm_hash_table_lookup(store, name); 
-    return (merch_t *) (NULL); 
-}
+    option_t *lookup_result = ioopm_hash_table_lookup(store, str_elem(name)); 
 
-merch_t get_merch_dummy(store_t *store, char *name)
-{
-    char *dummy_name = "test_name"; 
-    char *dummy_desc = "test_desc"; 
-    int dummy_price = 100000; 
-    ioopm_list_t *dummy_location = NULL; 
-    merch_t dummy = {dummy_name, dummy_desc, dummy_price, dummy_location}; 
-
-    return dummy; 
+    if (lookup_result->success)
+    {
+        merch_t *merch_found = lookup_result->value.void_ptr; 
+        free(lookup_result); 
+        return merch_found; 
+    }
+    else 
+    {
+        free(lookup_result); 
+        return NULL; 
+    }
 }
 
 char *get_name(merch_t *merch)
@@ -106,17 +114,42 @@ int get_price(merch_t *merch)
     return merch->price; 
 }
 
+
 void get_names_in_arr(store_t *store, char *arr_of_names[])
 {
+    //TODO: unfinished!!
+    //ioopm_list_t *names = ioopm_hash_table_keys(store); 
+    //size_t names_size = ioopm_linked_list_size(names);
+//
+    //ioopm_list_iterator_t *iter = ioopm_list_iterator(names);
+    //elem_t value = ioopm_iterator_current(iter);
+//
+    //for (int i = 0; i < names_size; i++)
+    //{
+    //    arr_of_names[i] = value.string;
+    //    value = ioopm_iterator_next(iter);
+    //}
+//
+    //sort_keys(keys, ht_size);
     return; 
 }
 
-int get_stock(char *name)
+char *get_shelf(store_t *store, char *name, int index)
 {
-    return 0; 
+    return NULL; 
 }
 
+int get_stock(store_t *store, char *name)
+{
+    return 0; 
+    //return get_merch(store, name)->locations; 
+}
 
+//location_t get_location(store_t *store, char *name, char *shelf)
+//{
+//    //merch_t *merch = get_merch(store, name); 
+//    //ioopm_linked_list_get(merch->locations, )
+//}
 
 void set_name(merch_t *merch, char *new_name)
 {
@@ -137,11 +170,16 @@ void set_price(merch_t *merch, int new_price)
 
 void print_merch(merch_t *merch)
 {
+    printf("\nName: %s", get_name(merch)); 
+    printf("\nDescription: %s", get_description(merch)); 
+    printf("\nPrice: %d", get_price(merch)); 
+    //printf("\nLocations: %ld", get_locations(merch)); 
     return; 
 }
 
 void print_stock(merch_t *merch)
 {
+    //printf("\nLocations: %ld", get_locations(merch)); 
     return; 
 }
 

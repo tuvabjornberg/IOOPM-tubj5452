@@ -2,6 +2,7 @@
 #include "../data_structures/linked_list.h"
 
 
+
 /**
  * @file merch_storage.h
  * @author Tuva Björnberg & Marcus Ray Sandersson
@@ -54,7 +55,7 @@ void location_add(merch_t *merch, char *shelf);
 /// @brief 
 /// @param
 /// @return
-void store_remove(store_t *store, merch_t *merch); 
+void store_remove(store_t *store, char *name); 
 
 /// @brief 
 /// @param
@@ -75,6 +76,11 @@ bool shelf_exists(merch_t *merch, char *shelf);
 /// @param
 /// @return
 size_t store_size(store_t *store); 
+
+/// @brief 
+/// @param
+/// @return
+size_t locations_size(merch_t *merch); 
 
 /// @brief 
 /// @param
@@ -105,7 +111,12 @@ void get_names_in_arr(store_t *store, char *arr_of_names[]);
 /// @brief 
 /// @param
 /// @return
-int get_stock(char *name); 
+int get_stock(store_t *store, char *name); 
+
+/// @brief 
+/// @param
+/// @return
+char *get_shelf(store_t *store, char *name, int index); 
 
 /// @brief may need to insert again to get a valid hashing TODO: edit to better breif
 /// @param
@@ -136,11 +147,6 @@ void print_stock(merch_t *merch);
 /// @param
 /// @return
 bool store_is_empty(store_t *store); 
-
-/// @brief 
-/// @param
-/// @return
-//void merch_destroy(merch_t *merch); 
 
 /// @brief 
 /// @param
