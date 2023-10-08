@@ -36,7 +36,7 @@ unsigned string_sum_hash(elem_t e)
     return result; 
 }
 
-static char *input_name_check(ioopm_exist_function exist_fun, merch_table_t *store)
+static char *input_name_check(ioopm_exist_function exist_fun, store_t *store)
 {
     char *input_name = ask_question_string("\nWrite the name of the merch: "); 
 
@@ -55,18 +55,17 @@ static char *input_name_check(ioopm_exist_function exist_fun, merch_table_t *sto
     return input_name; 
 }
 
-merch_t *input_merch(void)
+static merch_t *input_merch(void)
 {
     char *name = ask_question_string("\nWrite the name of the merch: "); 
     char *description = ask_question_string("\nWrite a description of the merch: "); 
     int price = ask_question_int("\nWrite the price of the merch: ");
-    int stock = ask_question_int("\nWrite the stock amount you want to add: "); 
     char *shelf = ask_question_shelf("\nWrite the shelf: (Format: 'A36') "); 
 
     return merch_create(name, description, price, shelf); 
 }
 
-void add_merch(merch_table_t *store)
+void add_merch(store_t *store)
 {    
     //what happens if identical locations?? only checking for merch exists
     merch_t *input = input_merch(); 
@@ -88,7 +87,7 @@ void add_merch(merch_table_t *store)
 
 }
 
-void list_merch(merch_table_t *store)
+void list_merch(store_t *store)
 {
     if (store_is_empty(store)) 
     {
@@ -99,8 +98,8 @@ void list_merch(merch_table_t *store)
     size_t st_size = store_size(store);
     int fist_print_size = st_size < 20 ? st_size : 20; 
 
-    char *names[st_size]; 
-    get_names_in_arr(store, names); 
+    char *names[st_size];           //TODO: needs to be allocated?
+    get_names_in_arr(store, names); //
     sort_keys(names, st_size); 
 
     for (int i; i < fist_print_size; i++)
@@ -125,7 +124,7 @@ void list_merch(merch_table_t *store)
 
 }
 
-void remove_merch(merch_table_t *store)
+void remove_merch(store_t *store)
 {
     if (store_is_empty(store)) 
     {
@@ -140,13 +139,12 @@ void remove_merch(merch_table_t *store)
 
     if (toupper(*conf_remove) == 'Y')
     {
-        merch_t *merch = get_merch(store, name); 
-        store_remove(store, merch); 
+        store_remove(store, name); 
     }
     return; 
 }
 
-void edit_merch(merch_table_t *store)
+void edit_merch(store_t *store)
 {
     if (store_is_empty(store)) 
     {
@@ -191,7 +189,7 @@ void edit_merch(merch_table_t *store)
 
 }
 
-void show_stock(merch_table_t *store)
+void show_stock(store_t *store)
 {
     if (store_is_empty(store)) 
     {
@@ -208,7 +206,7 @@ void show_stock(merch_table_t *store)
 
 }
 
-void replenish_stock(merch_table_t *store)
+void replenish_stock(store_t *store)
 {
     if (store_is_empty(store)) 
     {
@@ -239,34 +237,34 @@ void replenish_stock(merch_table_t *store)
 
 }
 
-void create_cart(merch_table_t *store)
+void create_cart(store_t *store)
 {
 
 
 
 }   
 
-void remove_cart(merch_table_t *store)
+void remove_cart(store_t *store)
 {
 
 }
 
-void add_to_cart(merch_table_t *store)
+void add_to_cart(store_t *store)
 {
 
 }
 
-void remove_from_cart(merch_table_t *store)
+void remove_from_cart(store_t *store)
 {
 
 }
 
-void calculate_cart_cost(merch_table_t *store)
+void calculate_cart_cost(store_t *store)
 {
 
 }
 
-void checkout_cart(merch_table_t *store)
+void checkout_cart(store_t *store)
 {
 
 }
@@ -315,7 +313,7 @@ char ask_question_menu(void)
 }
 
 
-void event_loop(merch_table_t *store, int store_size) 
+void event_loop(store_t *store, int store_size) 
 {
     bool running = true; 
     char *quit_confirmation; 
@@ -366,6 +364,7 @@ void event_loop(merch_table_t *store, int store_size)
                 if (toupper(*quit_confirmation) == 'Y')
                 {
                     running = false; 
+                    store_destroy(store); 
                 } 
                 break; 
             default:
@@ -380,7 +379,7 @@ void event_loop(merch_table_t *store, int store_size)
 }
 
 int main() { 
-    merch_table_t *store = store_create(string_sum_hash, string_eq); 
+    store_t *store = store_create(string_sum_hash, string_eq); 
     int store_siz = store_size(store); // Antalet varor i arrayen just nu
     event_loop(store, store_siz); 
     return 0;
