@@ -15,12 +15,15 @@ typedef struct {
     char *name;
     char *description;
     int price;
-    int stock;
-    ioopm_list_t *location;
+    ioopm_list_t *locations;
 } merch_t;
 
-typedef ioopm_hash_table_t merch_table_t; 
+typedef struct {
+  char *shelf;
+  int quantity;
+} location_t;
 
+typedef ioopm_hash_table_t store_t;
 
 /// @brief creates a new merch
 /// @param
@@ -30,7 +33,7 @@ merch_t create_merch(char *name, char *description, int price, char *shelf, int 
 /// @brief 
 /// @param
 /// @return
-void store_add(merch_table_t *store, merch_t merch); 
+void store_add(store_t *store, merch_t merch); 
 
 /// @brief 
 /// @param
@@ -45,27 +48,27 @@ void location_add(merch_t merch, char *shelf);
 /// @brief 
 /// @param
 /// @return
-void store_remove(merch_table_t *store, merch_t merch); 
+void store_remove(store_t *store, merch_t merch); 
 
 /// @brief 
 /// @param
 /// @return
-bool merch_exists(merch_table_t *store, char *name); 
+bool merch_exists(store_t *store, char *name); 
 
 /// @brief 
 /// @param
 /// @return
-size_t store_size(merch_table_t *store); 
+size_t store_size(store_t *store); 
 
 /// @brief 
 /// @param
 /// @return
-merch_t get_merch(merch_table_t *store, char *name); 
+merch_t get_merch(store_t *store, char *name); 
 
 /// @brief 
 /// @param
 /// @return
-void get_names_in_arr(merch_table_t *store, char *arr_of_names[]); 
+void get_names_in_arr(store_t *store, char *arr_of_names[]); 
 
 /// @brief 
 /// @param
@@ -100,5 +103,5 @@ void print_stock(merch_t merch);
 /// @brief 
 /// @param
 /// @return
-bool store_is_empty(merch_table_t *store); 
+bool store_is_empty(store_t *store); 
 
