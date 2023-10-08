@@ -32,7 +32,7 @@ unsigned string_sum_hash(elem_t e)
 
 void create_destroy_merch_test()
 {
-    ioopm_hash_table_t *store = store_create(string_sum_hash, string_eq); 
+    store_t *store = store_create(string_sum_hash, string_eq); 
     CU_ASSERT_PTR_NOT_NULL(store); 
 
     store_destroy(store); 
@@ -40,7 +40,7 @@ void create_destroy_merch_test()
 
 void store_add_remove_test()
 {
-    ioopm_hash_table_t *store = store_create(string_sum_hash, string_eq); 
+    store_t *store = store_create(string_sum_hash, string_eq); 
     char *name = "Apple"; 
     char *description = "Red"; 
     int price = 10; 
@@ -63,7 +63,7 @@ void store_add_remove_test()
 
 void stock_add_remove_test() 
 {
-    ioopm_hash_table_t *store = store_create(string_sum_hash, string_eq); 
+    store_t *store = store_create(string_sum_hash, string_eq); 
 
     char *name = "Apple"; 
     char *non_input_name = "Pear"; 
@@ -88,7 +88,7 @@ void stock_add_remove_test()
 
 void location_add_remove_test()
 {
-    ioopm_hash_table_t *store = store_create(string_sum_hash, string_eq);
+    store_t *store = store_create(string_sum_hash, string_eq);
     char *name = "Apple"; 
     char *description = "Red"; 
     int price = 10; 
@@ -111,7 +111,7 @@ void location_add_remove_test()
 
 void merch_exists_test()
 {
-    ioopm_hash_table_t *store = store_create(string_sum_hash, string_eq); 
+    store_t *store = store_create(string_sum_hash, string_eq); 
     CU_ASSERT_TRUE(store_is_empty(store)); 
 
     char *name = "Apple"; 
@@ -132,7 +132,7 @@ void merch_exists_test()
 
 void store_size_test()
 {
-    ioopm_hash_table_t *store = store_create(string_sum_hash, string_eq); 
+    store_t *store = store_create(string_sum_hash, string_eq); 
     CU_ASSERT_EQUAL(store_size(store), 0); 
     
     char *name = "Apple"; 
@@ -154,7 +154,7 @@ void store_size_test()
 
 void get_merch_test()
 {
-    ioopm_hash_table_t *store = store_create(string_sum_hash, string_eq); 
+    store_t *store = store_create(string_sum_hash, string_eq); 
 
     char *name = "Apple"; 
     char *description = "Red"; 
@@ -190,37 +190,37 @@ void get_merch_test()
 
 void get_names_in_arr_test()
 {
-    ioopm_hash_table_t *store = store_create(string_sum_hash, string_eq); 
+    store_t *store = store_create(string_sum_hash, string_eq); 
     store_destroy(store); 
 }
 
 void get_stock_test()
 {
-    ioopm_hash_table_t *store = store_create(string_sum_hash, string_eq); 
+    store_t *store = store_create(string_sum_hash, string_eq); 
     store_destroy(store); 
 }
 
 void set_name_test()
 {
-    ioopm_hash_table_t *store = store_create(string_sum_hash, string_eq); 
+    store_t *store = store_create(string_sum_hash, string_eq); 
     store_destroy(store); 
 }
 
 void set_description_test()
 {
-    ioopm_hash_table_t *store = store_create(string_sum_hash, string_eq); 
+    store_t *store = store_create(string_sum_hash, string_eq); 
     store_destroy(store); 
 }
 
 void set_price_test()
 {
-    ioopm_hash_table_t *store = store_create(string_sum_hash, string_eq); 
+    store_t *store = store_create(string_sum_hash, string_eq); 
     store_destroy(store); 
 }
 
 void store_is_empty_test()
 {
-    ioopm_hash_table_t *store = store_create(string_sum_hash, string_eq); 
+    store_t *store = store_create(string_sum_hash, string_eq); 
     CU_ASSERT_TRUE(store_is_empty(store)); 
     store_destroy(store); 
 }
