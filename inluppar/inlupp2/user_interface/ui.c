@@ -55,19 +55,17 @@ static char *input_name_check(ioopm_exist_function exist_fun, store_t *store)
     return input_name; 
 }
 
-static merch_t *input_merch(void)
+static merch_t *input_merch()
 {
     char *name = ask_question_string("\nWrite the name of the merch: "); 
     char *description = ask_question_string("\nWrite a description of the merch: "); 
     int price = ask_question_int("\nWrite the price of the merch: ");
-    char *shelf = ask_question_shelf("\nWrite the shelf: (Format: 'A36') "); 
 
-    return merch_create(name, description, price, shelf); 
+    return merch_create(name, description, price, ioopm_linked_list_create(string_eq)); 
 }
 
 void add_merch(store_t *store)
 {    
-    //what happens if identical locations?? only checking for merch exists
     merch_t *input = input_merch(); 
 
     while (merch_exists(store, input->name))
@@ -99,7 +97,7 @@ void list_merch(store_t *store)
     int fist_print_size = st_size < 20 ? st_size : 20; 
 
     char *names[st_size];           //TODO: needs to be allocated?
-    get_names_in_arr(store, names); //
+    //get_names_in_arr(store, names); //TODO: Will be a part of store_t struct??
     sort_keys(names, st_size); 
 
     for (int i; i < fist_print_size; i++)
@@ -163,30 +161,40 @@ void edit_merch(store_t *store)
     }
     
     merch_t *merch = get_merch(store, name); 
-    char *alt_edit = ask_question_string("\nChoose what you want to edit:\n[A] Edit name\n[B] Edit description\n[C] Edit price\n"); 
+    char *alt_edit = ask_question_string("\nChoose what you want to edit:\n[A] Edit name\n[B] Edit description\n[C] Edit price\n[E] Exit edit mode"); 
 
     char *new_name; 
     char *new_description; 
     int new_price; 
 
-    switch (toupper(*alt_edit)) 
+    while (toupper(alt_edit) != "E")
     {
-        case 'A':
-            new_name = ask_question_string("\nWrite the new name: "); 
-            set_name(merch, new_name); 
-            break; 
-        case 'B': 
-            new_description = ask_question_string("\nWrite the new decription: "); 
-            set_description(merch, new_description); 
-            break; 
-        case 'C': 
-            new_price = ask_question_int("\nWrite the new price: "); 
-            set_price(merch, new_price); 
-            break; 
-        default:
-            alt_edit = ask_question_string("Try again with a valid input \n");
-    } 
-
+        switch (toupper(*alt_edit)) 
+        {
+            case 'A':
+                new_name = ask_question_string("\nWrite the new name: "); 
+                if (merch_exists(store, new_name))
+                {
+                    puts("\nThis merch already exists, try again "); 
+                    break; 
+                }
+                else
+                {
+                    set_name(store, merch, new_name); 
+                }
+                break; 
+            case 'B': 
+                new_description = ask_question_string("\nWrite the new decription: "); 
+                set_description(merch, new_description); 
+                break; 
+            case 'C': 
+                new_price = ask_question_int("\nWrite the new price: "); 
+                set_price(merch, new_price); 
+                break; 
+            default:
+                alt_edit = ask_question_string("Try again with a valid input \n");
+        } 
+    }
 }
 
 void show_stock(store_t *store)
@@ -222,19 +230,14 @@ void replenish_stock(store_t *store)
     printf("\nYou selected this merch:\n"); 
     print_merch(merch); 
 
-    int input_replenish = ask_question_int("\nEnter the amount to increase the stock: "); 
+    char *input_shelf = ask_question_shelf("\nEnter a shelf to add stock to: "); 
+    int input_replenish = ask_question_int("\nEnter an amount to increase the stock: "); 
     while (input_replenish < 1)
     {
         input_replenish = ask_question_int("\nEnter at least 1: "); 
     }
 
-    for (int i = 0; i < input_replenish; i++)
-    {
-        char *input_shelf = ask_question_shelf("\nEnter the shelf to add stock to: "); 
-        location_add(merch, input_shelf); 
-        stock_add(merch, 1); 
-    }
-
+    location_add(merch, input_shelf, input_replenish); 
 }
 
 void create_cart(store_t *store)
