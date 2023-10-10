@@ -21,7 +21,7 @@ merch_t *merch_create(char *name, char *description, int price, ioopm_list_t *lo
     return new_merch;
 }
 
-location_t *location_create(char *shelf, int amount)
+static location_t *location_create(char *shelf, int amount)
 {
     location_t *location = calloc(1, sizeof(location_t)); 
     location->shelf = shelf; 
@@ -32,6 +32,19 @@ location_t *location_create(char *shelf, int amount)
 void store_add(store_t *store, merch_t *merch)
 {
     ioopm_hash_table_insert(store, str_elem(merch->name), void_elem(merch)); 
+}
+
+static bool shelf_exists(merch_t *merch, char *shelf)
+{
+    location_t *location = get_location(merch, shelf); 
+    if (get_shelf(location) == shelf)
+    {
+        return true; 
+    }
+    else
+    {
+        return false; 
+    }
 }
 
 void location_add(merch_t *merch, char *shelf, int amount)
@@ -52,24 +65,6 @@ void location_add(merch_t *merch, char *shelf, int amount)
 bool merch_exists(store_t *store, char *name)
 {
     return ioopm_hash_table_has_key(store, str_elem(name)); 
-}
-
-bool shelf_exists(merch_t *merch, char *shelf)
-{
-    location_t *location = get_location(merch, shelf); 
-    if (get_shelf(location) == shelf)
-    {
-        return true; 
-    }
-    else
-    {
-        return false; 
-    }
-}
-
-bool location_exists(merch_t *merch)
-{
-    return false; 
 }
 
 bool store_is_empty(store_t *store)
@@ -173,7 +168,7 @@ location_t *get_location(merch_t *merch, char *shelf)
     return (location_t *) NULL; 
 }
 
-ioopm_list_t *get_locations(merch_t *merch)
+static ioopm_list_t *get_locations(merch_t *merch)
 {
     return merch->locations;  
 }
@@ -241,13 +236,6 @@ void store_remove(store_t *store, char *name)
     ioopm_hash_table_remove(store, str_elem(name)); 
 }
 
-void location_remove(merch_t *merch, char *shelf)
-{
-    return; 
-    //return ioopm_linked_list_remove(merch->locations, INDEX) 
-}
-
-
 static void merch_destroy(elem_t name, elem_t *value, void *arg)
 {
     ioopm_list_t *locations = get_locations(value->void_ptr); 
@@ -255,7 +243,6 @@ static void merch_destroy(elem_t name, elem_t *value, void *arg)
     ioopm_linked_list_destroy(locations); 
     free(value->void_ptr); 
 }
-
 
 void store_destroy(store_t *store)
 {

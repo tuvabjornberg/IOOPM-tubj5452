@@ -51,22 +51,12 @@ void location_add(merch_t *merch, char *shelf, int amount);
 /// @brief 
 /// @param
 /// @return
-void store_remove(store_t *store, char *name); 
-
-/// @brief 
-/// @param
-/// @return
-void location_remove(merch_t *merch, char *shelf); 
-
-/// @brief 
-/// @param
-/// @return
 bool merch_exists(store_t *store, char *name); 
 
 /// @brief 
-/// @param merch to check for shelf, expects merch following its struct
+/// @param
 /// @return
-bool shelf_exists(merch_t *merch, char *shelf); 
+bool store_is_empty(store_t *store); 
 
 /// @brief 
 /// @param
@@ -76,7 +66,7 @@ size_t store_size(store_t *store);
 /// @brief 
 /// @param
 /// @return
-size_t locations_size(merch_t *merch); 
+size_t locations_size(merch_t *merch); //TODO: CURRENTLY ONLY USED BY TESTS
 
 /// @brief 
 /// @param
@@ -86,12 +76,12 @@ merch_t *get_merch(store_t *store, char *name);
 /// @brief 
 /// @param merch to get name from, expects merch following its struct
 /// @return
-char *get_name(merch_t *merch); 
+char *get_name(merch_t *merch); //TODO: CURRENTLY ONLY USED BY TESTS
 
 /// @brief 
 /// @param merch to get despription from, expects merch following its struct
 /// @return
-char *get_description(merch_t *merch);
+char *get_description(merch_t *merch); //TODO: CURRENTLY ONLY USED BY TESTS
 
 /// @brief 
 /// @param merch to get price from, expects merch following its struct
@@ -101,22 +91,17 @@ int get_price(merch_t *merch);
 /// @brief 
 /// @param
 /// @return
-location_t *get_location(merch_t *merch, char *shelf); 
-
-/// @brief 
-/// @param merch to get locations from, expects merch following its struct
-/// @return
-ioopm_list_t *get_locations(merch_t *merch); 
+char *get_shelf(location_t *location); //TODO: CURRENTLY ONLY USED BY TESTS
 
 /// @brief 
 /// @param
 /// @return
-int get_quantity(location_t *location); 
+int get_quantity(location_t *location); //TODO: CURRENTLY ONLY USED BY TESTS
 
 /// @brief 
 /// @param
 /// @return
-char *get_shelf(location_t *location);
+location_t *get_location(merch_t *merch, char *shelf); //TODO: CURRENTLY ONLY USED BY TESTS
 
 /// @brief may need to insert again to get a valid hashing TODO: edit to better breif
 /// @param
@@ -146,7 +131,8 @@ void print_stock(merch_t *merch);
 /// @brief 
 /// @param
 /// @return
-bool store_is_empty(store_t *store); 
+void store_remove(store_t *store, char *name); 
+
 
 /// @brief 
 /// @param
