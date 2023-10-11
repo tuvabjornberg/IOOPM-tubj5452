@@ -26,6 +26,7 @@ typedef struct {
 typedef struct {
   char **merch_names;
   ioopm_hash_table_t *merch_details;
+  int merch_count;
 } store_t;
 
 /// @brief 
