@@ -65,4 +65,4 @@ mem_ui_arg: ui.out
 	valgrind --leak-check=full ./ui.out < test.txt
 
 
-.PHONY: ui test mem_tests mem_ui clean 
+.PHONY: ui test mem_tests mem_ui mem_ui_arg cov clean 

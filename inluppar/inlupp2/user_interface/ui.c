@@ -9,16 +9,6 @@
 #include <ctype.h>
 #include <time.h>
 
-static int cmp_stringp(const void *p1, const void *p2)
-{
-    return strcmp(*(char *const *)p1, *(char *const *)p2);
-}
-
-void sort_keys(char *keys[], size_t no_keys)
-{
-    qsort(keys, no_keys, sizeof(char *), cmp_stringp);
-}
-
 bool string_eq(elem_t e1, elem_t e2)
 {
     return (strcmp(e1.string, e2.string) == 0);
@@ -144,14 +134,14 @@ void list_merch(store_t *store)
     int twenty_time = 0; 
     do
     {
-        while (twenty_time < 20)
+        while (twenty_time < PRINT_AT_A_TIME) //TODO: 
         {
         
             twenty_time++; 
         }
         twenty_time = 0; 
         
-        if (twenty_time == 20)
+        if (twenty_time == PRINT_AT_A_TIME)
         {
             continue_list = ask_question_string("\nPress 'N' to return to menu, press anywhere to continue list "); 
         }
@@ -258,7 +248,7 @@ void replenish_stock(store_t *store)
     print_merch(merch); 
 
     char *input_shelf = ask_question_shelf("\nEnter a shelf to add stock to: "); 
-    int input_amount = ask_question_int("\nEnter an amount to increase the stock: "); //TODO: should be fine without freeing??
+    int input_amount = ask_question_int("\nEnter an amount to increase the stock: "); 
 
     while (input_amount < 1)
     {
