@@ -12,12 +12,11 @@ VPATH		   = user_interface : data_structures : utils : tests : logic
 ui.out: ui.o hash_table.o linked_list.o utils.o merch_storage.o 
 	$(C_COMPILER) $(C_LINK_OPTIONS) $(C_OPTIONS) $^ -o $@ 
 
-#ui.out: hash_table.c linked_list.c
+#ui_prof.out: hash_table.c linked_list.c  	PROFILING
 #	$(C_COMPILER) $(C_OPTIONS) $^ -o $@ $(C_PROF)
 
-
-merch_storage_tests.out: merch_storage_tests.o merch_storage.o hash_table.o linked_list.o
-	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) 
+merch_storage_tests.out: hash_table.c linked_list.c  	
+	$(C_COMPILER) $(C_OPTIONS) $^ -o $@ $(C_PROF)
 
 shop_cart_tests.out: shop_cart_tests.o shop_cart.o 
 	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) 
@@ -31,14 +30,15 @@ tests: merch_storage_tests.out shop_cart_tests.out ui_tests.out
 	./ui_tests.out
 
 
-#merch_test_coverage.out: merch_storage_tests.o merch_storage.c 
-#	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) $(C_GCOV)
+merch_test_coverage.out: merch_storage_tests.o merch_storage.c hash_table.o linked_list.o	
+	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) $(C_GCOV)
 #shop_test_coverage.out: shop_cart_tests.o shop_cart.c 
 #	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) $(C_GCOV)
 
-#cov: merch_test_coverage.out shop_test_coverage.out
-#	./merch_test_coverage.out
-#	gcov -b -c merch_test_coverage.out-merch_storage.c
+cov: merch_test_coverage.out 
+#shop_test_coverage.out
+	./merch_test_coverage.out	
+	gcov -b -c merch_test_coverage.out-merch_storage.c
 #	./shop_test_coverage.out
 #	gcov -b -c shop_test_coverage.out-shop_cart.c
 

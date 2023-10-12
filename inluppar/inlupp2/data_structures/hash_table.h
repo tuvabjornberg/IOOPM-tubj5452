@@ -47,6 +47,7 @@ struct option
 
 /// @brief create a new hash table, with a hash-function
 /// @param hash_fun a hash function
+/// @param eq_fun an equal function
 /// @return a new empty hash table
 ioopm_hash_table_t *ioopm_hash_table_create(ioopm_hash_function hash_fun, ioopm_eq_function eq_fun);
 

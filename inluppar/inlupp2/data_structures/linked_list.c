@@ -32,6 +32,7 @@ ioopm_list_t *ioopm_linked_list_create(ioopm_eq_function eq_fun)
 {
     ioopm_list_t *list = calloc(1, sizeof(struct list));
     list->eq_fun = eq_fun; 
+    list->size = 0; 
     return list; 
 }
 

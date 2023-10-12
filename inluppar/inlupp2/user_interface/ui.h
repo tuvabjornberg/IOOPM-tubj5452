@@ -11,4 +11,4 @@
  *
  */
 
-typedef bool(*ioopm_exist_function)(merch_table_t *a, char *b);
+typedef bool(*ioopm_exist_function)(store_t *a, char *b);

@@ -34,7 +34,6 @@ void create_destroy_merch_test()
 {
     store_t *store = store_create(string_sum_hash, string_eq); 
     CU_ASSERT_PTR_NOT_NULL(store); 
-
     store_destroy(store); 
 }
 
@@ -44,70 +43,61 @@ void store_add_remove_test()
     char *name = "Apple"; 
     char *description = "Red"; 
     int price = 10; 
-     
-    char *shelf = "A36"; 
 
-    merch_t *apple = merch_create(name, description, price, shelf); 
+    merch_t *apple = merch_create(name, description, price, ioopm_linked_list_create(string_eq)); 
 
     store_add(store, apple); 
     CU_ASSERT_TRUE(merch_exists(store, name)); 
     CU_ASSERT_EQUAL(get_merch(store, name), apple); 
 
-    store_remove(store, apple); 
+    store_remove(store, get_name(apple)); 
     CU_ASSERT_FALSE(merch_exists(store, name)); 
     CU_ASSERT_EQUAL(get_merch(store, name), NULL); 
 
     store_destroy(store); 
 }
 
-
 void stock_add_remove_test() 
 {
     store_t *store = store_create(string_sum_hash, string_eq); 
 
     char *name = "Apple"; 
-    char *non_input_name = "Pear"; 
     char *description = "Red"; 
     int price = 10; 
-     
-    char *shelf = "A36"; 
+    char *shelf[] = {"B36", "R62", "A4"}; 
+    int quantity[] = {0, 1, 4}; 
 
-    merch_t *apple = merch_create(name, description, price, shelf); 
-    CU_ASSERT_EQUAL(get_stock(name), 0); 
-    CU_ASSERT_EQUAL(get_stock(non_input_name), NULL); 
+    merch_t *apple = merch_create(name, description, price, ioopm_linked_list_create(string_eq)); 
+    
+    store_add(store, apple); 
 
-    stock_add(apple, 3); //TODO: replenish should do it??
-    CU_ASSERT_EQUAL(get_stock(name), 4); 
+    for (int i = 0; i < 3; i++)
+    {
+        location_add(apple, shelf[i], quantity[i]);
+    }
 
-    stock_add(apple, -2); //TODO: do we have stock add negative for remove (stock_add_remove) or seperate function (stock_add + stock_remove)
-    CU_ASSERT_EQUAL(get_stock(name), 2); 
+    location_t *apple_location = get_location(apple, shelf[0]); 
+    CU_ASSERT_EQUAL(get_quantity(apple_location), 0); 
 
-    free(apple); //TODO: avoid!!
+    for (int i = 0; i < 3; i++)
+    {
+        apple_location = get_location(apple, shelf[i]);
+
+        CU_ASSERT_EQUAL(apple_location->quantity, quantity[i]); 
+        CU_ASSERT_STRING_EQUAL(apple_location->shelf, shelf[i]); 
+    }
+
+    location_add(apple, shelf[2], 5); 
+    apple_location = get_location(apple, shelf[2]);
+    CU_ASSERT_EQUAL(apple_location->quantity, 9); 
+    CU_ASSERT_STRING_EQUAL(apple_location->shelf, shelf[2]);
+
+    location_add(apple, shelf[2], -2);
+    apple_location = get_location(apple, shelf[2]); 
+    CU_ASSERT_EQUAL(apple_location->quantity, 7);
+
     store_destroy(store); 
 }
-
-void location_add_remove_test()
-{
-    store_t *store = store_create(string_sum_hash, string_eq);
-    char *name = "Apple"; 
-    char *description = "Red"; 
-    int price = 10; 
-     
-    char *shelf = "A36"; 
-    char *second_shelf = "B81"; 
-
-    merch_t *apple = merch_create(name, description, price, shelf); 
-
-    location_add(apple, second_shelf); 
-    CU_ASSERT_TRUE(shelf_exists(apple, second_shelf))
-
-    location_remove(apple, second_shelf); 
-    CU_ASSERT_FALSE(shelf_exists(apple, second_shelf))
-
-    free(apple); //TODO: avoid!!
-    store_destroy(store); 
-}
-
 
 void merch_exists_test()
 {
@@ -118,14 +108,15 @@ void merch_exists_test()
     char *non_input_name = "Pear"; 
     char *description = "Red"; 
     int price = 10; 
-     
-    char *shelf = "A36"; 
 
-    merch_t *apple = merch_create(name, description, price, shelf); 
+    merch_t *apple = merch_create(name, description, price, ioopm_linked_list_create(string_eq)); 
     store_add(store, apple); 
 
     CU_ASSERT_TRUE(merch_exists(store, name)); 
     CU_ASSERT_FALSE(merch_exists(store, non_input_name)); 
+
+    store_remove(store, name); 
+    CU_ASSERT_FALSE(merch_exists(store, name)); 
 
     store_destroy(store); 
 }
@@ -138,15 +129,13 @@ void store_size_test()
     char *name = "Apple"; 
     char *description = "Red"; 
     int price = 10; 
-     
-    char *shelf = "A36"; 
 
-    merch_t *apple = merch_create(name, description, price, shelf); 
+    merch_t *apple = merch_create(name, description, price, ioopm_linked_list_create(string_eq)); 
     
     store_add(store, apple); 
     CU_ASSERT_EQUAL(store_size(store), 1); 
 
-    store_remove(store, apple); 
+    store_remove(store, get_name(apple)); 
     CU_ASSERT_EQUAL(store_size(store), 0); 
 
     store_destroy(store);  
@@ -157,64 +146,122 @@ void get_merch_test()
     store_t *store = store_create(string_sum_hash, string_eq); 
 
     char *name = "Apple"; 
+    char *non_input_name = "Pear"; 
     char *description = "Red"; 
     int price = 10; 
      
     char *shelf[] = {"A36", "B62", "C4"}; 
+    int quantity[] = {0, 1, 4}; 
 
-    merch_t *apple = merch_create(name, description, price, shelf[0]); 
+    merch_t *apple = merch_create(name, description, price, ioopm_linked_list_create(string_eq)); 
     
     store_add(store, apple); 
-    location_add(apple, shelf[1]);
-    location_add(apple, shelf[2]);  
 
-    //TODO: commented out will crash because get_merch is null (nothing to point to)
-    //merch_t *apple_from_store = get_merch(store, name);
-    //CU_ASSERT_EQUAL(apple_from_store->description, "Red");
-    //CU_ASSERT_EQUAL(apple_from_store->price, 10);
+    for (int i = 0; i < 3; i++)
+    {
+        location_add(apple, shelf[i], quantity[i]);
+    }
 
-    merch_t apple_from_store = get_merch_dummy(store, name); 
+    merch_t *apple_from_store = get_merch(store, name);
+    CU_ASSERT_EQUAL(apple->description, "Red");
+    CU_ASSERT_EQUAL(apple->price, 10);
+    CU_ASSERT_STRING_EQUAL(get_description(apple_from_store), "Red");
+    CU_ASSERT_EQUAL(get_price(apple_from_store), 10);
 
-    CU_ASSERT_EQUAL(apple_from_store.description, "Red");
-    CU_ASSERT_EQUAL(apple_from_store.price, 10);
-
+    merch_t *pear_from_store = get_merch(store, non_input_name);
+    CU_ASSERT_PTR_NULL(pear_from_store);
     
-    //for (int i = 0; i < ioopm_linked_list_size(apple_from_store->location); i++)
-    //{
-    //    elem_t shelf_from_list = ioopm_linked_list_get(apple_from_store->location, i);
-    //    CU_ASSERT_TRUE(shelf_from_list.string == shelf[i]); 
-    //}
-    
-    store_destroy(store); 
-}
+    for (int i = 0; i < locations_size(apple_from_store); i++)
+    {
+        location_t *location = get_location(apple, shelf[i]); 
+        CU_ASSERT_STRING_EQUAL(get_shelf(location), shelf[i]); 
+        CU_ASSERT_EQUAL(get_quantity(location), quantity[i])
+    }
 
-void get_names_in_arr_test()
-{
-    store_t *store = store_create(string_sum_hash, string_eq); 
-    store_destroy(store); 
-}
-
-void get_stock_test()
-{
-    store_t *store = store_create(string_sum_hash, string_eq); 
     store_destroy(store); 
 }
 
 void set_name_test()
 {
-    store_t *store = store_create(string_sum_hash, string_eq); 
+    store_t *store = store_create(string_sum_hash, string_eq);
+
+    char *name = "Apple"; 
+    char *description = "Red"; 
+    int price = 10; 
+    char *shelf[] = {"B36", "R62", "A4"}; 
+    int quantity[] = {0, 1, 4}; 
+
+    merch_t *apple = merch_create(name, description, price, ioopm_linked_list_create(string_eq)); 
+    
+    store_add(store, apple); 
+
+    for (int i = 0; i < 3; i++)
+    {
+        location_add(apple, shelf[i], quantity[i]);
+    }
+
+    set_name(store, apple, "Pear"); 
+    CU_ASSERT_TRUE(merch_exists(store, "Pear")); 
+
+    merch_t *updated_merch = get_merch(store, "Pear"); 
+    CU_ASSERT_STRING_EQUAL(get_name(updated_merch), "Pear"); 
+    CU_ASSERT_STRING_EQUAL(get_description(updated_merch), "Red"); 
+    CU_ASSERT_EQUAL(get_price(updated_merch), 10);
+    
+    set_description(updated_merch, "Green"); 
+    CU_ASSERT_STRING_NOT_EQUAL(get_description(updated_merch), description); 
+    CU_ASSERT_STRING_EQUAL(get_description(updated_merch), "Green");  
+    
+    location_t *first_shelf = get_location(updated_merch, shelf[0]);
+    CU_ASSERT_EQUAL(get_shelf(first_shelf), "B36"); 
+    CU_ASSERT_EQUAL(get_quantity(first_shelf), 0); 
+
+    location_t *second_shelf = get_location(updated_merch, shelf[1]);
+    CU_ASSERT_EQUAL(get_shelf(second_shelf), "R62"); 
+    CU_ASSERT_EQUAL(get_quantity(second_shelf), 1); 
+
+    location_t *third_shelf = get_location(updated_merch, shelf[2]);
+    CU_ASSERT_EQUAL(get_shelf(third_shelf), "A4"); 
+    CU_ASSERT_EQUAL(get_quantity(third_shelf), 4); 
+
     store_destroy(store); 
 }
 
 void set_description_test()
 {
     store_t *store = store_create(string_sum_hash, string_eq); 
+
+    char *name = "Apple"; 
+    char *description = "Red"; 
+    int price = 10; 
+    
+    merch_t *apple = merch_create(name, description, price, ioopm_linked_list_create(string_eq)); 
+    
+    store_add(store, apple); 
+
+    set_description(apple, "Green"); 
+    CU_ASSERT_STRING_NOT_EQUAL(get_description(apple), description); 
+    CU_ASSERT_STRING_EQUAL(get_description(apple), "Green"); 
+
     store_destroy(store); 
 }
 
 void set_price_test()
 {
     store_t *store = store_create(string_sum_hash, string_eq); 
+
+    char *name = "Apple"; 
+    char *description = "Red"; 
+    int price = 10; 
+    
+    merch_t *apple = merch_create(name, description, price, ioopm_linked_list_create(string_eq)); 
+    
+    store_add(store, apple); 
+
+    set_price(apple, 30); 
+    CU_ASSERT_NOT_EQUAL(get_price(apple), 10); 
+    CU_ASSERT_EQUAL(get_price(apple), 30); 
+
     store_destroy(store); 
 }
 
@@ -224,8 +271,33 @@ void store_is_empty_test()
     CU_ASSERT_TRUE(store_is_empty(store)); 
     store_destroy(store); 
 }
+//TODO: check!
+void locations_size_test() //TODO: commented out in main because incomplete
+{
+    store_t *store = store_create(string_sum_hash, string_eq); 
 
+    char *name = "Apple"; 
+    char *description = "Red"; 
+    int price = 10; 
+    char *shelf[] = {"B36", "R62", "A4"}; 
+    int quantity[] = {0, 1, 4}; 
 
+    merch_t *apple = merch_create(name, description, price, ioopm_linked_list_create(string_eq)); 
+    
+    CU_ASSERT_EQUAL(locations_size(apple), 0); 
+
+    store_add(store, apple); 
+
+    for (int i = 0; i < 3; i++)
+    {
+        location_add(apple, shelf[i], quantity[i]);
+        CU_ASSERT_EQUAL(locations_size(apple), i + 1); 
+    }
+
+    CU_ASSERT_TRUE(locations_size(apple) == 3); 
+
+    store_destroy(store); 
+}
 
 int main()
 {
@@ -252,16 +324,16 @@ int main()
         (CU_add_test(my_test_suite, "simple create destroy merch test", create_destroy_merch_test) == NULL ||
          CU_add_test(my_test_suite, "testing for adding and removing from store", store_add_remove_test) == NULL ||
          CU_add_test(my_test_suite, "test for adding and removing from stock", stock_add_remove_test) == NULL ||
-         CU_add_test(my_test_suite, "test for adding to location", location_add_remove_test) == NULL ||
          CU_add_test(my_test_suite, "test for merch existing", merch_exists_test) == NULL ||
          CU_add_test(my_test_suite, "test for the store size", store_size_test) == NULL ||
          CU_add_test(my_test_suite, "getting merch from store", get_merch_test) == NULL ||
-         CU_add_test(my_test_suite, "getting names of merch in an array", get_names_in_arr_test) == NULL ||
-         CU_add_test(my_test_suite, "test for getting stock from merch", get_stock_test) == NULL ||
          CU_add_test(my_test_suite, "test for editing name of merch", set_name_test) == NULL ||
          CU_add_test(my_test_suite, "test for editing description of merch", set_description_test) == NULL ||
          CU_add_test(my_test_suite, "test for editing price of merch", set_price_test) == NULL ||
-         CU_add_test(my_test_suite, "test if store is empty", store_is_empty_test) == NULL 
+         CU_add_test(my_test_suite, "test if store is empty", store_is_empty_test) == NULL ||
+         CU_add_test(my_test_suite, "test for a merch's locations", locations_size_test) == NULL 
+
+         
         )
     )
 

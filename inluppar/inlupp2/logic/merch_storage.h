@@ -2,6 +2,7 @@
 #include "../data_structures/linked_list.h"
 
 
+
 /**
  * @file merch_storage.h
  * @author Tuva Björnberg & Marcus Ray Sandersson
@@ -38,7 +39,8 @@ store_t *store_create(ioopm_hash_function hash_fun, ioopm_eq_function eq_fun);
 /// @brief creates a new merch
 /// @param
 /// @return
-merch_t *merch_create(char *name, char *description, int price, char *shelf);
+//ioopm_eq_function eq_fun, 
+merch_t *merch_create(char *name, char *description, int price, ioopm_list_t *locations);
 
 /// @brief 
 /// @param
@@ -46,24 +48,9 @@ merch_t *merch_create(char *name, char *description, int price, char *shelf);
 void store_add(store_t *store, merch_t *merch); 
 
 /// @brief 
-/// @param
+/// @param merch merch to add location to, expects merch following its struct
 /// @return
-void stock_add(merch_t *merch, int to_add); 
-
-/// @brief 
-/// @param
-/// @return
-void location_add(merch_t *merch, char *shelf); 
-
-/// @brief 
-/// @param
-/// @return
-void store_remove(store_t *store, merch_t *merch); 
-
-/// @brief 
-/// @param
-/// @return
-void location_remove(merch_t *merch, char *shelf); 
+void location_add(merch_t *merch, char *shelf, int amount); 
 
 /// @brief 
 /// @param
@@ -73,7 +60,7 @@ bool merch_exists(store_t *store, char *name);
 /// @brief 
 /// @param
 /// @return
-bool shelf_exists(merch_t *merch, char *shelf); 
+bool store_is_empty(store_t *store); 
 
 /// @brief 
 /// @param
@@ -83,38 +70,47 @@ size_t store_size(store_t *store);
 /// @brief 
 /// @param
 /// @return
+size_t locations_size(merch_t *merch); //TODO: CURRENTLY ONLY USED BY TESTS
+
+/// @brief 
+/// @param
+/// @return
 merch_t *get_merch(store_t *store, char *name); 
-merch_t get_merch_dummy(store_t *store, char *name); 
 
 /// @brief 
-/// @param
+/// @param merch to get name from, expects merch following its struct
 /// @return
-char *get_name(merch_t *merch); 
+char *get_name(merch_t *merch); //TODO: CURRENTLY ONLY USED BY TESTS
 
 /// @brief 
-/// @param
+/// @param merch to get despription from, expects merch following its struct
 /// @return
-char *get_description(merch_t *merch);
+char *get_description(merch_t *merch); //TODO: CURRENTLY ONLY USED BY TESTS
 
 /// @brief 
-/// @param
+/// @param merch to get price from, expects merch following its struct
 /// @return
 int get_price(merch_t *merch); 
 
 /// @brief 
 /// @param
 /// @return
-void get_names_in_arr(store_t *store, char *arr_of_names[]); 
+char *get_shelf(location_t *location); //TODO: CURRENTLY ONLY USED BY TESTS
 
 /// @brief 
 /// @param
 /// @return
-int get_stock(char *name); 
+int get_quantity(location_t *location); //TODO: CURRENTLY ONLY USED BY TESTS
+
+/// @brief 
+/// @param
+/// @return
+location_t *get_location(merch_t *merch, char *shelf); //TODO: CURRENTLY ONLY USED BY TESTS
 
 /// @brief may need to insert again to get a valid hashing TODO: edit to better breif
 /// @param
 /// @return
-void set_name(merch_t *merch, char *new_name); 
+void set_name(store_t *store, merch_t *merch, char *new_name); 
 
 /// @brief 
 /// @param
@@ -127,24 +123,20 @@ void set_description(merch_t *merch, char *new_description);
 void set_price(merch_t *merch, int new_price); 
 
 /// @brief 
-/// @param
+/// @param merch to print, expects merch following its struct
 /// @return
 void print_merch(merch_t *merch); 
 
 /// @brief 
-/// @param
+/// @param merch print its stock, expects merch following its struct
 /// @return
 void print_stock(merch_t *merch); 
 
 /// @brief 
 /// @param
 /// @return
-bool store_is_empty(store_t *store); 
+void store_remove(store_t *store, char *name); 
 
-/// @brief 
-/// @param
-/// @return
-//void merch_destroy(merch_t *merch); 
 
 /// @brief 
 /// @param

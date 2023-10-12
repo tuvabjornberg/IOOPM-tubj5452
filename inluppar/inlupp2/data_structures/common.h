@@ -3,6 +3,7 @@
 
 #define int_elem(x) (elem_t) { .integer=(x) }
 #define str_elem(x) (elem_t) { .string=(x) }
+#define void_elem(x) (elem_t) { .void_ptr=(x) }
 
 /**
  * @file common.h
