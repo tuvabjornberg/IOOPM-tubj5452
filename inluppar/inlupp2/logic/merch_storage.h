@@ -16,7 +16,7 @@ typedef struct {
     char *name;
     char *description;
     int price;
-    ioopm_list_t *locations;
+    ioopm_list_t *stock;
 } merch_t;
 
 typedef struct {
@@ -36,7 +36,7 @@ store_t *store_create(ioopm_hash_function hash_fun, ioopm_eq_function eq_fun);
 /// @param
 /// @return
 //ioopm_eq_function eq_fun, 
-merch_t *merch_create(char *name, char *description, int price, ioopm_list_t *locations);
+merch_t *merch_create(char *name, char *description, int price, ioopm_list_t *stock);
 
 /// @brief 
 /// @param
@@ -66,7 +66,7 @@ size_t store_size(store_t *store);
 /// @brief 
 /// @param
 /// @return
-size_t locations_size(merch_t *merch); //TODO: CURRENTLY ONLY USED BY TESTS
+size_t stock_size(merch_t *merch); //TODO: CURRENTLY ONLY USED BY TESTS
 
 /// @brief 
 /// @param

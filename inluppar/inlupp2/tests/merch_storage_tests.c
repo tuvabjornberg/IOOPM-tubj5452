@@ -171,7 +171,7 @@ void get_merch_test()
     merch_t *pear_from_store = get_merch(store, non_input_name);
     CU_ASSERT_PTR_NULL(pear_from_store);
     
-    for (int i = 0; i < locations_size(apple_from_store); i++)
+    for (int i = 0; i < stock_size(apple_from_store); i++)
     {
         location_t *location = get_location(apple, shelf[i]); 
         CU_ASSERT_STRING_EQUAL(get_shelf(location), shelf[i]); 
@@ -200,12 +200,23 @@ void set_name_test()
         location_add(apple, shelf[i], quantity[i]);
     }
 
-    set_name(store, apple, "Pear"); 
-    CU_ASSERT_TRUE(merch_exists(store, "Pear")); 
+/*
+   merch_t *merch = get_merch(store, name); 
 
-    merch_t *updated_merch = get_merch(store, "Pear"); 
-    CU_ASSERT_STRING_EQUAL(get_name(updated_merch), "Pear"); 
-    CU_ASSERT_STRING_EQUAL(get_description(updated_merch), "Red"); 
+    char *new_name = merch_exist_check(store, false);
+    set_name(store, merch, new_name); 
+
+    char *new_description = ask_question_string("\nWrite the new decription: "); 
+    set_description(merch, new_description); 
+    */
+
+    char *new_name = "Pear"; 
+    set_name(store, apple, new_name); 
+    CU_ASSERT_TRUE(merch_exists(store, new_name)); 
+
+    merch_t *updated_merch = get_merch(store, new_name); 
+    CU_ASSERT_STRING_EQUAL(get_name(updated_merch), new_name); 
+    CU_ASSERT_STRING_EQUAL(get_description(updated_merch), description); 
     CU_ASSERT_EQUAL(get_price(updated_merch), 10);
     
     set_description(updated_merch, "Green"); 
@@ -272,7 +283,7 @@ void store_is_empty_test()
     store_destroy(store); 
 }
 //TODO: check!
-void locations_size_test() //TODO: commented out in main because incomplete
+void stock_size_test() //TODO: commented out in main because incomplete
 {
     store_t *store = store_create(string_sum_hash, string_eq); 
 
@@ -284,17 +295,17 @@ void locations_size_test() //TODO: commented out in main because incomplete
 
     merch_t *apple = merch_create(name, description, price, ioopm_linked_list_create(string_eq)); 
     
-    CU_ASSERT_EQUAL(locations_size(apple), 0); 
+    CU_ASSERT_EQUAL(stock_size(apple), 0); 
 
     store_add(store, apple); 
 
     for (int i = 0; i < 3; i++)
     {
         location_add(apple, shelf[i], quantity[i]);
-        CU_ASSERT_EQUAL(locations_size(apple), i + 1); 
+        CU_ASSERT_EQUAL(stock_size(apple), i + 1); 
     }
 
-    CU_ASSERT_TRUE(locations_size(apple) == 3); 
+    CU_ASSERT_TRUE(stock_size(apple) == 3); 
 
     store_destroy(store); 
 }
@@ -331,7 +342,7 @@ int main()
          CU_add_test(my_test_suite, "test for editing description of merch", set_description_test) == NULL ||
          CU_add_test(my_test_suite, "test for editing price of merch", set_price_test) == NULL ||
          CU_add_test(my_test_suite, "test if store is empty", store_is_empty_test) == NULL ||
-         CU_add_test(my_test_suite, "test for a merch's locations", locations_size_test) == NULL 
+         CU_add_test(my_test_suite, "test for a merch's stock", stock_size_test) == NULL 
 
          
         )
