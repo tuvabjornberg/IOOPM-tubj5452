@@ -91,7 +91,24 @@ void add_merch(store_t *store)
 //TODO: implement when the struct of listed names is complete
 void list_merch(store_t *store)
 {
-
+    if (store_is_empty(store)) 
+    {
+        printf("\nThe store is empty, no merch to list"); 
+        return; 
+    }
+    int i = 0;
+    for(; i < store->merch_count && i < PRINT_AT_A_TIME; i++){
+      puts(store->merch_names[i]);
+    }
+    if(store->merch_count > PRINT_AT_A_TIME){
+        char descision = ask_question_string("Press any key to see more items, N/n to return")[0];
+	while(toupper(descision) != 'N' && i < store->merch_count){
+	      for(; i < store->merch_count && i < PRINT_AT_A_TIME; i++){
+		puts(store->merch_names[i]);
+	      }
+	      descision = ask_question_string("Press any key to see more items, N/n to return")[0];
+	}
+    }    
 }
 
 void remove_merch(store_t *store)
@@ -390,11 +407,23 @@ void remove_from_cart(store_t *store, carts_t *storage_carts)
 
     cart_remove(cart_items, input_name, input_quantity); 
     free(input_name); 
+    printf("Removed %d %s from cart %d.\n", input_quantity, input_name, input_id + 1);
+
 }
 
-void calculate_cart_cost(store_t *store)
+void calculate_cart_cost(store_t *store, carts_t *storage_carts)
 {
+    if (carts_is_empty(storage_carts))
+    {
+        puts("\nThere are no carts, please add one first");
+        return;
+    }
 
+    int input_id = cart_exists_check(storage_carts);
+    if (input_id == -1) return;
+
+    int total_cost = cost_calculate(store, storage_carts, input_id);
+    printf("The total cost of cart %d is %d SEK.\n", input_id + 1, total_cost);
 }
 
 void checkout_cart(store_t *store)
@@ -427,7 +456,7 @@ void event_loop(store_t *store, carts_t *storage_carts)
                 break; 
             case 'L': 
                 list_merch(store); 
-                 break; 
+                break; 
             case 'D':
                 remove_merch(store); 
                 break;
@@ -450,10 +479,10 @@ void event_loop(store_t *store, carts_t *storage_carts)
                 add_to_cart(store, storage_carts); 
                 break; 
             case '-': 
-                remove_from_cart(store, storage_carts); 
+	      remove_from_cart(store, storage_carts); 
                 break; 
             case '=': 
-                calculate_cart_cost(store); 
+	      calculate_cart_cost(store, storage_carts); 
                 break; 
             case 'O': 
                 checkout_cart(store); 
@@ -475,6 +504,7 @@ void event_loop(store_t *store, carts_t *storage_carts)
         free(menu_choice); 
     } while (running); 
 }
+
 
 int main() { 
     store_t *store = store_create(string_sum_hash, string_eq); 

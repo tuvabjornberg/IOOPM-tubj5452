@@ -1,6 +1,8 @@
+#pragma once
+
 #include "../data_structures/hash_table.h"
 #include "../data_structures/linked_list.h"
-
+#include "../data_structures/iterator.h"
 
 
 /**
@@ -25,7 +27,11 @@ typedef struct {
   int quantity;
 } location_t;
 
-typedef ioopm_hash_table_t store_t;
+typedef struct {
+  char **merch_names;
+  ioopm_hash_table_t *merch_details;
+  int merch_count;
+} store_t;
 
 /// @brief 
 /// @param

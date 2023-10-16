@@ -1,6 +1,4 @@
 #include "shop_cart.h"
-#include "../data_structures/hash_table.h"
-#include "../data_structures/linked_list.h"
 #include <string.h>
 #include <stdbool.h>
 
@@ -8,7 +6,8 @@ carts_t *cart_storage_create(ioopm_hash_function hash_fun, ioopm_eq_function eq_
 {
     carts_t *new_carts = calloc(1, sizeof(carts_t)); 
     new_carts->carts = ioopm_hash_table_create(hash_fun, eq_fun); 
-    new_carts->total_carts = 0; 
+    new_carts->total_carts = 0;
+    return new_carts;
 }
 
 ioopm_hash_table_t *get_items_in_cart(carts_t *storage_carts, int id)
@@ -49,6 +48,10 @@ void cart_create(carts_t *storage_carts, ioopm_hash_function hash_fun, ioopm_eq_
     ioopm_hash_table_insert(storage_carts->carts, int_elem(id), void_elem(new_cart)); 
 }
 
+static void free_cart_item(elem_t key, elem_t *value, void *arg)
+{
+    free(key.string);
+}
 
 void cart_destroy(carts_t *storage_carts, int id)
 {
@@ -59,6 +62,7 @@ void cart_destroy(carts_t *storage_carts, int id)
     ioopm_hash_table_destroy(cart_items); 
     ioopm_hash_table_remove(storage_carts->carts, int_elem(id)); 
 }
+
 
 bool carts_is_empty(carts_t *storage_carts)
 {
@@ -104,18 +108,45 @@ void cart_add(carts_t *storage_carts, int id, char *merch_name, int quantity)
 }
 
 
-void cart_remove(ioopm_hash_table_t *cart_items, char *merch_name, int quantity)
+void cart_remove(ioopm_hash_table_t *cart_items, char *merch_name, int amount)
 {
-    option_t *item_in_cart = ioopm_hash_table_lookup(cart_items, str_elem(merch_name)); 
-
-    ioopm_hash_table_insert(cart_items, str_elem(merch_name), int_elem(item_in_cart->value.integer - quantity)); 
+    option_t *item_in_cart = ioopm_hash_table_lookup(cart_items, str_elem(merch_name));
+    
+    if (item_in_cart->success)
+    {
+        int existing_amount = item_in_cart->value.integer;
+        if (existing_amount > amount)
+        {
+            existing_amount -= amount;
+            ioopm_hash_table_insert(cart_items, str_elem(merch_name), int_elem(existing_amount));
+        }
+        else
+        {
+            ioopm_hash_table_remove(cart_items, str_elem(merch_name));
+        }
+    }
     free(item_in_cart); 
+
 }
 
-
-int cost_calculate(carts_t *storage_carts, int id)
+int cost_calculate(store_t *store, carts_t *storage_carts, int id)
 {
+    int total_cost = 0;
+    ioopm_hash_table_t *cart_items = get_items_in_cart(storage_carts, id);
 
+    ioopm_list_t *keys = ioopm_hash_table_keys(cart_items);
+    for (int i = 0; i < ioopm_linked_list_size(keys); ++i)
+    {
+        elem_t key = ioopm_linked_list_get(keys, i);
+        option_t *value = ioopm_hash_table_lookup(cart_items, key);
+        if (value->success)
+        {
+	  total_cost += value->value.integer * get_price(get_merch(store, key.string));
+        }
+        free(value);
+    }
+    ioopm_linked_list_destroy(keys);
+    return total_cost;
 }
 
 

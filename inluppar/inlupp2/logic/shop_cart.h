@@ -1,5 +1,5 @@
-#include "../data_structures/hash_table.h"
-#include "../data_structures/linked_list.h"
+#pragma once
+#include "merch_storage.h"
 
 
 /**
@@ -74,7 +74,7 @@ void cart_remove(ioopm_hash_table_t *cart_items, char *merch_name, int amount);
  
 
 
-int cost_calculate(carts_t *storage_carts, int id);
+int cost_calculate(store_t *store, carts_t *storage_carts, int id);
 
  
 
