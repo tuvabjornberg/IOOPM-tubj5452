@@ -1,5 +1,5 @@
-#include "../data_structures/hash_table.h"
-#include "../data_structures/linked_list.h"
+#pragma once
+#include "merch_storage.h"
 
 
 /**
@@ -59,12 +59,12 @@ void cart_add(carts_t *storage_carts, int id, char *merch_name, int amount);
  
 
 
-void cart_remove(carts_t *storage_carts, int id, int amount);
+void cart_remove(carts_t *storage_carts, int id, char* merch_name, int amount);
 
  
 
 
-int cost_calculate(carts_t *storage_carts, int id);
+int cost_calculate(store_t *store, carts_t *storage_carts, int id);
 
  
 

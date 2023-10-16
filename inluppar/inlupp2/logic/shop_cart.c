@@ -1,6 +1,4 @@
 #include "shop_cart.h"
-#include "../data_structures/hash_table.h"
-#include "../data_structures/linked_list.h"
 #include <string.h>
 
 carts_t *cart_storage_create(ioopm_hash_function hash_fun, ioopm_eq_function eq_fun)
@@ -97,16 +95,45 @@ void cart_add(carts_t *storage_carts, int id, char *merch_name, int amount)
     free(merch_name); 
 }
 
-
-void cart_remove(carts_t *carts, int id, int amount)
+void cart_remove(carts_t *storage_carts, int id, char *merch_name, int amount)
 {
-
+    ioopm_hash_table_t *cart_items = get_items_in_cart(storage_carts, id); 
+    option_t *item_in_cart = ioopm_hash_table_lookup(cart_items, str_elem(merch_name));
+    
+    if (item_in_cart->success)
+    {
+        int existing_amount = item_in_cart->value.integer;
+        if (existing_amount > amount)
+        {
+            existing_amount -= amount;
+            ioopm_hash_table_insert(cart_items, str_elem(merch_name), int_elem(existing_amount));
+        }
+        else
+        {
+            ioopm_hash_table_remove(cart_items, str_elem(merch_name));
+        }
+    }
+    free(item_in_cart); 
 }
 
-
-int cost_calculate(carts_t *carts, int id)
+int cost_calculate(store_t *store, carts_t *storage_carts, int id)
 {
+    int total_cost = 0;
+    ioopm_hash_table_t *cart_items = get_items_in_cart(storage_carts, id);
 
+    ioopm_list_t *keys = ioopm_hash_table_keys(cart_items);
+    for (int i = 0; i < ioopm_linked_list_size(keys); ++i)
+    {
+        elem_t key = ioopm_linked_list_get(keys, i);
+        option_t *value = ioopm_hash_table_lookup(cart_items, key);
+        if (value->success)
+        {
+	  total_cost += value->value.integer * get_price(get_merch(store, key.string));
+        }
+        free(value);
+    }
+    ioopm_linked_list_destroy(keys);
+    return total_cost;
 }
 
 

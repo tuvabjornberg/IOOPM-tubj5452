@@ -1,6 +1,3 @@
-#include "../data_structures/hash_table.h"
-#include "../data_structures/linked_list.h"
-#include "../data_structures/iterator.h"
 #include "merch_storage.h"
 #include <stdbool.h>
 #include <stdlib.h>

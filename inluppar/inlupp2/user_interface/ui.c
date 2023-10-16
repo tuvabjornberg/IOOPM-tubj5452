@@ -348,17 +348,49 @@ void add_to_cart(store_t *store, carts_t *storage_carts)
     int quantity = quantity_check(store, input_name, merch_cart_amount); 
     if (quantity == -1) return; 
 
-    cart_add(storage_carts, input_id, input_name, quantity); 
+    cart_add(storage_carts, input_id, input_name, quantity);
 }
 
-void remove_from_cart(store_t *store)
+void remove_from_cart(store_t *store, carts_t *storage_carts)
 {
+    if (carts_is_empty(storage_carts))
+    {
+        puts("\nThere are no carts, please add one first");
+        return;
+    }
 
+    int input_id = cart_exists_check(storage_carts);
+    if (input_id == -1) return;
+
+    char *input_name = merch_exist_check(store, false);
+    if (input_name == NULL) return;
+
+    int merch_cart_amount = item_in_cart_amount(storage_carts, input_id, input_name);
+
+    int amount_to_remove = ask_question_int("\nHow many do you want to remove?");
+    while (amount_to_remove > merch_cart_amount)
+    {
+        printf("You can't remove more than you have in the cart.\n");
+        amount_to_remove = ask_question_int("How many do you want to remove?");
+    }
+
+    cart_remove(storage_carts, input_id, input_name, amount_to_remove);
+    printf("Removed %d %s from cart %d.\n", amount_to_remove, input_name, input_id + 1);
 }
 
-void calculate_cart_cost(store_t *store)
+void calculate_cart_cost(store_t *store, carts_t *storage_carts)
 {
+    if (carts_is_empty(storage_carts))
+    {
+        puts("\nThere are no carts, please add one first");
+        return;
+    }
 
+    int input_id = cart_exists_check(storage_carts);
+    if (input_id == -1) return;
+
+    int total_cost = cost_calculate(store, storage_carts, input_id);
+    printf("The total cost of cart %d is %d SEK.\n", input_id + 1, total_cost);
 }
 
 void checkout_cart(store_t *store)
@@ -414,10 +446,10 @@ void event_loop(store_t *store, carts_t *storage_carts)
                 add_to_cart(store, storage_carts); 
                 break; 
             case '-': 
-                remove_from_cart(store); 
+	      remove_from_cart(store, storage_carts); 
                 break; 
             case '=': 
-                calculate_cart_cost(store); 
+	      calculate_cart_cost(store, storage_carts); 
                 break; 
             case 'O': 
                 checkout_cart(store); 
