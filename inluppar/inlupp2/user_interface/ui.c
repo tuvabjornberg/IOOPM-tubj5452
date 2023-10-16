@@ -315,6 +315,7 @@ static int quantity_check(store_t *store, char *merch_name, int current_amount)
     return input_amount; 
 }
 
+//TODO: förmodligen implementerad fel mot beskrivningen
 void add_to_cart(store_t *store, carts_t *storage_carts)
 {
     if (carts_is_empty(storage_carts)) 
