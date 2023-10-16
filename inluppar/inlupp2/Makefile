@@ -9,7 +9,7 @@ VPATH		   = user_interface : data_structures : utils : tests : logic
 %.o:  %.c 
 	$(C_COMPILER) $(C_OPTIONS) $^ -c 
 
-ui.out: ui.o hash_table.o linked_list.o utils.o merch_storage.o 
+ui.out: ui.o hash_table.o linked_list.o utils.o merch_storage.o shop_cart.o 
 	$(C_COMPILER) $(C_LINK_OPTIONS) $(C_OPTIONS) $^ -o $@ 
 
 #ui_prof.out: hash_table.c linked_list.c  	PROFILING

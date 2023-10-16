@@ -30,7 +30,7 @@ bool location_eq(elem_t a, elem_t b){
   return !strcmp((*(location_t*)a.void_ptr).shelf, (*(location_t*)b.void_ptr).shelf);
 }
 
-merch_t *merch_create(char *name, char *description, int price, ioopm_list_t *stock)
+merch_t *merch_create(char *name, char *description, int price, ioopm_list_t *stock, int stock_size)
 {
     merch_t *new_merch = calloc(1, sizeof(merch_t));
     new_merch->name = strdup(name);
@@ -38,7 +38,8 @@ merch_t *merch_create(char *name, char *description, int price, ioopm_list_t *st
     new_merch->description = strdup(description);
     free(description); 
     new_merch->price = price;
-    new_merch->stock = stock;
+    new_merch->stock = stock; 
+    new_merch->stock_size = stock_size; 
 
     return new_merch;
 }
@@ -129,18 +130,25 @@ static bool shelf_exists(merch_t *merch, char *shelf)
     }
 }
 
+static int get_stock_size(merch_t *merch)
+{
+    return merch->stock_size; 
+}
+
 void location_add(merch_t *merch, char *shelf, int amount)
 {
     if (shelf_exists(merch, shelf))
     {
         location_t *location = get_location(merch, shelf);
         location->quantity = get_quantity(location) + amount;
+        merch->stock_size = get_stock_size(merch) + amount; 
         free(shelf);  
     }
     else
     {
         location_t *location = location_create(shelf, amount); 
         ioopm_linked_list_append(merch->stock, void_elem(location)); 
+        merch->stock_size = get_stock_size(merch) + amount; 
     }
 }
 
@@ -174,7 +182,7 @@ size_t store_size(store_t *store)
   return store->merch_count;
 }
 
-size_t stock_size(merch_t *merch)
+size_t shelves_size(merch_t *merch)
 {
     return ioopm_linked_list_size(merch->stock); 
 }
@@ -248,7 +256,7 @@ location_t *get_location(merch_t *merch, char *shelf)
     else
     {
         ioopm_list_t *stock = merch->stock; 
-        size_t loc_size = stock_size(merch); 
+        size_t loc_size = shelves_size(merch); 
 
         ioopm_list_iterator_t *iter = ioopm_list_iterator(stock);
 
@@ -279,7 +287,7 @@ void set_name(store_t *store, merch_t *old_merch, char *new_name)
     char *description = get_description(old_merch); 
     ioopm_list_t *stock = get_stock(old_merch); 
 
-    merch_t *new_merch = merch_create(new_name, description, price, stock); 
+    merch_t *new_merch = merch_create(new_name, description, price, stock, old_merch->stock_size); 
 
     store_add(store, new_merch); 
 
@@ -316,7 +324,7 @@ void print_merch(merch_t *merch)
 void print_stock(merch_t *merch)
 {
     ioopm_list_t *stock = get_stock(merch); 
-    size_t loc_size = stock_size(merch); 
+    size_t loc_size = shelves_size(merch); 
 
     for (int i = 0; i < loc_size; i++)
     {

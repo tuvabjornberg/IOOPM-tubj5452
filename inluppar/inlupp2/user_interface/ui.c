@@ -14,6 +14,11 @@ bool string_eq(elem_t e1, elem_t e2)
     return (strcmp(e1.string, e2.string) == 0);
 }
 
+bool int_eq(elem_t e1, elem_t e2)
+{
+    return (e1.integer == e2.integer);
+}
+
 unsigned string_sum_hash(elem_t e)
 {
     char *str = e.string;
@@ -24,6 +29,11 @@ unsigned string_sum_hash(elem_t e)
     }
     while (*++str != '\0');
     return result; 
+}
+
+static unsigned hash_fun_key_int(elem_t key)
+{
+  return key.integer;
 }
 
 static char *merch_exist_check(store_t *store, bool should_exist)
@@ -60,8 +70,9 @@ static merch_t *input_merch(char *name)
 {
     char *description = ask_question_string("\nWrite a description of the merch: "); 
     int price = ask_question_int("\nWrite the price of the merch: ");
+    int stock_size = 0; 
 
-    merch_t *new_merch = merch_create(name, description, price, ioopm_linked_list_create(string_eq)); 
+    merch_t *new_merch = merch_create(name, description, price, ioopm_linked_list_create(string_eq), stock_size); 
 
     return new_merch; 
 }
@@ -70,11 +81,7 @@ void add_merch(store_t *store)
 {    
     char *input_name = merch_exist_check(store, false);
 
-    if (input_name == NULL)
-    {
-        free(input_name); 
-        return;
-    }
+    if (input_name == NULL) return;
 
     merch_t *input = input_merch(input_name); 
 
@@ -113,11 +120,7 @@ void remove_merch(store_t *store)
     }
 
     char *input_name = merch_exist_check(store, true);
-    if (input_name == NULL)
-    {
-        free(input_name); 
-        return;
-    }
+    if (input_name == NULL) return;
 
     char *conf_remove = ask_question_string("\nAre you sure you want to remove this merch? (y/n)"); 
 
@@ -140,15 +143,6 @@ void edit_merch(store_t *store)
 
     char *input_name = merch_exist_check(store, true);
     if (input_name == NULL) return; 
-
-    char *conf_edit = ask_question_string("\nAre you sure you want to edit this merch? (y/n)"); 
-
-    if (!(toupper(*conf_edit) == 'Y'))
-    {
-        free(conf_edit); 
-        return; 
-    }
-    free(conf_edit); 
     
     merch_t *merch = get_merch(store, input_name); 
     free(input_name); 
@@ -161,6 +155,15 @@ void edit_merch(store_t *store)
     
     int new_price = ask_question_int("\nWrite the new price: "); 
     set_price(merch, new_price); 
+
+    char *conf_edit = ask_question_string("\nAre you sure you want to edit this merch? (y/n)"); 
+
+    if (!(toupper(*conf_edit) == 'Y'))
+    {
+        free(conf_edit); 
+        return; 
+    }
+    free(conf_edit); 
 
     set_name(store, merch, new_name); 
 }
@@ -181,7 +184,34 @@ void show_stock(store_t *store)
 
     free(input_name); 
 }
+/*
+//TODO: part of 
+static char *shelf_exist_check(store_t *store)
+{
+    char *input_shelf = ask_question_shelf("\nEnter a shelf to add stock to: ");
 
+    while (shelf_exists(store, shelf))
+    {
+        char *new_alt = ask_question_string("\nThe shelf already exists, do you want to write another one (y/n)? ");
+
+        if (toupper(*new_alt) == 'Y')
+        {
+            free(input_shelf);
+            input_shelf = ask_question_string("\nWrite the name of the shelf: ");
+        }
+        else
+        {
+            free(new_alt);
+            free(input_shelf);
+            return NULL;
+        }
+
+        free(new_alt);
+    }
+
+    return input_shelf;
+}
+*/
 void replenish_stock(store_t *store)
 {
     if (store_is_empty(store)) 
@@ -199,7 +229,13 @@ void replenish_stock(store_t *store)
     printf("\nYou selected this merch:\n"); 
     print_merch(merch); 
 
-    char *input_shelf = ask_question_shelf("\nEnter a shelf to add stock to: "); 
+
+    char *input_shelf = ask_question_shelf("\nEnter a shelf to add stock to: ");
+
+    //TODO: Not duplicate shelf, not more than one merch on each shelf
+    //Idea: add an element to the store-struct of an ht(?)/list(?) of each shelf in use. 
+    //char *input_shelf = shelf_exist_check(store); 
+
     int input_amount = ask_question_int("\nEnter an amount to increase the stock: "); 
 
     while (input_amount < 1)
@@ -211,21 +247,108 @@ void replenish_stock(store_t *store)
 
 }
 
-void create_cart(store_t *store)
+void cart_create_ui(carts_t *storage_carts)
 {
-
-
-
+    cart_create(storage_carts, string_sum_hash, string_eq); 
+    storage_carts->total_carts++; 
+    printf("\nYou have created a cart with the ID: %d", storage_carts->total_carts); 
 }   
 
-void remove_cart(store_t *store)
+static int cart_exists_check(carts_t *storage_carts)
 {
+    int input_id = ask_question_int("\nWrite the ID of the cart: ") - 1; 
 
+    while (!ioopm_hash_table_has_key(storage_carts->carts, int_elem(input_id)))
+    {
+        char *new_alt = ask_question_string("\nThe cart doesn't exist, do you want to write another one (y/n)? "); 
+
+        if (toupper(*new_alt) == 'Y')
+        {
+            input_id = ask_question_int("\nWrite the ID of the cart: "); 
+        }
+        else
+        {
+            free(new_alt);
+            return -1;
+        }
+        free(new_alt); 
+    }
+    return input_id; 
 }
 
-void add_to_cart(store_t *store)
+void remove_cart(store_t *store, carts_t *storage_carts)
 {
+    if (carts_is_empty(storage_carts)) 
+    {
+        puts("\nThere are no carts, please add one first"); 
+        return; 
+    }
 
+    int input_id = cart_exists_check(storage_carts);
+    if (input_id == -1) return; 
+
+    char *conf_remove = ask_question_string("\nAre you sure you want to remove this cart? (y/n)"); 
+
+    if (!(toupper(*conf_remove) == 'Y'))
+    {
+        free(conf_remove); 
+        return; 
+    }
+    free(conf_remove);
+
+    cart_destroy(storage_carts, input_id); 
+}
+
+static int quantity_check(store_t *store, char *merch_name, int current_amount)
+{
+    merch_t *merch = get_merch(store, merch_name); 
+    if (current_amount == merch->stock_size) 
+    {
+        puts("There are no more items in stock to add to cart"); 
+        return -1; 
+    }
+
+    printf("Amount in stock: %d", merch->stock_size); 
+    int input_amount = ask_question_int("\nEnter the amount of the merch to add to cart: "); 
+
+    while (input_amount > merch->stock_size - current_amount)
+    {
+        char *new_alt = ask_question_string("\nThe store doesn't carry that many items, do you want another try (y/n)? "); 
+
+        if (toupper(*new_alt) == 'Y')
+        {
+            input_amount = ask_question_int("\nWrite the amount to add to cart: "); 
+        }
+        else
+        {
+            free(new_alt);
+            return -1;
+        }
+        free(new_alt); 
+    }
+    
+    return input_amount; 
+}
+
+void add_to_cart(store_t *store, carts_t *storage_carts)
+{
+    if (carts_is_empty(storage_carts)) 
+    {
+        puts("\nThere are no carts, please add one first"); 
+        return; 
+    }
+
+    int input_id = cart_exists_check(storage_carts);
+    if (input_id == -1) return; 
+
+    char *input_name = merch_exist_check(store, true); 
+    if (input_name == NULL) return; 
+
+    int merch_cart_amount = item_in_cart_amount(storage_carts, input_id, input_name); 
+    int quantity = quantity_check(store, input_name, merch_cart_amount); 
+    if (quantity == -1) return; 
+
+    cart_add(storage_carts, input_id, input_name, quantity); 
 }
 
 void remove_from_cart(store_t *store)
@@ -252,7 +375,7 @@ void print_menu(void)
 
 }
 
-void event_loop(store_t *store, int store_size) 
+void event_loop(store_t *store, carts_t *storage_carts) 
 {
     bool running = true; 
     char *quit_confirmation; 
@@ -282,13 +405,13 @@ void event_loop(store_t *store, int store_size)
                 replenish_stock(store); 
                 break;
             case 'C': 
-                create_cart(store); 
+                cart_create_ui(storage_carts); 
                 break; 
             case 'R':
-                remove_cart(store); 
+                remove_cart(store, storage_carts); 
                 break; 
             case '+':
-                add_to_cart(store); 
+                add_to_cart(store, storage_carts); 
                 break; 
             case '-': 
                 remove_from_cart(store); 
@@ -305,7 +428,8 @@ void event_loop(store_t *store, int store_size)
                 if (toupper(*quit_confirmation) == 'Y')
                 {
                     running = false; 
-                    store_destroy(store); 
+                    cart_storage_destroy(storage_carts);  
+                    store_destroy(store);
                 } 
                 free(quit_confirmation); 
                 break; 
@@ -319,7 +443,7 @@ void event_loop(store_t *store, int store_size)
 
 int main() { 
     store_t *store = store_create(string_sum_hash, string_eq); 
-    int store_siz = store_size(store); // Antalet varor i arrayen just nu
-    event_loop(store, store_siz); 
+    carts_t *storage_carts = cart_storage_create(hash_fun_key_int, int_eq); 
+    event_loop(store, storage_carts); 
     return 0;
 }

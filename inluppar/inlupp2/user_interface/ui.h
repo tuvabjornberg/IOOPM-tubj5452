@@ -1,4 +1,5 @@
 #include "../logic/merch_storage.h"
+#include "../logic/shop_cart.h"
 #include "../data_structures/common.h"
 
 #define PRINT_AT_A_TIME 20
