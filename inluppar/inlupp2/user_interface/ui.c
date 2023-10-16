@@ -111,7 +111,7 @@ void list_merch(store_t *store)
     }    
 }
 
-void remove_merch(store_t *store)
+void remove_merch(store_t *store, carts_t *storage_carts)
 {
     if (store_is_empty(store)) 
     {
@@ -126,7 +126,7 @@ void remove_merch(store_t *store)
 
     if (toupper(*conf_remove) == 'Y')
     {
-        store_remove(store, input_name); 
+        store_remove(store, storage_carts->carts, input_name); 
     }
     free(conf_remove);
 
@@ -351,7 +351,9 @@ void add_to_cart(store_t *store, carts_t *storage_carts)
     int input_quantity = quantity_check(store, input_name, merch_cart_amount); 
     if (input_quantity == -1) return; 
 
-    cart_add(storage_carts, input_id, input_name, input_quantity); 
+    merch_t *merch = get_merch(store, input_name); 
+
+    cart_add(storage_carts, input_id, merch->name, input_quantity); 
     printf("You have added %d of %s to this cart: %d", input_quantity, input_name, input_id + 1); 
     free(input_name); 
 }
@@ -406,9 +408,8 @@ void remove_from_cart(store_t *store, carts_t *storage_carts)
     }
 
     cart_remove(cart_items, input_name, input_quantity); 
-    free(input_name); 
     printf("Removed %d %s from cart %d.\n", input_quantity, input_name, input_id + 1);
-
+    free(input_name); 
 }
 
 void calculate_cart_cost(store_t *store, carts_t *storage_carts)
@@ -458,7 +459,7 @@ void event_loop(store_t *store, carts_t *storage_carts)
                 list_merch(store); 
                 break; 
             case 'D':
-                remove_merch(store); 
+                remove_merch(store, storage_carts); 
                 break;
             case 'E':
                 edit_merch(store); 

@@ -4,7 +4,6 @@
 #include "../data_structures/linked_list.h"
 #include "../data_structures/iterator.h"
 
-
 /**
  * @file merch_storage.h
  * @author Tuva Björnberg & Marcus Ray Sandersson
@@ -138,8 +137,7 @@ void print_stock(merch_t *merch);
 /// @brief 
 /// @param
 /// @return
-void store_remove(store_t *store, char *name); 
-
+void store_remove(store_t *store, ioopm_hash_table_t *carts, char *name);
 
 /// @brief 
 /// @param

@@ -313,9 +313,6 @@ void set_price(merch_t *merch, int new_price)
 void print_merch(merch_t *merch)
 {
     printf("\nName: %s", get_name(merch)); 
-    //printf("\nDescription: %s", get_description(merch)); 
-    //printf("\nPrice: %d", get_price(merch)); 
-    //print_stock(merch);
 }
 
 void print_stock(merch_t *merch)
@@ -329,27 +326,7 @@ void print_stock(merch_t *merch)
         printf("\nShelf: %s, Quantity: %d ", location->shelf, location->quantity); 
     }
     puts("\n"); 
-
-//TODO: print alphabeticly
-//insert if strcmp < 0 
-/*
-    size_t size_store = store_s(ht); 
-
-    ioopm_list_iterator_t *iter = ioopm_list_iterator(list);
-    elem_t value = ioopm_iterator_current(iter);
-
-    char *keys[loc_size]; 
-    for (int i = 0; i < loc_size; i++)
-    {
-        keys[i] = value.string;
-        value = ioopm_iterator_next(iter);
-    }
-       
-    sort_keys(keys, ht_size);
-    */
-}
-
-        
+}     
 
 static void stock_destroy(elem_t *value, void *arg)
 {
@@ -358,7 +335,7 @@ static void stock_destroy(elem_t *value, void *arg)
     free(value->void_ptr);
 }
 
-void store_remove(store_t *store, char *name)
+void store_remove(store_t *store, ioopm_hash_table_t *carts, char *name)
 {
     merch_t *merch = get_merch(store, name); 
     ioopm_list_t *stock = get_stock(merch); 

@@ -16,11 +16,6 @@ typedef struct {
     int total_carts; 
 } carts_t;
 
-typedef struct {
-    char *name; 
-    int *amount; 
-} cart_item_t; 
-
 
 /// @brief 
 /// @param hash_fun 

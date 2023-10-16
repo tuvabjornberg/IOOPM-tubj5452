@@ -23,14 +23,14 @@ bool has_merch_in_cart(ioopm_hash_table_t *cart_items, char *name)
     return ioopm_hash_table_has_key(cart_items, str_elem(name)); 
 }
 
-static void free_cart_item(elem_t key, elem_t *value, void *arg)
-{
-    free(key.string);
-}
+//static void free_cart_item(elem_t key, elem_t *value, void *arg)
+//{
+//    free(key.string);
+//}
 
 static void items_in_cart_destroy(elem_t key, elem_t *value, void *arg)
 {
-    ioopm_hash_table_apply_to_all((ioopm_hash_table_t *) value->void_ptr, free_cart_item, NULL);
+    //ioopm_hash_table_apply_to_all((ioopm_hash_table_t *) value->void_ptr, free_cart_item, NULL);
     ioopm_hash_table_destroy((ioopm_hash_table_t *) value->void_ptr); 
 }
 
@@ -48,16 +48,11 @@ void cart_create(carts_t *storage_carts, ioopm_hash_function hash_fun, ioopm_eq_
     ioopm_hash_table_insert(storage_carts->carts, int_elem(id), void_elem(new_cart)); 
 }
 
-static void free_cart_item(elem_t key, elem_t *value, void *arg)
-{
-    free(key.string);
-}
-
 void cart_destroy(carts_t *storage_carts, int id)
 {
     ioopm_hash_table_t *cart_items = get_items_in_cart(storage_carts, id); 
     
-    ioopm_hash_table_apply_to_all(cart_items, free_cart_item, NULL);
+    //ioopm_hash_table_apply_to_all(cart_items, free_cart_item, NULL);
 
     ioopm_hash_table_destroy(cart_items); 
     ioopm_hash_table_remove(storage_carts->carts, int_elem(id)); 
@@ -101,8 +96,7 @@ void cart_add(carts_t *storage_carts, int id, char *merch_name, int quantity)
     }
     else
     {  
-        //TODO: om redigera namn i store kommer namnet i carten inte att updateras
-        ioopm_hash_table_insert(cart_items, str_elem(strdup(merch_name)), int_elem(quantity)); 
+        ioopm_hash_table_insert(cart_items, str_elem(merch_name), int_elem(quantity)); 
     }
     free(item_in_cart); 
 }
