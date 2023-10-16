@@ -20,7 +20,7 @@ ioopm_hash_table_t *get_items_in_cart(carts_t *storage_carts, int id)
 
 bool has_merch_in_cart(ioopm_hash_table_t *cart_items, char *name)
 {
-    return ioopm_hash_table_has_key(cart_items, str_elem(name)); 
+    return ioopm_hash_table_has_key(cart_items, str_elem(name));
 }
 
 static void free_cart_item(elem_t key, elem_t *value, void *arg)
@@ -31,7 +31,7 @@ static void free_cart_item(elem_t key, elem_t *value, void *arg)
 static void items_in_cart_destroy(elem_t key, elem_t *value, void *arg)
 {
     ioopm_hash_table_apply_to_all((ioopm_hash_table_t *) value->void_ptr, free_cart_item, NULL);
-    ioopm_hash_table_destroy((ioopm_hash_table_t *) value->void_ptr); 
+    ioopm_hash_table_destroy((ioopm_hash_table_t *) value->void_ptr);
 }
 
 void cart_storage_destroy(carts_t *storage_carts)
@@ -46,11 +46,6 @@ void cart_create(carts_t *storage_carts, ioopm_hash_function hash_fun, ioopm_eq_
     ioopm_hash_table_t *new_cart = ioopm_hash_table_create(hash_fun, eq_fun); 
     int id = storage_carts->total_carts; 
     ioopm_hash_table_insert(storage_carts->carts, int_elem(id), void_elem(new_cart)); 
-}
-
-static void free_cart_item(elem_t key, elem_t *value, void *arg)
-{
-    free(key.string);
 }
 
 void cart_destroy(carts_t *storage_carts, int id)

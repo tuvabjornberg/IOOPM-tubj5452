@@ -406,9 +406,8 @@ void remove_from_cart(store_t *store, carts_t *storage_carts)
     }
 
     cart_remove(cart_items, input_name, input_quantity); 
-    free(input_name); 
     printf("Removed %d %s from cart %d.\n", input_quantity, input_name, input_id + 1);
-
+    free(input_name); 
 }
 
 void calculate_cart_cost(store_t *store, carts_t *storage_carts)

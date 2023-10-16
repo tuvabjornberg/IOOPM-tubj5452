@@ -13,6 +13,7 @@
  *
  */
 
+#define INITIAL_CAPACAITY 10
 
 typedef struct {
     char *name;
@@ -31,15 +32,15 @@ typedef struct {
   char **merch_names;
   ioopm_hash_table_t *merch_details;
   int merch_count;
+  int capacity;
 } store_t;
 
 /// @brief 
 /// @param
 /// @return
-store_t *store_create(ioopm_hash_function hash_fun, ioopm_eq_function eq_fun); 
+store_t *store_create(ioopm_hash_function hash_fun, ioopm_eq_function eq_fun);
 
-
-/// @brief creates a new merch
+/// @rief creates a new merch
 /// @param
 /// @return
 //ioopm_eq_function eq_fun, 
