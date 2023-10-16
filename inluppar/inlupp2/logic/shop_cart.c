@@ -7,7 +7,8 @@ carts_t *cart_storage_create(ioopm_hash_function hash_fun, ioopm_eq_function eq_
 {
     carts_t *new_carts = calloc(1, sizeof(carts_t)); 
     new_carts->carts = ioopm_hash_table_create(hash_fun, eq_fun); 
-    new_carts->total_carts = 0; 
+    new_carts->total_carts = 0;
+    return new_carts;
 }
 
 ioopm_hash_table_t *get_items_in_cart(carts_t *storage_carts, int id)
@@ -37,13 +38,21 @@ void cart_create(carts_t *storage_carts, ioopm_hash_function hash_fun, ioopm_eq_
     ioopm_hash_table_insert(storage_carts->carts, int_elem(id), void_elem(new_cart)); 
 }
 
+static void free_cart_item(elem_t key, elem_t *value, void *arg)
+{
+    free(key.string);
+}
+
 void cart_destroy(carts_t *storage_carts, int id)
 {
     ioopm_hash_table_t *cart_items = get_items_in_cart(storage_carts, id); 
     
+    ioopm_hash_table_apply_to_all(cart_items, free_cart_item, NULL);
+    
     ioopm_hash_table_destroy(cart_items); 
     ioopm_hash_table_remove(storage_carts->carts, int_elem(id)); 
 }
+
 
 bool carts_is_empty(carts_t *storage_carts)
 {
