@@ -15,8 +15,8 @@ ui.out: ui.o hash_table.o linked_list.o utils.o merch_storage.o
 #ui_prof.out: hash_table.c linked_list.c  	PROFILING
 #	$(C_COMPILER) $(C_OPTIONS) $^ -o $@ $(C_PROF)
 
-merch_storage_tests.out: hash_table.c linked_list.c  	
-	$(C_COMPILER) $(C_OPTIONS) $^ -o $@ $(C_PROF)
+merch_storage_tests.out: merch_storage_tests.o merch_storage.o hash_table.o linked_list.o 	
+	$(C_COMPILER) $(C_LINK_OPTIONS) $(C_OPTIONS) $^ -o $@ $(CUNIT_LINK)
 
 shop_cart_tests.out: shop_cart_tests.o shop_cart.o 
 	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) 
@@ -59,7 +59,10 @@ mem_tests: merch_storage_tests.out
 #valgrind --leak-ckeck=full ./ui_tests.out
 
 mem_ui: ui.out
-	valgrind --leak-check=full ./ui.out $(ARGS) 
+	valgrind --leak-check=full ./ui.out  
+
+mem_ui_arg: ui.out
+	valgrind --leak-check=full ./ui.out < test.txt
 
 
-.PHONY: ui test mem_tests mem_ui clean 
+.PHONY: ui test mem_tests mem_ui mem_ui_arg cov clean 

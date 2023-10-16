@@ -7,6 +7,16 @@
 #include <string.h>
 #include <stdio.h>
 
+static int cmp_stringp(const void *p1, const void *p2)
+{
+    return strcmp(*(char *const *)p1, *(char *const *)p2);
+}
+
+void sort_keys(char *keys[], size_t no_keys)
+{
+    qsort(keys, no_keys, sizeof(char *), cmp_stringp);
+}
+
 store_t *store_create(ioopm_hash_function hash_fun, ioopm_eq_function eq_fun)
 {
   store_t *new_store = calloc(1, sizeof(store_t));
@@ -20,33 +30,43 @@ bool location_eq(elem_t a, elem_t b){
   return !strcmp((*(location_t*)a.void_ptr).shelf, (*(location_t*)b.void_ptr).shelf);
 }
 
-merch_t *merch_create(char *name, char *description, int price, ioopm_list_t *locations)
+merch_t *merch_create(char *name, char *description, int price, ioopm_list_t *stock)
 {
-  merch_t *new_merch = calloc(1, sizeof(merch_t));
-  new_merch->name = name;
-  new_merch->description = description;
-  new_merch->price = price;
-  new_merch->locations = ioopm_linked_list_create(location_eq);
+    merch_t *new_merch = calloc(1, sizeof(merch_t));
+    new_merch->name = strdup(name);
+    free(name); 
+    new_merch->description = strdup(description);
+    free(description); 
+    new_merch->price = price;
+    new_merch->stock = stock;
 
-  return new_merch;
+    return new_merch;
 }
 
 //Gets index of element in names array if it exists else gets index where it would be
 static int names_index_of(store_t *store, char *name) {
+  if (store->merch_count == 0) return 0;
+
   char **start = store->merch_names;
   char **end = store->merch_names + store->merch_count-1;
-  char **center = store->merch_names + store->merch_count/2;
-  
-  while(strcmp(*center, name)){
-    if(strcmp(name, *start) < 0) return 0;
-    if(strcmp(name, *end) > 0) return end - store->merch_names + 1;
+  char **center;
 
-    bool is_larger = strcmp(name, *center) > 0;
-    start = is_larger ? center + 1 : start;
-    end = is_larger ? end : center - 1;
-    center = start + (end - start)/2;
+  while (start <= end) {
+    center = start + (end - start) / 2;
+
+    if (strcmp(name, *start) < 0) return start - store->merch_names;
+    if (strcmp(name, *end) > 0) return end - store->merch_names + 1;
+
+    int comparison = strcmp(name, *center);
+    if (comparison == 0) return center - store->merch_names; 
+    if (comparison > 0) {
+      start = center + 1;
+    } else {
+      end = center - 1;
+    }
   }
-  return center - store->merch_names;
+
+  return start - store->merch_names;
 }
 
 //inserts in names array at given index, doubles memory allocation of array if overflow
@@ -58,6 +78,7 @@ static void names_insert(store_t *store, int index, char *name){
     for(int i = 0; i < last*2; i++){
       store->merch_names[i] = tmp[i];
     }
+    free(tmp);
   }  
   while(last != index){
     store->merch_names[last] = store->merch_names[last-1];
@@ -67,8 +88,6 @@ static void names_insert(store_t *store, int index, char *name){
 }
 static void names_remove(store_t *store, int index) {
     int last = store->merch_count - 1;
-
-    //    free(store->merch_names[index]);
 
     for (int i = index; i < last; i++) {
         store->merch_names[i] = store->merch_names[i + 1];
@@ -86,15 +105,21 @@ void store_add(store_t *store, merch_t *merch)
 static location_t *location_create(char *shelf, int amount)
 {
     location_t *location = calloc(1, sizeof(location_t)); 
-    location->shelf = shelf; 
+    location->shelf = strdup(shelf);
+    free(shelf);  
     location->quantity = amount; 
+
     return location; 
 }
 
 static bool shelf_exists(merch_t *merch, char *shelf)
 {
     location_t *location = get_location(merch, shelf); 
-    if (get_shelf(location) == shelf)
+    if (location == NULL)
+    {
+        return false; 
+    }
+    else if (!strcmp(get_shelf(location), shelf))
     {
         return true; 
     }
@@ -109,33 +134,35 @@ void location_add(merch_t *merch, char *shelf, int amount)
     if (shelf_exists(merch, shelf))
     {
         location_t *location = get_location(merch, shelf);
-        location->quantity = get_quantity(location) + amount; 
+        location->quantity = get_quantity(location) + amount;
+        free(shelf);  
     }
     else
     {
         location_t *location = location_create(shelf, amount); 
-        ioopm_linked_list_append(merch->locations, void_elem(location)); 
+        ioopm_linked_list_append(merch->stock, void_elem(location)); 
     }
-    return; 
 }
 
-bool merch_exists(store_t *store, char *name)
-{
-  if(store->merch_count == 0) return false;
-  char **start = store->merch_names;
-  char **end = store->merch_names + store->merch_count-1;
-  char **center = store->merch_names + store->merch_count/2;
-  
-  while(strcmp(*center, name)){
-    if(strcmp(name, *start) < 0 || strcmp(name, *end) > 0) return false;
+bool merch_exists(store_t *store, char *name) {
+    char **start = store->merch_names;
+    char **end = store->merch_names + store->merch_count-1;
+    char **center;
 
-    bool is_larger = strcmp(name, *center) > 0;
-    start = is_larger ? center + 1 : start;
-    end = is_larger ? end : center - 1;
-    center = start + (end - start)/2;
-  }
-  return true;
+    while (start <= end) {
+        center = start + (end - start) / 2;
+
+        int comparison = strcmp(name, *center);
+        if (comparison == 0) return true; 
+        if (comparison > 0) {
+            start = center + 1;
+        } else {
+            end = center - 1;
+        }
+    }
+    return false; 
 }
+
 
 bool store_is_empty(store_t *store)
 {
@@ -147,6 +174,10 @@ size_t store_size(store_t *store)
   return store->merch_count;
 }
 
+size_t stock_size(merch_t *merch)
+{
+    return ioopm_linked_list_size(merch->stock); 
+}
 
 merch_t *get_merch(store_t *store, char *name)
 {
@@ -166,7 +197,7 @@ merch_t *get_merch(store_t *store, char *name)
 }
 size_t locations_size(merch_t *merch)
 {
-    return ioopm_linked_list_size(merch->locations); 
+    return ioopm_linked_list_size(merch->stock); 
 }
 
 char *get_name(merch_t *merch)
@@ -210,22 +241,22 @@ int get_quantity(location_t *location)
 
 location_t *get_location(merch_t *merch, char *shelf)
 {
-    if (merch->locations == NULL)
+    if (merch->stock == NULL)
     {
         return NULL; 
     }
     else
     {
-        ioopm_list_t *locations = merch->locations; 
-        size_t loc_size = locations_size(merch); 
+        ioopm_list_t *stock = merch->stock; 
+        size_t loc_size = stock_size(merch); 
 
-        ioopm_list_iterator_t *iter = ioopm_list_iterator(locations);
+        ioopm_list_iterator_t *iter = ioopm_list_iterator(stock);
 
         location_t *location = ioopm_iterator_current(iter).void_ptr;
         
         for (int i = 0; i < loc_size; i++)
         {
-            if (get_shelf(location) == shelf)
+            if (!strcmp(get_shelf(location), shelf))
             {
                 ioopm_iterator_destroy(iter); 
                 return location; 
@@ -237,30 +268,36 @@ location_t *get_location(merch_t *merch, char *shelf)
     return (location_t *) NULL; 
 }
 
-static ioopm_list_t *get_locations(merch_t *merch)
+static ioopm_list_t *get_stock(merch_t *merch)
 {
-    return merch->locations;  
+    return merch->stock;  
 }
-
 
 void set_name(store_t *store, merch_t *old_merch, char *new_name)
 {
     int price = get_price(old_merch); 
     char *description = get_description(old_merch); 
-    ioopm_list_t *locations = get_locations(old_merch); 
+    ioopm_list_t *stock = get_stock(old_merch); 
 
-    merch_t *new_merch = merch_create(new_name, description, price, locations); 
+    merch_t *new_merch = merch_create(new_name, description, price, stock); 
 
     store_add(store, new_merch); 
 
-    char *old_name = get_name(old_merch); 
-    free(old_merch);
-    ioopm_hash_table_remove(store->merch_details, str_elem(old_name)); 
+    char *old_name = get_name(old_merch);
+    
+    ioopm_hash_table_remove(store->merch_details, str_elem(old_name));
+    names_remove(store, names_index_of(store, old_name));
+    store->merch_count--;
+    free(old_name);
+    free(old_merch);   
 }
 
 void set_description(merch_t *merch, char *new_description)
 {
-    merch->description = new_description;
+    char *old_description = get_description(merch); 
+    merch->description = strdup(new_description);
+    free(old_description); 
+    free(new_description); 
 }
 
 void set_price(merch_t *merch, int new_price)
@@ -271,53 +308,84 @@ void set_price(merch_t *merch, int new_price)
 void print_merch(merch_t *merch)
 {
     printf("\nName: %s", get_name(merch)); 
-    printf("\nDescription: %s", get_description(merch)); 
-    printf("\nPrice: %d", get_price(merch)); 
-    print_stock(merch);
+    //printf("\nDescription: %s", get_description(merch)); 
+    //printf("\nPrice: %d", get_price(merch)); 
+    //print_stock(merch);
 }
 
 void print_stock(merch_t *merch)
 {
-    ioopm_list_t *locations = get_locations(merch); 
-    size_t loc_size = locations_size(merch); 
+    ioopm_list_t *stock = get_stock(merch); 
+    size_t loc_size = stock_size(merch); 
 
     for (int i = 0; i < loc_size; i++)
     {
-        location_t *location = ioopm_linked_list_get(locations, i).void_ptr; 
+        location_t *location = ioopm_linked_list_get(stock, i).void_ptr; 
         printf("\nShelf: %s, Quantity: %d ", location->shelf, location->quantity); 
     }
+    puts("\n"); 
+
+//TODO: print alphabeticly
+//insert if strcmp < 0 
+/*
+    size_t size_store = store_s(ht); 
+
+    ioopm_list_iterator_t *iter = ioopm_list_iterator(list);
+    elem_t value = ioopm_iterator_current(iter);
+
+    char *keys[loc_size]; 
+    for (int i = 0; i < loc_size; i++)
+    {
+        keys[i] = value.string;
+        value = ioopm_iterator_next(iter);
+    }
+       
+    sort_keys(keys, ht_size);
+    */
 }
 
-static void locations_destroy(elem_t *value, void *arg)
+        
+
+static void stock_destroy(elem_t *value, void *arg)
 {
+    char *shelf = get_shelf(value->void_ptr); 
+    free(shelf); 
     free(value->void_ptr);
 }
 
 void store_remove(store_t *store, char *name)
 {
     merch_t *merch = get_merch(store, name); 
-    ioopm_list_t *locations = get_locations(merch); 
+    ioopm_list_t *stock = get_stock(merch); 
 
-    ioopm_linked_list_apply_to_all(locations, locations_destroy, NULL); 
-    ioopm_linked_list_destroy(locations);
+    ioopm_linked_list_apply_to_all(stock, stock_destroy, NULL); 
+    ioopm_linked_list_destroy(stock);
+    
     names_remove(store, names_index_of(store, name));
-
-    free(merch); 
     ioopm_hash_table_remove(store->merch_details, str_elem(name));
+    
+    free(merch->name); 
+    free(merch->description); 
+    free(merch);
     store->merch_count--;
 }
 
 static void merch_destroy(elem_t name, elem_t *value, void *arg)
 {
-    ioopm_list_t *locations = get_locations(value->void_ptr); 
-    ioopm_linked_list_apply_to_all(locations, locations_destroy, NULL); 
-    ioopm_linked_list_destroy(locations); 
+    ioopm_list_t *stock = get_stock(value->void_ptr); 
+    ioopm_linked_list_apply_to_all(stock, stock_destroy, NULL); 
+    ioopm_linked_list_destroy(stock); 
+    char *name_in_merch = get_name(value->void_ptr); 
+    char *description = get_description(value->void_ptr); 
+    free(name_in_merch); 
+    free(description); 
     free(value->void_ptr); 
 }
 
 void store_destroy(store_t *store)
 {
     ioopm_hash_table_apply_to_all(store->merch_details, merch_destroy, NULL);
-    //TODO: destroy store->merch_names
-    ioopm_hash_table_destroy(store->merch_details); 
+    free(store->merch_names);
+    ioopm_hash_table_destroy(store->merch_details);
+    free(store);
 }

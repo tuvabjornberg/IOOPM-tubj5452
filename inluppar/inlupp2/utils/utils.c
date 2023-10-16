@@ -51,7 +51,6 @@ int read_string(char *buf, int buf_size)
   return strlen(buf);
 }
 
-//TODO: why malloc? could this be done static?
 answer_t ask_question(char *question, check_func check, convert_func convert)
 {
   char *answer = malloc(BUF_SIZE);

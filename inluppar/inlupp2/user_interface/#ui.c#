@@ -268,7 +268,7 @@ void event_loop(store_t *store, int store_size)
                 break; 
             case 'L': 
                 list_merch(store); 
-                break; 
+                 break; 
             case 'D':
                 remove_merch(store); 
                 break;
@@ -310,12 +310,11 @@ void event_loop(store_t *store, int store_size)
                 free(quit_confirmation); 
                 break; 
             default:
-                printf("Try again with a valid input\n");
+                menu_choice = ask_question_string("Try again with a valid input\n");
         }
         free(menu_choice); 
     } while (running); 
 }
-
 
 int main() { 
     store_t *store = store_create(string_sum_hash, string_eq); 
