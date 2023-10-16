@@ -28,7 +28,18 @@ typedef struct {
 /// @return 
 carts_t *cart_storage_create(ioopm_hash_function hash_fun, ioopm_eq_function eq_fun); 
 
- 
+/// @brief 
+/// @param storage_carts 
+/// @param id 
+/// @return 
+ioopm_hash_table_t *get_items_in_cart(carts_t *storage_carts, int id); 
+
+/// @brief 
+/// @param cart_items 
+/// @param id 
+/// @return 
+bool has_merch_in_cart(ioopm_hash_table_t *cart_items, char *name);
+
 
 /// @brief 
 /// @param storage_carts 
@@ -59,8 +70,7 @@ void cart_add(carts_t *storage_carts, int id, char *merch_name, int amount);
  
 
 
-void cart_remove(carts_t *storage_carts, int id, int amount);
-
+void cart_remove(ioopm_hash_table_t *cart_items, char *merch_name, int amount);
  
 
 

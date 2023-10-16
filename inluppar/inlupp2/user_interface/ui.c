@@ -237,6 +237,7 @@ void cart_create_ui(carts_t *storage_carts)
     printf("\nYou have created a cart with the ID: %d", storage_carts->total_carts); 
 }   
 
+//TODO: better place for -1 for input_id???
 static int cart_exists_check(carts_t *storage_carts)
 {
     int input_id = ask_question_int("\nWrite the ID of the cart: ") - 1; 
@@ -247,7 +248,7 @@ static int cart_exists_check(carts_t *storage_carts)
 
         if (toupper(*new_alt) == 'Y')
         {
-            input_id = ask_question_int("\nWrite the ID of the cart: "); 
+            input_id = ask_question_int("\nWrite the ID of the cart: ") - 1; 
         }
         else
         {
@@ -274,12 +275,13 @@ void remove_cart(store_t *store, carts_t *storage_carts)
 
     if (!(toupper(*conf_remove) == 'Y'))
     {
-        free(conf_remove); 
+        free(conf_remove);  
         return; 
     }
     free(conf_remove);
 
     cart_destroy(storage_carts, input_id); 
+    printf("You have removed this cart: %d", input_id + 1);
 }
 
 static int quantity_check(store_t *store, char *merch_name, int current_amount)
@@ -328,15 +330,65 @@ void add_to_cart(store_t *store, carts_t *storage_carts)
     if (input_name == NULL) return; 
 
     int merch_cart_amount = item_in_cart_amount(storage_carts, input_id, input_name); 
-    int quantity = quantity_check(store, input_name, merch_cart_amount); 
-    if (quantity == -1) return; 
+    int input_quantity = quantity_check(store, input_name, merch_cart_amount); 
+    if (input_quantity == -1) return; 
 
-    cart_add(storage_carts, input_id, input_name, quantity); 
+    cart_add(storage_carts, input_id, input_name, input_quantity); 
+    printf("You have added %d of %s to this cart: %d", input_quantity, input_name, input_id + 1); 
+    free(input_name); 
 }
 
-void remove_from_cart(store_t *store)
+void remove_from_cart(store_t *store, carts_t *storage_carts)
 {
+    if (carts_is_empty(storage_carts)) 
+    {
+        puts("\nThere are no carts, please add one first"); 
+        return; 
+    }
 
+    int input_id = cart_exists_check(storage_carts);
+    if (input_id == -1) return; 
+
+    ioopm_hash_table_t *cart_items = get_items_in_cart(storage_carts, input_id); 
+    char *input_name = ask_question_string("\nWrite the merch to remove items from: ");     
+    while (!has_merch_in_cart(cart_items, input_name))
+    {
+       char *new_alt = ask_question_string("\nYour cart doesn't have that merch, do you want another try (y/n)? "); 
+
+        if (toupper(*new_alt) == 'Y')
+        {
+            input_name = ask_question_string("\nWrite the merch to remove items from: "); 
+        }
+        else
+        {
+            free(new_alt);
+            free(input_name); 
+            return; 
+        }
+        free(new_alt);  
+    }
+
+    int input_quantity = ask_question_int("\nEnter the quantity of items to remove: "); 
+    int merch_cart_amount = item_in_cart_amount(storage_carts, input_id, input_name); 
+    while (input_quantity > merch_cart_amount || input_quantity < 0)
+    {
+       char *new_alt = ask_question_string("\nYour cart doesn't have that quantity, do you want another try (y/n)? "); 
+
+        if (toupper(*new_alt) == 'Y')
+        {
+            input_quantity = ask_question_int("\nWrite the amount to remove from cart: "); 
+        }
+        else
+        {
+            free(new_alt);
+            free(input_name); 
+            return;
+        }
+        free(new_alt);  
+    }
+
+    cart_remove(cart_items, input_name, input_quantity); 
+    free(input_name); 
 }
 
 void calculate_cart_cost(store_t *store)
@@ -397,7 +449,7 @@ void event_loop(store_t *store, carts_t *storage_carts)
                 add_to_cart(store, storage_carts); 
                 break; 
             case '-': 
-                remove_from_cart(store); 
+                remove_from_cart(store, storage_carts); 
                 break; 
             case '=': 
                 calculate_cart_cost(store); 
@@ -417,7 +469,7 @@ void event_loop(store_t *store, carts_t *storage_carts)
                 free(quit_confirmation); 
                 break; 
             default:
-                menu_choice = ask_question_string("Try again with a valid input\n");
+                puts("\nTry again with a valid input"); 
         }
         free(menu_choice); 
     } while (running); 

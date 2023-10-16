@@ -2,6 +2,7 @@
 #include "../data_structures/hash_table.h"
 #include "../data_structures/linked_list.h"
 #include <string.h>
+#include <stdbool.h>
 
 carts_t *cart_storage_create(ioopm_hash_function hash_fun, ioopm_eq_function eq_fun)
 {
@@ -18,8 +19,19 @@ ioopm_hash_table_t *get_items_in_cart(carts_t *storage_carts, int id)
     return cart_items; 
 }
 
+bool has_merch_in_cart(ioopm_hash_table_t *cart_items, char *name)
+{
+    return ioopm_hash_table_has_key(cart_items, str_elem(name)); 
+}
+
+static void free_cart_item(elem_t key, elem_t *value, void *arg)
+{
+    free(key.string);
+}
+
 static void items_in_cart_destroy(elem_t key, elem_t *value, void *arg)
 {
+    ioopm_hash_table_apply_to_all((ioopm_hash_table_t *) value->void_ptr, free_cart_item, NULL);
     ioopm_hash_table_destroy((ioopm_hash_table_t *) value->void_ptr); 
 }
 
@@ -37,10 +49,13 @@ void cart_create(carts_t *storage_carts, ioopm_hash_function hash_fun, ioopm_eq_
     ioopm_hash_table_insert(storage_carts->carts, int_elem(id), void_elem(new_cart)); 
 }
 
+
 void cart_destroy(carts_t *storage_carts, int id)
 {
     ioopm_hash_table_t *cart_items = get_items_in_cart(storage_carts, id); 
     
+    ioopm_hash_table_apply_to_all(cart_items, free_cart_item, NULL);
+
     ioopm_hash_table_destroy(cart_items); 
     ioopm_hash_table_remove(storage_carts->carts, int_elem(id)); 
 }
@@ -69,39 +84,42 @@ int item_in_cart_amount(carts_t *storage_carts, int id, char *merch_name)
     return current_amount; 
 }
 
-//TODO: mem-leak because of strdup
-void cart_add(carts_t *storage_carts, int id, char *merch_name, int amount)
+//TODO: förmodligen implementerad fel mot beskrivningen
+void cart_add(carts_t *storage_carts, int id, char *merch_name, int quantity)
 {
     ioopm_hash_table_t *cart_items = get_items_in_cart(storage_carts, id); 
     option_t *item_in_cart = ioopm_hash_table_lookup(cart_items, str_elem(merch_name)); 
 
     if (item_in_cart->success)
     {
-        int existing_amount = item_in_cart->value.integer; 
-        item_in_cart->value.integer = existing_amount + amount; 
+        int existing_quantity = item_in_cart->value.integer; 
+        item_in_cart->value.integer = existing_quantity + quantity; 
     }
     else
     {  
-        ioopm_hash_table_insert(cart_items, str_elem(strdup(merch_name)), int_elem(amount)); 
+        //TODO: om redigera namn i store kommer namnet i carten inte att updateras
+        ioopm_hash_table_insert(cart_items, str_elem(strdup(merch_name)), int_elem(quantity)); 
     }
     free(item_in_cart); 
-    free(merch_name); 
 }
 
 
-void cart_remove(carts_t *carts, int id, int amount)
+void cart_remove(ioopm_hash_table_t *cart_items, char *merch_name, int quantity)
+{
+    option_t *item_in_cart = ioopm_hash_table_lookup(cart_items, str_elem(merch_name)); 
+
+    ioopm_hash_table_insert(cart_items, str_elem(merch_name), int_elem(item_in_cart->value.integer - quantity)); 
+    free(item_in_cart); 
+}
+
+
+int cost_calculate(carts_t *storage_carts, int id)
 {
 
 }
 
 
-int cost_calculate(carts_t *carts, int id)
-{
-
-}
-
-
-void cart_checkout(carts_t *carts, int id)
+void cart_checkout(carts_t *storage_carts, int id)
 {
 
 }
