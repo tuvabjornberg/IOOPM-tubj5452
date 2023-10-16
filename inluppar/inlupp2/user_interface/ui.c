@@ -162,8 +162,7 @@ void edit_merch(store_t *store)
 
     if (!(toupper(*conf_edit) == 'Y'))
     {
-        free(conf_edit);
-	free(new_description);
+        free(conf_edit);	
 	free(new_name);
         return; 
     }
