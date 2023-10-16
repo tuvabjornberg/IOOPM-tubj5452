@@ -101,13 +101,15 @@ void list_merch(store_t *store)
       puts(store->merch_names[i]);
     }
     if(store->merch_count > PRINT_AT_A_TIME){
-        char descision = ask_question_string("Press any key to see more items, N/n to return")[0];
-	while(toupper(descision) != 'N' && i < store->merch_count){
-	      for(; i < store->merch_count && i < PRINT_AT_A_TIME; i++){
+        char *descision = ask_question_string("Press any key to see more items, N/n to return");
+	while(toupper(descision[0]) != 'N' && i < store->merch_count){
+	      for(; i < store->merch_count && i < store->merch_count + PRINT_AT_A_TIME; i++){
 		puts(store->merch_names[i]);
 	      }
-	      descision = ask_question_string("Press any key to see more items, N/n to return")[0];
+	      free(descision);
+	      descision = ask_question_string("Press any key to see more items, N/n to return");
 	}
+	free(descision);
     }    
 }
 
@@ -160,7 +162,9 @@ void edit_merch(store_t *store)
 
     if (!(toupper(*conf_edit) == 'Y'))
     {
-        free(conf_edit); 
+        free(conf_edit);
+	free(new_description);
+	free(new_name);
         return; 
     }
     free(conf_edit); 

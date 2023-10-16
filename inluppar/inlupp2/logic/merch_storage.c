@@ -295,7 +295,7 @@ void set_name(store_t *store, merch_t *old_merch, char *new_name)
     names_remove(store, names_index_of(store, old_name));
     store->merch_count--;
     free(old_name);
-    free(old_merch);   
+    free(old_merch);
 }
 
 void set_description(merch_t *merch, char *new_description)
