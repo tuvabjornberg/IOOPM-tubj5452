@@ -17,9 +17,10 @@ void sort_keys(char *keys[], size_t no_keys)
 store_t *store_create(ioopm_hash_function hash_fun, ioopm_eq_function eq_fun)
 {
   store_t *new_store = calloc(1, sizeof(store_t));
-  new_store->merch_names = calloc(10, sizeof(char*));
+  new_store->merch_names = calloc(INITIAL_CAPACAITY, sizeof(char*));
   new_store->merch_details = ioopm_hash_table_create(hash_fun, eq_fun);
   new_store->merch_count = 0;
+  new_store->capacity = INITIAL_CAPACAITY;
   return new_store;
 }
 
@@ -66,24 +67,24 @@ static int names_index_of(store_t *store, char *name) {
 
   return start - store->merch_names;
 }
-
 //inserts in names array at given index, doubles memory allocation of array if overflow
 static void names_insert(store_t *store, int index, char *name){
   int last = store->merch_count;
-  if(last*sizeof(char*) >= sizeof(store->merch_names)){
+  if(last >= store->capacity){
     char **tmp = store->merch_names;
-    store->merch_names = calloc(last*2, sizeof(char*));
-    for(int i = 0; i < last*2; i++){
+    store->merch_names = calloc(last * 2, sizeof(char*));
+    for(int i = 0; i < last; i++){
       store->merch_names[i] = tmp[i];
     }
     free(tmp);
-  }  
-  while(last != index){
-    store->merch_names[last] = store->merch_names[last-1];
-    last--;
+    store->capacity = last * 2;
+  }
+  for (int i = last; i > index; i--) {
+    store->merch_names[i] = store->merch_names[i - 1];
   }
   store->merch_names[index] = name;
 }
+
 static void names_remove(store_t *store, int index) {
     int last = store->merch_count - 1;
 
@@ -294,7 +295,7 @@ void set_name(store_t *store, merch_t *old_merch, char *new_name)
     names_remove(store, names_index_of(store, old_name));
     store->merch_count--;
     free(old_name);
-    free(old_merch);   
+    free(old_merch);
 }
 
 void set_description(merch_t *merch, char *new_description)
