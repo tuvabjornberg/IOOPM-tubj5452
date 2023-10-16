@@ -67,24 +67,24 @@ static int names_index_of(store_t *store, char *name) {
 
   return start - store->merch_names;
 }
-
 //inserts in names array at given index, doubles memory allocation of array if overflow
 static void names_insert(store_t *store, int index, char *name){
   int last = store->merch_count;
   if(last >= store->capacity){
     char **tmp = store->merch_names;
-    store->merch_names = calloc(last*2, sizeof(char*));
-    for(int i = 0; i < last*2; i++){
+    store->merch_names = calloc(last * 2, sizeof(char*));
+    for(int i = 0; i < last; i++){
       store->merch_names[i] = tmp[i];
     }
     free(tmp);
-  }  
-  while(last != index){
-    store->merch_names[last] = store->merch_names[last-1];
-    last--;
+    store->capacity = last * 2;
+  }
+  for (int i = last; i > index; i--) {
+    store->merch_names[i] = store->merch_names[i - 1];
   }
   store->merch_names[index] = name;
 }
+
 static void names_remove(store_t *store, int index) {
     int last = store->merch_count - 1;
 
