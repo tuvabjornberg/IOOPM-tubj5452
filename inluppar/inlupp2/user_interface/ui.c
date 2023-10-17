@@ -135,7 +135,7 @@ void remove_merch(store_t *store, carts_t *storage_carts)
     free(input_name); 
 }
 
-void edit_merch(store_t *store)
+void edit_merch(store_t *store, carts_t *storage_carts)
 {
     if (store_is_empty(store)) 
     {
@@ -147,28 +147,31 @@ void edit_merch(store_t *store)
     if (input_name == NULL) return; 
     
     merch_t *merch = get_merch(store, input_name); 
-    free(input_name); 
 
     puts("\nNew name: ");
     char *new_name = merch_exist_check(store, false);
 
     char *new_description = ask_question_string("\nWrite the new decription: "); 
-    set_description(merch, new_description); 
     
     int new_price = ask_question_int("\nWrite the new price: "); 
-    set_price(merch, new_price); 
 
     char *conf_edit = ask_question_string("\nAre you sure you want to edit this merch? (y/n)"); 
 
     if (!(toupper(*conf_edit) == 'Y'))
-    {
+    { 
         free(conf_edit);	
-	free(new_name);
+	    free(new_name);
+        free(new_description); 
         return; 
     }
     free(conf_edit); 
 
-    set_name(store, merch, new_name); 
+    set_description(merch, new_description); 
+    set_price(merch, new_price); 
+    set_name(store, merch, new_name, storage_carts->carts); 
+    printf("\nYou have edited: %s", input_name); 
+    
+    free(input_name); 
 }
 
 void show_stock(store_t *store)
@@ -374,7 +377,7 @@ void remove_from_cart(store_t *store, carts_t *storage_carts)
 
     ioopm_hash_table_t *cart_items = get_items_in_cart(storage_carts, input_id); 
     char *input_name = ask_question_string("\nWrite the merch to remove items from: ");     
-    while (!has_merch_in_cart(cart_items, input_name))
+    while (!has_merch_in_cart(cart_items, input_name)) //TODO: Does not seem to work correctly 
     {
        char *new_alt = ask_question_string("\nYour cart doesn't have that merch, do you want another try (y/n)? "); 
 
@@ -465,7 +468,7 @@ void event_loop(store_t *store, carts_t *storage_carts)
                 remove_merch(store, storage_carts); 
                 break;
             case 'E':
-                edit_merch(store); 
+                edit_merch(store, storage_carts); 
                 break;
             case 'S': 
                 show_stock(store); 

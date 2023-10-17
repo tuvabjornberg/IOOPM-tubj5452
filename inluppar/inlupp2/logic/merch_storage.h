@@ -34,6 +34,26 @@ typedef struct {
   int capacity;
 } store_t;
 
+typedef void(*ioopm_cart_apply_function)(elem_t key, elem_t *value, void *arg1, void *arg2);
+
+typedef struct hash_table ioopm_hash_table_t;
+typedef struct entry entry_t;
+
+struct entry
+{
+  elem_t key;      
+  elem_t value;   
+  entry_t *next; 
+};
+
+struct hash_table
+{
+  entry_t buckets[No_Buckets];
+  ioopm_hash_function hash_fun;
+  ioopm_eq_function eq_fun; 
+};
+
+
 /// @brief 
 /// @param
 /// @return
@@ -113,7 +133,7 @@ location_t *get_location(merch_t *merch, char *shelf); //TODO: CURRENTLY ONLY US
 /// @brief may need to insert again to get a valid hashing TODO: edit to better breif
 /// @param
 /// @return
-void set_name(store_t *store, merch_t *merch, char *new_name); 
+void set_name(store_t *store, merch_t *old_merch, char *new_name, ioopm_hash_table_t *carts); 
 
 /// @brief 
 /// @param

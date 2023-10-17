@@ -279,7 +279,29 @@ static ioopm_list_t *get_stock(merch_t *merch)
     return merch->stock;  
 }
 
-void set_name(store_t *store, merch_t *old_merch, char *new_name)
+static void ioopm_cart_apply_to_all(ioopm_hash_table_t *ht, ioopm_cart_apply_function apply_fun, void *arg1, void *arg2)
+{
+  for (int i = 0; i < No_Buckets; i++) 
+  {
+    entry_t *current = (&ht->buckets[i])->next;
+  
+  while (current != NULL) 
+  {
+    apply_fun(current->key, &current->value, arg1, arg2); // address of value to apply function
+    current = current->next;
+    }
+  }
+}
+
+static void search_carts(elem_t key, elem_t *value, void *old_name, void *new_name)
+{
+    option_t *lookup_result = ioopm_hash_table_lookup((ioopm_hash_table_t *) value->void_ptr, str_elem(old_name)); 
+    ioopm_hash_table_insert((ioopm_hash_table_t *) value->void_ptr, str_elem(new_name), lookup_result->value); 
+    ioopm_hash_table_remove((ioopm_hash_table_t *) value->void_ptr, str_elem(old_name)); 
+    free(lookup_result); 
+}
+
+void set_name(store_t *store, merch_t *old_merch, char *new_name, ioopm_hash_table_t *carts)
 {
     int price = get_price(old_merch); 
     char *description = get_description(old_merch); 
@@ -291,9 +313,13 @@ void set_name(store_t *store, merch_t *old_merch, char *new_name)
 
     char *old_name = get_name(old_merch);
     
+    ioopm_cart_apply_to_all(carts, search_carts, old_name, get_name(new_merch));
+
     ioopm_hash_table_remove(store->merch_details, str_elem(old_name));
     names_remove(store, names_index_of(store, old_name));
     store->merch_count--;
+
+
     free(old_name);
     free(old_merch);
 }
