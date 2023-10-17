@@ -1,5 +1,6 @@
 C_COMPILER     = gcc
-C_OPTIONS      = -Wall -pedantic -g
+C_OPTIONS      = -Wall -pedantic -g 
+C_SANITIZE	   = -fsanitize=address
 C_LINK_OPTIONS = -lm 
 CUNIT_LINK     = -lcunit
 C_PROF		   = -pg
@@ -11,6 +12,12 @@ VPATH		   = user_interface : data_structures : utils : tests : logic
 
 ui.out: ui.o hash_table.o linked_list.o utils.o merch_storage.o shop_cart.o 
 	$(C_COMPILER) $(C_LINK_OPTIONS) $(C_OPTIONS) $^ -o $@ 
+
+ui_san.out: ui.c hash_table.c linked_list.c utils.c merch_storage.c shop_cart.c
+	$(C_COMPILER) $(C_LINK_OPTIONS) $(C_OPTIONS) $(C_SANITIZE) $^ -o $@ 
+
+ui_sanitize: ui_san.out
+	./ui_san.out < test.txt
 
 #ui_prof.out: hash_table.c linked_list.c  	PROFILING
 #	$(C_COMPILER) $(C_OPTIONS) $^ -o $@ $(C_PROF)
@@ -49,7 +56,7 @@ cov: merch_test_coverage.out
 #
 
 clean:
-	rm -f *.o *.out *.profiling *.gcno *gcda *.gcov ui merch_storage_tests shop_cart_tests  
+	rm -f *.o *.out *.profiling *.gcno *gcda *.gcov ui merch_storage_tests shop_cart_tests ui_sanitize
 
 
 mem_tests: merch_storage_tests.out 
@@ -65,4 +72,4 @@ mem_ui_arg: ui.out
 	valgrind --leak-check=full ./ui.out < test.txt
 
 
-.PHONY: ui test mem_tests mem_ui mem_ui_arg cov clean 
+.PHONY: ui test mem_tests mem_ui mem_ui_arg cov clean ui_sanitize

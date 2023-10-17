@@ -111,6 +111,8 @@ Watermelon
 Watermelon
 3
 N
+=
+2
 E
 Watermelon
 Kiwi
@@ -120,6 +122,8 @@ Y
 +
 2
 Kiwi
+2
+=
 2
 -
 2
@@ -132,5 +136,9 @@ Y
 2
 Kiwi
 N
+-
+2
+Kiwi
+1
 Q
 Y
