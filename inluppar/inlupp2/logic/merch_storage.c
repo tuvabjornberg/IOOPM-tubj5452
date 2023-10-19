@@ -362,10 +362,17 @@ static void stock_destroy(elem_t *value, void *arg)
     free(value->void_ptr);
 }
 
+static void cart_iterator(elem_t id, elem_t *cart_items, void *name)
+{
+    ioopm_hash_table_remove((ioopm_hash_table_t *) cart_items->void_ptr, str_elem(name)); 
+}
+
 void store_remove(store_t *store, ioopm_hash_table_t *carts, char *name)
 {
     merch_t *merch = get_merch(store, name); 
     ioopm_list_t *stock = get_stock(merch); 
+
+    ioopm_hash_table_apply_to_all(carts, cart_iterator, name);
 
     ioopm_linked_list_apply_to_all(stock, stock_destroy, NULL); 
     ioopm_linked_list_destroy(stock);
