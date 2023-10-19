@@ -25,7 +25,7 @@ ui_sanitize: ui_san.out
 merch_storage_tests.out: merch_storage_tests.o merch_storage.o hash_table.o linked_list.o 	
 	$(C_COMPILER) $(C_LINK_OPTIONS) $(C_OPTIONS) $^ -o $@ $(CUNIT_LINK)
 
-shop_cart_tests.out: shop_cart_tests.o shop_cart.o 
+shop_cart_tests.out: shop_cart_tests.o shop_cart.o hash_table.o linked_list.o merch_storage.o
 	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) 
 
 ui_tests.out: ui_tests.o ui.o 
@@ -39,15 +39,14 @@ tests: merch_storage_tests.out shop_cart_tests.out ui_tests.out
 
 merch_test_coverage.out: merch_storage_tests.o merch_storage.c hash_table.o linked_list.o	
 	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) $(C_GCOV)
-#shop_test_coverage.out: shop_cart_tests.o shop_cart.c 
-#	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) $(C_GCOV)
+shop_test_coverage.out: shop_cart_tests.o shop_cart.c hash_table.o linked_list.. merch_storage.o
+	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) $(C_GCOV)
 
-cov: merch_test_coverage.out 
-#shop_test_coverage.out
+cov: merch_test_coverage.out shop_test_coverage.out
 	./merch_test_coverage.out	
 	gcov -b -c merch_test_coverage.out-merch_storage.c
-#	./shop_test_coverage.out
-#	gcov -b -c shop_test_coverage.out-shop_cart.c
+	./shop_test_coverage.out
+	gcov -b -c shop_test_coverage.out-shop_cart.c
 
 
 #prof: ui.out
@@ -59,10 +58,10 @@ clean:
 	rm -f *.o *.out *.profiling *.gcno *gcda *.gcov ui merch_storage_tests shop_cart_tests ui_sanitize
 
 
-mem_tests: merch_storage_tests.out 
-#shop_cart_tests.out ui_tests.out
+mem_tests: merch_storage_tests.out shop_cart_tests.out 
+#ui_tests.out
 	valgrind --leak-check=full ./merch_storage_tests.out
-#valgrind --leak-check=full ./shop_cart_tests.out
+	valgrind --leak-check=full ./shop_cart_tests.out
 #valgrind --leak-ckeck=full ./ui_tests.out
 
 mem_ui: ui.out

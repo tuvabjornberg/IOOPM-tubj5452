@@ -2,7 +2,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include "../logic/merch_storage.h"
-#include "../utils/utils.h"
 
 int init_suite(void)
 {
@@ -63,6 +62,8 @@ void create_destroy_merch_test()
 void store_add_remove_test()
 {
     store_t *store = store_create(string_sum_hash, string_eq); 
+    ioopm_hash_table_t *carts = NULL; 
+
     char *name = "Apple"; 
     char *description = "Red"; 
     int price = 10; 
@@ -74,7 +75,7 @@ void store_add_remove_test()
     CU_ASSERT_TRUE(merch_exists(store, name)); 
     CU_ASSERT_EQUAL(get_merch(store, name), apple); 
 
-    store_remove(store, get_name(apple)); 
+    store_remove(store, carts, get_name(apple)); 
     CU_ASSERT_FALSE(merch_exists(store, name)); 
     CU_ASSERT_EQUAL(get_merch(store, name), NULL); 
 
@@ -128,6 +129,8 @@ void stock_add_remove_test()
 void merch_exists_test()
 {
     store_t *store = store_create(string_sum_hash, string_eq); 
+    ioopm_hash_table_t *carts = NULL; 
+
     CU_ASSERT_TRUE(store_is_empty(store)); 
 
     char *name = "Apple"; 
@@ -143,7 +146,7 @@ void merch_exists_test()
     CU_ASSERT_TRUE(merch_exists(store, name)); 
     CU_ASSERT_FALSE(merch_exists(store, non_input_name)); 
 
-    store_remove(store, name); 
+    store_remove(store, carts, name); 
     CU_ASSERT_FALSE(merch_exists(store, name)); 
 
     store_destroy(store); 
@@ -152,6 +155,8 @@ void merch_exists_test()
 void store_size_test()
 {
     store_t *store = store_create(string_sum_hash, string_eq); 
+    ioopm_hash_table_t *carts = NULL; 
+
     CU_ASSERT_EQUAL(store_size(store), 0); 
     
     char *name = "Apple"; 
@@ -165,7 +170,7 @@ void store_size_test()
     store_add(store, apple); 
     CU_ASSERT_EQUAL(store_size(store), 1); 
 
-    store_remove(store, get_name(apple)); 
+    store_remove(store, carts, get_name(apple)); 
     CU_ASSERT_EQUAL(store_size(store), 0); 
 
     store_destroy(store);  
@@ -215,6 +220,7 @@ void get_merch_test()
 void set_name_test()
 {
     store_t *store = store_create(string_sum_hash, string_eq);
+    ioopm_hash_table_t *carts = NULL; 
 
     char *name = "Apple"; 
     char *description = "Red"; 
@@ -233,7 +239,7 @@ void set_name_test()
     }
 
     char *new_name = "Pear"; 
-    set_name(store, apple, strdup(new_name)); 
+    set_name(store, apple, strdup(new_name), carts); 
     CU_ASSERT_TRUE(merch_exists(store, new_name)); 
 
     merch_t *updated_merch = get_merch(store, new_name); 

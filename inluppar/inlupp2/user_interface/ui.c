@@ -88,7 +88,6 @@ void add_merch(store_t *store)
     store_add(store, input); 
 }
 
-//TODO: implement when the struct of listed names is complete
 void list_merch(store_t *store)
 {
     if (store_is_empty(store)) 
@@ -190,34 +189,7 @@ void show_stock(store_t *store)
 
     free(input_name); 
 }
-/*
-//TODO: part of 
-static char *shelf_exist_check(store_t *store)
-{
-    char *input_shelf = ask_question_shelf("\nEnter a shelf to add stock to: ");
 
-    while (shelf_exists(store, shelf))
-    {
-        char *new_alt = ask_question_string("\nThe shelf already exists, do you want to write another one (y/n)? ");
-
-        if (toupper(*new_alt) == 'Y')
-        {
-            free(input_shelf);
-            input_shelf = ask_question_string("\nWrite the name of the shelf: ");
-        }
-        else
-        {
-            free(new_alt);
-            free(input_shelf);
-            return NULL;
-        }
-
-        free(new_alt);
-    }
-
-    return input_shelf;
-}
-*/
 void replenish_stock(store_t *store)
 {
     if (store_is_empty(store)) 
@@ -377,7 +349,7 @@ void remove_from_cart(store_t *store, carts_t *storage_carts)
 
     ioopm_hash_table_t *cart_items = get_items_in_cart(storage_carts, input_id); 
     char *input_name = ask_question_string("\nWrite the merch to remove items from: ");     
-    while (!has_merch_in_cart(cart_items, input_name)) //TODO: Does not seem to work correctly 
+    while (!has_merch_in_cart(cart_items, input_name)) 
     {
        char *new_alt = ask_question_string("\nYour cart doesn't have that merch, do you want another try (y/n)? "); 
 

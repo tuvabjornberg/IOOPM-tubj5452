@@ -4,16 +4,6 @@
 #include <string.h>
 #include <stdio.h>
 
-static int cmp_stringp(const void *p1, const void *p2)
-{
-    return strcmp(*(char *const *)p1, *(char *const *)p2);
-}
-
-void sort_keys(char *keys[], size_t no_keys)
-{
-    qsort(keys, no_keys, sizeof(char *), cmp_stringp);
-}
-
 store_t *store_create(ioopm_hash_function hash_fun, ioopm_eq_function eq_fun)
 {
   store_t *new_store = calloc(1, sizeof(store_t));
@@ -313,7 +303,10 @@ void set_name(store_t *store, merch_t *old_merch, char *new_name, ioopm_hash_tab
 
     char *old_name = get_name(old_merch);
     
-    ioopm_cart_apply_to_all(carts, search_carts, old_name, get_name(new_merch));
+    if (carts != NULL)
+    {
+        ioopm_cart_apply_to_all(carts, search_carts, old_name, get_name(new_merch));
+    }
 
     ioopm_hash_table_remove(store->merch_details, str_elem(old_name));
     names_remove(store, names_index_of(store, old_name));
@@ -372,7 +365,10 @@ void store_remove(store_t *store, ioopm_hash_table_t *carts, char *name)
     merch_t *merch = get_merch(store, name); 
     ioopm_list_t *stock = get_stock(merch); 
 
-    ioopm_hash_table_apply_to_all(carts, cart_iterator, name);
+    if (carts != NULL)
+    {
+        ioopm_hash_table_apply_to_all(carts, cart_iterator, name);
+    }
 
     ioopm_linked_list_apply_to_all(stock, stock_destroy, NULL); 
     ioopm_linked_list_destroy(stock);
