@@ -10,22 +10,26 @@ VPATH		   = user_interface : data_structures : utils : tests : logic
 %.o:  %.c 
 	$(C_COMPILER) $(C_OPTIONS) $^ -c 
 
-ui.out: ui.o hash_table.o linked_list.o utils.o merch_storage.o shop_cart.o 
+ui.out: ui.o hash_table.o linked_list.o utils.o merch_storage.o shop_cart.o hash_fun.o
 	$(C_COMPILER) $(C_LINK_OPTIONS) $(C_OPTIONS) $^ -o $@ 
 
-ui_san.out: ui.c hash_table.c linked_list.c utils.c merch_storage.c shop_cart.c
+ui_san.out: ui.c hash_table.c linked_list.c utils.c merch_storage.c shop_cart.c hash_fun.c
 	$(C_COMPILER) $(C_LINK_OPTIONS) $(C_OPTIONS) $(C_SANITIZE) $^ -o $@ 
 
 ui_sanitize: ui_san.out
 	./ui_san.out < test.txt
 
-#ui_prof.out: hash_table.c linked_list.c  	PROFILING
+ui_prof.out: ui.c hash_table.c linked_list.c utils.c merch_storage.c shop_cart.c hash_fun.c
+	$(C_COMPILER) $(C_OPTIONS) $^ -o $@ $(C_PROF)
+
+#freq_count_prof.out: freq_count.c hash_table.c linked_list.c
 #	$(C_COMPILER) $(C_OPTIONS) $^ -o $@ $(C_PROF)
 
-merch_storage_tests.out: merch_storage_tests.o merch_storage.o hash_table.o linked_list.o 	
+
+merch_storage_tests.out: merch_storage_tests.o merch_storage.o hash_table.o linked_list.o hash_fun.o	
 	$(C_COMPILER) $(C_LINK_OPTIONS) $(C_OPTIONS) $^ -o $@ $(CUNIT_LINK)
 
-shop_cart_tests.out: shop_cart_tests.o shop_cart.o hash_table.o linked_list.o merch_storage.o
+shop_cart_tests.out: shop_cart_tests.o shop_cart.o hash_table.o linked_list.o merch_storage.o hash_fun.o
 	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) 
 
 ui_tests.out: ui_tests.o ui.o 
@@ -37,9 +41,9 @@ tests: merch_storage_tests.out shop_cart_tests.out ui_tests.out
 	./ui_tests.out
 
 
-merch_test_coverage.out: merch_storage_tests.o merch_storage.c hash_table.o linked_list.o	
+merch_test_coverage.out: merch_storage_tests.o merch_storage.c hash_table.o linked_list.o hash_fun.o	
 	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) $(C_GCOV)
-shop_test_coverage.out: shop_cart_tests.o shop_cart.c hash_table.o linked_list.. merch_storage.o
+shop_test_coverage.out: shop_cart_tests.o shop_cart.c hash_table.o linked_list.o merch_storage.o hash_fun.o
 	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) $(C_GCOV)
 
 cov: merch_test_coverage.out shop_test_coverage.out
@@ -48,11 +52,11 @@ cov: merch_test_coverage.out shop_test_coverage.out
 	./shop_test_coverage.out
 	gcov -b -c shop_test_coverage.out-shop_cart.c
 
+#doesn't work
+prof: ui.out
+	./ui.out < test.txt
+	gprof ui.out gmon.out > test.profiling
 
-#prof: ui.out
-#	./ui.out input.txt
-#	gprof ui.out gmon.out > input.profiling
-#
 
 clean:
 	rm -f *.o *.out *.profiling *.gcno *gcda *.gcov ui merch_storage_tests shop_cart_tests ui_sanitize

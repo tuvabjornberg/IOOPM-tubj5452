@@ -1,5 +1,4 @@
 #pragma once
-
 #include "../data_structures/hash_table.h"
 #include "../data_structures/linked_list.h"
 #include "../data_structures/iterator.h"
@@ -13,6 +12,10 @@
  */
 
 #define INITIAL_CAPACAITY 10
+
+typedef void(*ioopm_cart_apply_function)(elem_t key, elem_t *value, void *arg1, void *arg2);
+typedef struct hash_table ioopm_hash_table_t;
+typedef struct entry entry_t;
 
 typedef struct {
     char *name;
@@ -34,11 +37,6 @@ typedef struct {
   int capacity;
 } store_t;
 
-typedef void(*ioopm_cart_apply_function)(elem_t key, elem_t *value, void *arg1, void *arg2);
-
-typedef struct hash_table ioopm_hash_table_t;
-typedef struct entry entry_t;
-
 struct entry
 {
   elem_t key;      
@@ -54,113 +52,50 @@ struct hash_table
 };
 
 
-/// @brief 
-/// @param
-/// @return
-store_t *store_create(ioopm_hash_function hash_fun, ioopm_eq_function eq_fun);
+store_t *ioopm_store_create();
 
-/// @rief creates a new merch
-/// @param
-/// @return
-//ioopm_eq_function eq_fun, 
-merch_t *merch_create(char *name, char *description, int price, ioopm_list_t *stock, int stock_size);
 
-/// @brief 
-/// @param
-/// @return
-void store_add(store_t *store, merch_t *merch); 
+merch_t *ioopm_merch_create(char *name, char *description, int price, ioopm_list_t *stock, int stock_size);
 
-/// @brief 
-/// @param merch merch to add location to, expects merch following its struct
-/// @return
-void location_add(merch_t *merch, char *shelf, int amount); 
 
-/// @brief 
-/// @param
-/// @return
-bool merch_exists(store_t *store, char *name); 
+void ioopm_store_add(store_t *store, merch_t *merch); 
 
-/// @brief 
-/// @param
-/// @return
-bool store_is_empty(store_t *store); 
 
-/// @brief 
-/// @param
-/// @return
-size_t store_size(store_t *store); 
+void ioopm_location_add(merch_t *merch, char *shelf, int amount); 
 
-/// @brief 
-/// @param
-/// @return
-size_t shelves_size(merch_t *merch); //TODO: CURRENTLY ONLY USED BY TESTS
 
-/// @brief 
-/// @param
-/// @return
-merch_t *get_merch(store_t *store, char *name); 
+bool ioopm_merch_exist(store_t *store, char *name); 
 
-/// @brief 
-/// @param merch to get name from, expects merch following its struct
-/// @return
-char *get_name(merch_t *merch); //TODO: CURRENTLY ONLY USED BY TESTS
 
-/// @brief 
-/// @param merch to get despription from, expects merch following its struct
-/// @return
-char *get_description(merch_t *merch); //TODO: CURRENTLY ONLY USED BY TESTS
+bool ioopm_store_is_empty(store_t *store); 
 
-/// @brief 
-/// @param merch to get price from, expects merch following its struct
-/// @return
-int get_price(merch_t *merch); 
 
-/// @brief 
-/// @param
-/// @return
-char *get_shelf(location_t *location); //TODO: CURRENTLY ONLY USED BY TESTS
+merch_t *ioopm_merch_get(store_t *store, char *name); 
 
-/// @brief 
-/// @param
-/// @return
-int get_quantity(location_t *location); //TODO: CURRENTLY ONLY USED BY TESTS
 
-/// @brief 
-/// @param
-/// @return
-location_t *get_location(merch_t *merch, char *shelf); //TODO: CURRENTLY ONLY USED BY TESTS
+int ioopm_price_get(merch_t *merch); 
 
-/// @brief may need to insert again to get a valid hashing TODO: edit to better breif
-/// @param
-/// @return
-void set_name(store_t *store, merch_t *old_merch, char *new_name, ioopm_hash_table_t *carts); 
 
-/// @brief 
-/// @param
-/// @return
-void set_description(merch_t *merch, char *new_description); 
+void ioopm_name_set(store_t *store, merch_t *old_merch, char *new_name, ioopm_hash_table_t *carts); 
 
-/// @brief 
-/// @param
-/// @return
-void set_price(merch_t *merch, int new_price); 
+
+void ioopm_description_set(merch_t *merch, char *new_description); 
+
+
+void ioopm_price_set(merch_t *merch, int new_price); 
 
 /// @brief 
 /// @param merch to print, expects merch following its struct
 /// @return
-void print_merch(merch_t *merch); 
+void ioopm_merch_print(merch_t *merch); 
 
 /// @brief 
 /// @param merch print its stock, expects merch following its struct
 /// @return
-void print_stock(merch_t *merch); 
+void ioopm_stock_print(merch_t *merch); 
 
-/// @brief 
-/// @param
-/// @return
-void store_remove(store_t *store, ioopm_hash_table_t *carts, char *name);
 
-/// @brief 
-/// @param
-/// @return
-void store_destroy(store_t *store); 
+void ioopm_store_remove(store_t *store, ioopm_hash_table_t *carts, char *name);
+
+
+void ioopm_store_destroy(store_t *store); 

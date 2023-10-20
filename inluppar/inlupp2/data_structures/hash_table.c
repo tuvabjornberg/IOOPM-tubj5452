@@ -9,7 +9,6 @@
 #define Success(v) (option_t){.success = true, .value = v};
 #define Failure() (option_t){.success = false};
 
-/// the types from abovem  
 typedef struct entry entry_t;
 typedef struct hash_table ioopm_hash_table_t;
 typedef struct option option_t;

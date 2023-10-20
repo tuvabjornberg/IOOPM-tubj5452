@@ -1,6 +1,5 @@
-#include "../logic/merch_storage.h"
+#pragma once
 #include "../logic/shop_cart.h"
-#include "../data_structures/common.h"
 
 #define PRINT_AT_A_TIME 20
 
@@ -12,4 +11,3 @@
  *
  */
 
-typedef bool(*ioopm_exist_function)(store_t *a, char *b);
