@@ -1,5 +1,6 @@
 #include "shop_cart.h"
 #include "../utils/hash_fun.h"
+#include "merch_storage.h"
 #include <string.h>
 #include <stdbool.h>
 

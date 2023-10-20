@@ -29,7 +29,8 @@ merch_t *ioopm_merch_create(char *name, char *description, int price, ioopm_list
     free(description); 
     new_merch->price = price;
     new_merch->stock = stock; 
-    new_merch->stock_size = stock_size; 
+    new_merch->stock_size = stock_size;
+    new_merch->reserved_stock = 0;
 
     return new_merch;
 }

@@ -349,7 +349,8 @@ void cart_add(store_t *store, carts_t *storage_carts)
     int input_quantity = merch_quantity_check(store, input_name, merch_cart_amount); 
     if (input_quantity == -1) return; 
 
-    merch_t *merch = ioopm_merch_get(store, input_name); 
+    merch_t *merch = ioopm_merch_get(store, input_name);
+    merch->reserved_stock += input_quantity; 
 
     ioopm_cart_add(storage_carts, input_id, merch->name, input_quantity); 
 
@@ -376,6 +377,9 @@ void cart_remove(store_t *store, carts_t *storage_carts)
     int input_quantity = cart_quantity_check(storage_carts, input_id, input_name); 
     if (input_quantity == -1) return; 
 
+    merch_t *merch = ioopm_merch_get(store, input_name);
+    merch->reserved_stock -= input_quantity;
+
     ioopm_cart_remove(cart_items, input_name, input_quantity); 
     printf("Removed %d %s from cart %d.\n", input_quantity, input_name, input_id + 1);
     free(input_name); 
@@ -400,7 +404,6 @@ void cart_checkout(store_t *store)
 {
 
 }
-
 
 void print_menu(void) 
 {
