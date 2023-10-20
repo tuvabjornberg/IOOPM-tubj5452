@@ -13,6 +13,13 @@ carts_t *ioopm_cart_storage_create()
     return new_carts;
 }
 
+void ioopm_cart_create(carts_t *storage_carts)
+{
+    ioopm_hash_table_t *new_cart = ioopm_hash_table_create(ioopm_hash_fun_sum_key_string, ioopm_string_eq); 
+    int id = storage_carts->total_carts; 
+    ioopm_hash_table_insert(storage_carts->carts, int_elem(id), void_elem(new_cart)); 
+}
+
 ioopm_hash_table_t *ioopm_items_in_cart_get(carts_t *storage_carts, int id)
 {
     option_t *lookup_cart = ioopm_hash_table_lookup(storage_carts->carts, int_elem(id)); 
@@ -25,33 +32,6 @@ ioopm_hash_table_t *ioopm_items_in_cart_get(carts_t *storage_carts, int id)
 bool ioopm_has_merch_in_cart(ioopm_hash_table_t *cart_items, char *name)
 {
     return ioopm_hash_table_has_key(cart_items, str_elem(name));
-}
-
-static void items_in_cart_destroy(elem_t key, elem_t *value, void *arg)
-{
-    ioopm_hash_table_destroy((ioopm_hash_table_t *) value->void_ptr); 
-}
-
-void ioopm_cart_storage_destroy(carts_t *storage_carts)
-{
-    ioopm_hash_table_apply_to_all(storage_carts->carts, items_in_cart_destroy, NULL); 
-    ioopm_hash_table_destroy(storage_carts->carts); 
-    free(storage_carts); 
-}
-
-void ioopm_cart_create(carts_t *storage_carts)
-{
-    ioopm_hash_table_t *new_cart = ioopm_hash_table_create(ioopm_hash_fun_sum_key_string, ioopm_string_eq); 
-    int id = storage_carts->total_carts; 
-    ioopm_hash_table_insert(storage_carts->carts, int_elem(id), void_elem(new_cart)); 
-}
-
-void ioopm_cart_destroy(carts_t *storage_carts, int id)
-{
-    ioopm_hash_table_t *cart_items = ioopm_items_in_cart_get(storage_carts, id); 
-    
-    ioopm_hash_table_destroy(cart_items); 
-    ioopm_hash_table_remove(storage_carts->carts, int_elem(id)); 
 }
 
 bool ioopm_carts_are_empty(carts_t *storage_carts)
@@ -137,7 +117,28 @@ int ioopm_cost_calculate(store_t *store, carts_t *storage_carts, int id)
     return total_cost;
 }
 
+//TODO: 
 void ioopm_cart_checkout(carts_t *storage_carts, int id)
 {
 
+}
+
+static void items_in_cart_destroy(elem_t key, elem_t *value, void *arg)
+{
+    ioopm_hash_table_destroy((ioopm_hash_table_t *) value->void_ptr); 
+}
+
+void ioopm_cart_destroy(carts_t *storage_carts, int id)
+{
+    ioopm_hash_table_t *cart_items = ioopm_items_in_cart_get(storage_carts, id); 
+    
+    ioopm_hash_table_destroy(cart_items); 
+    ioopm_hash_table_remove(storage_carts->carts, int_elem(id)); 
+}
+
+void ioopm_cart_storage_destroy(carts_t *storage_carts)
+{
+    ioopm_hash_table_apply_to_all(storage_carts->carts, items_in_cart_destroy, NULL); 
+    ioopm_hash_table_destroy(storage_carts->carts); 
+    free(storage_carts); 
 }

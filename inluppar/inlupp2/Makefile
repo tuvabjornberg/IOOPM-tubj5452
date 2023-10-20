@@ -13,18 +13,12 @@ VPATH		   = user_interface : data_structures : utils : tests : logic
 ui.out: ui.o hash_table.o linked_list.o utils.o merch_storage.o shop_cart.o hash_fun.o
 	$(C_COMPILER) $(C_LINK_OPTIONS) $(C_OPTIONS) $^ -o $@ 
 
+
 ui_san.out: ui.c hash_table.c linked_list.c utils.c merch_storage.c shop_cart.c hash_fun.c
 	$(C_COMPILER) $(C_LINK_OPTIONS) $(C_OPTIONS) $(C_SANITIZE) $^ -o $@ 
 
 ui_sanitize: ui_san.out
-	./ui_san.out < test.txt
-
-ui_prof.out: ui.c hash_table.c linked_list.c utils.c merch_storage.c shop_cart.c hash_fun.c
-	$(C_COMPILER) $(C_OPTIONS) $^ -o $@ $(C_PROF)
-
-#freq_count_prof.out: freq_count.c hash_table.c linked_list.c
-#	$(C_COMPILER) $(C_OPTIONS) $^ -o $@ $(C_PROF)
-
+	./ui_san.out < ui_test.txt
 
 merch_storage_tests.out: merch_storage_tests.o merch_storage.o hash_table.o linked_list.o hash_fun.o	
 	$(C_COMPILER) $(C_LINK_OPTIONS) $(C_OPTIONS) $^ -o $@ $(CUNIT_LINK)
@@ -32,14 +26,12 @@ merch_storage_tests.out: merch_storage_tests.o merch_storage.o hash_table.o link
 shop_cart_tests.out: shop_cart_tests.o shop_cart.o hash_table.o linked_list.o merch_storage.o hash_fun.o
 	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) 
 
-ui_tests.out: ui_tests.o ui.o 
-	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK)
-
-tests: merch_storage_tests.out shop_cart_tests.out ui_tests.out
+tests: merch_storage_tests.out shop_cart_tests.out 
 	./merch_storage_tests.out 
 	./shop_cart_tests.out
-	./ui_tests.out
 
+ui_tests: ui.out
+	./ui.out < tests/ui_tests.txt
 
 merch_test_coverage.out: merch_storage_tests.o merch_storage.c hash_table.o linked_list.o hash_fun.o	
 	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) $(C_GCOV)
@@ -52,10 +44,13 @@ cov: merch_test_coverage.out shop_test_coverage.out
 	./shop_test_coverage.out
 	gcov -b -c shop_test_coverage.out-shop_cart.c
 
-#doesn't work
-prof: ui.out
-	./ui.out < test.txt
-	gprof ui.out gmon.out > test.profiling
+
+ui_prof.out: ui.c hash_table.c linked_list.c utils.c merch_storage.c shop_cart.c hash_fun.c
+	$(C_COMPILER) $(C_OPTIONS) $^ -o $@ $(C_PROF)
+
+prof: ui_prof.out
+	./ui_prof.out < tests/ui_tests.txt
+	gprof ui_prof.out gmon.out > ui_tests.profiling
 
 
 clean:
@@ -63,16 +58,14 @@ clean:
 
 
 mem_tests: merch_storage_tests.out shop_cart_tests.out 
-#ui_tests.out
 	valgrind --leak-check=full ./merch_storage_tests.out
 	valgrind --leak-check=full ./shop_cart_tests.out
-#valgrind --leak-ckeck=full ./ui_tests.out
 
 mem_ui: ui.out
 	valgrind --leak-check=full ./ui.out  
 
 mem_ui_arg: ui.out
-	valgrind --leak-check=full ./ui.out < test.txt
+	valgrind --leak-check=full ./ui.out < tests/ui_tests.txt
 
 
 .PHONY: ui test mem_tests mem_ui mem_ui_arg cov clean ui_sanitize

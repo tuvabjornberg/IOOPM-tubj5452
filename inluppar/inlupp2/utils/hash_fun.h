@@ -1,7 +1,6 @@
 #pragma once
 #include "../data_structures/common.h"
 
-
 /**
  * @file hash_fun.h
  * @author Tuva Björnberg & Marcus Ray Sanderson

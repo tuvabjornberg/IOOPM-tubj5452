@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include "../logic/shop_cart.h"
+#include "../utils/hash_fun.h"
 
 int init_suite(void)
 {
@@ -13,43 +14,16 @@ int clean_suite(void)
     return 0;
 }
 
-bool string_eq(elem_t e1, elem_t e2)
-{
-    return (strcmp(e1.string, e2.string) == 0);
-}
-
-bool int_eq(elem_t e1, elem_t e2)
-{
-    return (e1.integer == e2.integer);
-}
-
-unsigned string_sum_hash(elem_t e)
-{
-    char *str = e.string;
-    unsigned result = 0;
-    do
-    {
-        result += *str;
-    }
-    while (*++str != '\0');
-    return result; 
-}
-
-static unsigned hash_fun_key_int(elem_t key)
-{
-  return key.integer;
-}
-
 store_t *store_with_inputs()
 {
-    store_t *store = store_create(string_sum_hash, string_eq); 
+    store_t *store = store_create(ioopm_hash_fun_sum_key_string, ioopm_string_eq); 
 
     char *name = "Apple"; 
     char *description = "Red"; 
     int price = 10; 
     int stock_size = 0; 
 
-    merch_t *apple = merch_create(strdup(name), strdup(description), price, ioopm_linked_list_create(string_eq), stock_size); 
+    merch_t *apple = merch_create(strdup(name), strdup(description), price, ioopm_linked_list_create(ioopm_string_eq), stock_size); 
 
     store_add(store, apple); 
 
@@ -66,7 +40,7 @@ store_t *store_with_inputs()
 
 void create_destroy_test()
 {
-    carts_t *storage_carts = cart_storage_create(hash_fun_key_int, int_eq); 
+    carts_t *storage_carts = cart_storage_create(ioopm_hash_fun_key_int, ioopm_int_eq); 
     CU_ASSERT_PTR_NOT_NULL(storage_carts); 
     CU_ASSERT_TRUE(carts_is_empty(storage_carts)); 
     cart_storage_destroy(storage_carts); 
@@ -74,9 +48,9 @@ void create_destroy_test()
 
 void add_to_cart_test()
 {
-    carts_t *storage_carts = cart_storage_create(hash_fun_key_int, int_eq); 
+    carts_t *storage_carts = cart_storage_create(ioopm_hash_fun_key_int, ioopm_int_eq); 
     store_t *store = store_with_inputs(); 
-    cart_create(storage_carts, string_sum_hash, string_eq); 
+    cart_create(storage_carts); 
     storage_carts->total_carts++; 
 
     int id = 0; 
@@ -95,9 +69,9 @@ void add_to_cart_test()
 
 void remove_from_cart_test()
 {
-    carts_t *storage_carts = cart_storage_create(hash_fun_key_int, int_eq); 
+    carts_t *storage_carts = cart_storage_create(ioopm_hash_fun_key_int, ioopm_int_eq); 
     store_t *store = store_with_inputs(); 
-    cart_create(storage_carts, string_sum_hash, string_eq); 
+    cart_create(storage_carts); 
     storage_carts->total_carts++; 
 
     int id = 0; 
@@ -121,10 +95,10 @@ void remove_from_cart_test()
 
 void empty_cart_test()
 {
-    carts_t *storage_carts = cart_storage_create(hash_fun_key_int, int_eq); 
+    carts_t *storage_carts = cart_storage_create(ioopm_hash_fun_key_int, ioopm_int_eq); 
     CU_ASSERT_TRUE(carts_is_empty(storage_carts)); 
 
-    cart_create(storage_carts, string_sum_hash, string_eq); 
+    cart_create(storage_carts); 
     CU_ASSERT_FALSE(carts_is_empty(storage_carts)); 
 
     cart_storage_destroy(storage_carts); 
@@ -132,9 +106,9 @@ void empty_cart_test()
 
 void has_merch_in_cart_test()
 {
-    carts_t *storage_carts = cart_storage_create(hash_fun_key_int, int_eq); 
+    carts_t *storage_carts = cart_storage_create(ioopm_hash_fun_key_int, ioopm_int_eq); 
     store_t *store = store_with_inputs(); 
-    cart_create(storage_carts, string_sum_hash, string_eq); 
+    cart_create(storage_carts); 
     storage_carts->total_carts++; 
 
     int id = 0; 
@@ -156,9 +130,9 @@ void has_merch_in_cart_test()
 
 void cost_calculate_test()
 {
-    carts_t *storage_carts = cart_storage_create(hash_fun_key_int, int_eq); 
+    carts_t *storage_carts = cart_storage_create(ioopm_hash_fun_key_int, ioopm_int_eq); 
     store_t *store = store_with_inputs(); 
-    cart_create(storage_carts, string_sum_hash, string_eq); 
+    cart_create(storage_carts); 
     storage_carts->total_carts++; 
 
     int id = 0; 
@@ -183,9 +157,9 @@ void cost_calculate_test()
 //TODO: Needs better tests 
 void checkout_cart_test()
 {
-    carts_t *storage_carts = cart_storage_create(hash_fun_key_int, int_eq); 
+    carts_t *storage_carts = cart_storage_create(ioopm_hash_fun_key_int, ioopm_int_eq); 
     store_t *store = store_with_inputs(); 
-    cart_create(storage_carts, string_sum_hash, string_eq); 
+    cart_create(storage_carts); 
     storage_carts->total_carts++; 
 
     int id = 0; 
@@ -237,6 +211,7 @@ int main()
          CU_add_test(my_test_suite, "Checkout cart test", checkout_cart_test) == NULL
         )
     )
+    
     {
         // If adding any of the tests fails, we tear down CUnit and exit
         CU_cleanup_registry();
