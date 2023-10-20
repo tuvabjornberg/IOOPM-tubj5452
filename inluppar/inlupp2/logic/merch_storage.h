@@ -19,7 +19,8 @@ typedef struct {
     char *description;
     int price;
     ioopm_list_t *stock;
-    int stock_size; 
+    int stock_size;
+  int reserved_stock;
 } merch_t;
 
 typedef struct {

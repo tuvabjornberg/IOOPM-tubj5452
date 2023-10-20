@@ -329,7 +329,8 @@ void add_to_cart(store_t *store, carts_t *storage_carts)
     int input_quantity = quantity_check(store, input_name, merch_cart_amount); 
     if (input_quantity == -1) return; 
 
-    merch_t *merch = get_merch(store, input_name); 
+    merch_t *merch = get_merch(store, input_name);
+    merch->reserved_stock += input_quantity; 
 
     cart_add(storage_carts, input_id, merch->name, input_quantity); 
     printf("You have added %d of %s to this cart: %d", input_quantity, input_name, input_id + 1); 
@@ -365,8 +366,10 @@ void remove_from_cart(store_t *store, carts_t *storage_carts)
         }
         free(new_alt);  
     }
-
-    int input_quantity = ask_question_int("\nEnter the quantity of items to remove: "); 
+    merch_t *merch = get_merch(store, input_name);
+    int input_quantity = ask_question_int("\nEnter the quantity of items to remove: ");
+    merch->reserved_stock -= input_quantity;
+    free(merch);
     int merch_cart_amount = item_in_cart_amount(storage_carts, input_id, input_name); 
     while (input_quantity > merch_cart_amount || input_quantity < 0)
     {

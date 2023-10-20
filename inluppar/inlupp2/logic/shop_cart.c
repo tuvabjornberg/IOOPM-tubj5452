@@ -1,4 +1,5 @@
 #include "shop_cart.h"
+#include "merch_storage.h"
 #include <string.h>
 #include <stdbool.h>
 
@@ -77,9 +78,9 @@ int item_in_cart_amount(carts_t *storage_carts, int id, char *merch_name)
 
 //TODO: förmodligen implementerad fel mot beskrivningen
 void cart_add(carts_t *storage_carts, int id, char *merch_name, int amount)
-{ 
+{
     ioopm_hash_table_t *cart_items = get_items_in_cart(storage_carts, id); 
-    option_t *item_in_cart = ioopm_hash_table_lookup(cart_items, str_elem(merch_name)); 
+    option_t *item_in_cart = ioopm_hash_table_lookup(cart_items, str_elem(merch_name));
 
     if (item_in_cart->success)
     {
