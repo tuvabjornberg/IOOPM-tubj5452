@@ -96,7 +96,7 @@ void ioopm_cart_remove(ioopm_hash_table_t *cart_items, char *merch_name, int amo
     free(item_in_cart); 
 }
 
-int ioopm_cost_calculate(store_t *store, carts_t *storage_carts, int id)
+int ioopm_cost_calculate(ioopm_store_t *store, carts_t *storage_carts, int id)
 {
     int total_cost = 0;
     ioopm_hash_table_t *cart_items = ioopm_items_in_cart_get(storage_carts, id);
@@ -117,10 +117,35 @@ int ioopm_cost_calculate(store_t *store, carts_t *storage_carts, int id)
     return total_cost;
 }
 
-//TODO: 
-void ioopm_cart_checkout(carts_t *storage_carts, int id)
-{
+static void stock_update(elem_t name, elem_t *amount, void *store){
+  ioopm_merch_t *merch = ioopm_merch_get(store, name.string);
+  merch->reserved_stock -= amount->integer;
+  merch->stock_size -= amount->integer;
+  ioopm_list_t *stock = merch->stock;
+  for(int i = ioopm_linked_list_size(stock) - 1; i >= 0; i--){
+    location_t *shelf = ioopm_linked_list_get(stock, i).void_ptr;
+    if(amount->integer > shelf->quantity){
+      amount->integer -= shelf->quantity;
+      free(shelf->shelf);
+      free(shelf);
+      ioopm_linked_list_remove(stock, i);
+    } else {
+      shelf->quantity -= amount->integer;
+      return;
+    }
+  }
+}
 
+//TODO:
+/*Decrease the stock for the merches in the cart.
+Remove the shopping cart from the system.*/
+void ioopm_cart_checkout(ioopm_store_t *store, carts_t *storage_carts, int id)
+{
+  ioopm_hash_table_t *cart = ioopm_items_in_cart_get(storage_carts, id);
+  ioopm_hash_table_apply_to_all(cart, stock_update, store);
+
+  ioopm_hash_table_destroy(cart); 
+  ioopm_hash_table_remove(storage_carts->carts, int_elem(id));   
 }
 
 static void items_in_cart_destroy(elem_t key, elem_t *value, void *arg)
