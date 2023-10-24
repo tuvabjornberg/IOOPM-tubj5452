@@ -73,7 +73,7 @@ static int merch_quantity_check(ioopm_store_t *store, char *merch_name, int curr
 }
 
 //TODO: better place for -1 for input_id???
-static int cart_exists_check(carts_t *storage_carts)
+static int cart_exists_check(ioopm_carts_t *storage_carts)
 {
     int input_id = ioopm_ask_question_int("\nWrite the ID of the cart: ") - 1; 
 
@@ -118,7 +118,7 @@ static char *merch_in_cart_check(ioopm_hash_table_t *cart_items)
     return input_name; 
 }
 
-static int cart_quantity_check(carts_t *storage_carts, int input_id, char *input_name)
+static int cart_quantity_check(ioopm_carts_t *storage_carts, int input_id, char *input_name)
 {
     int input_quantity = ioopm_ask_question_int("\nEnter the quantity of items to remove: ");
 
@@ -144,7 +144,7 @@ static int cart_quantity_check(carts_t *storage_carts, int input_id, char *input
 }
 
 
-static char *shelf_exists_check(store_t *store, merch_t *merch)
+static char *shelf_exists_check(ioopm_store_t *store, ioopm_merch_t *merch)
 {
     char *input_shelf = ioopm_ask_question_shelf("\nEnter a shelf to add stock to: ");
 
@@ -226,7 +226,7 @@ void merch_list(ioopm_store_t *store)
     printf("\nNo more items to display\n");
 } 
 
-void merch_remove(ioopm_store_t *store, carts_t *storage_carts)
+void merch_remove(ioopm_store_t *store, ioopm_carts_t *storage_carts)
 {
     if (ioopm_store_is_empty(store)) 
     {
@@ -247,7 +247,7 @@ void merch_remove(ioopm_store_t *store, carts_t *storage_carts)
     free(input_name); 
 }
 
-void merch_edit(ioopm_store_t *store, carts_t *storage_carts)
+void merch_edit(ioopm_store_t *store, ioopm_carts_t *storage_carts)
 {
     if (ioopm_store_is_empty(store)) 
     {
@@ -332,7 +332,7 @@ void stock_replenish(ioopm_store_t *store)
     ioopm_location_add(merch, input_shelf, input_amount); 
 }
 
-void cart_create(carts_t *storage_carts)
+void cart_create(ioopm_carts_t *storage_carts)
 {
     ioopm_cart_create(storage_carts); 
     storage_carts->total_carts++; 
@@ -340,7 +340,7 @@ void cart_create(carts_t *storage_carts)
     printf("\nYou have created a cart with the ID: %d", storage_carts->total_carts); 
 }   
 
-void cart_destroy(ioopm_store_t *store, carts_t *storage_carts)
+void cart_destroy(ioopm_store_t *store, ioopm_carts_t *storage_carts)
 {
     if (ioopm_carts_are_empty(storage_carts)) 
     {
@@ -364,7 +364,7 @@ void cart_destroy(ioopm_store_t *store, carts_t *storage_carts)
 }
 
 //TODO: förmodligen implementerad fel mot beskrivningen
-void cart_add(ioopm_store_t *store, carts_t *storage_carts)
+void cart_add(ioopm_store_t *store, ioopm_carts_t *storage_carts)
 {
     if (ioopm_carts_are_empty(storage_carts)) 
     {
@@ -391,7 +391,7 @@ void cart_add(ioopm_store_t *store, carts_t *storage_carts)
     free(input_name); 
 }
 
-void cart_remove(ioopm_store_t *store, carts_t *storage_carts)
+void cart_remove(ioopm_store_t *store, ioopm_carts_t *storage_carts)
 {
     if (ioopm_carts_are_empty(storage_carts)) 
     {
@@ -418,7 +418,7 @@ void cart_remove(ioopm_store_t *store, carts_t *storage_carts)
     free(input_name); 
 }
 
-void cart_cost_calculate(ioopm_store_t *store, carts_t *storage_carts)
+void cart_cost_calculate(ioopm_store_t *store, ioopm_carts_t *storage_carts)
 {
     if (ioopm_carts_are_empty(storage_carts))
     {
@@ -433,7 +433,7 @@ void cart_cost_calculate(ioopm_store_t *store, carts_t *storage_carts)
     printf("The total cost of cart %d is %d SEK.\n", input_id + 1, total_cost);
 }
 
-void cart_checkout(ioopm_store_t *store, carts_t *storage_carts)
+void cart_checkout(ioopm_store_t *store, ioopm_carts_t *storage_carts)
 {
     if (ioopm_carts_are_empty(storage_carts))
     {
@@ -454,7 +454,7 @@ void print_menu(void)
 
 }
 
-void event_loop(ioopm_store_t *store, carts_t *storage_carts) 
+void event_loop(ioopm_store_t *store, ioopm_carts_t *storage_carts) 
 {
     bool running = true; 
     char *quit_confirmation; 
@@ -521,7 +521,7 @@ void event_loop(ioopm_store_t *store, carts_t *storage_carts)
 
 int main() { 
     ioopm_store_t *store = ioopm_store_create(); 
-    carts_t *storage_carts = ioopm_cart_storage_create(); 
+    ioopm_carts_t *storage_carts = ioopm_cart_storage_create(); 
     event_loop(store, storage_carts); 
     return 0;
 }

@@ -122,15 +122,8 @@ static size_t shelves_size(ioopm_merch_t *merch)
 }
 
 static char *shelf_get(location_t *location)
-{
-    if (location == NULL)
-    {
-        return NULL; 
-    }
-    else 
-    {
-        return location->shelf;  
-    }
+{   
+    return location->shelf;  
 }
 
 ioopm_merch_t *ioopm_merch_get(ioopm_store_t *store, char *name)
@@ -167,14 +160,7 @@ int ioopm_price_get(ioopm_merch_t *merch)
 
 static int quantity_get(location_t *location)
 {
-    if (location == NULL)
-    {
-        return 0; 
-    }
-    else 
-    {
-        return location->quantity;  
-    }
+    return location->quantity;  
 }
 
 static ioopm_list_t *stock_get(ioopm_merch_t *merch)
@@ -231,35 +217,6 @@ static bool shelf_exists(ioopm_merch_t *merch, char *shelf)
 static int stock_size_get(ioopm_merch_t *merch)
 {
     return merch->stock_size; 
-}
-
-static void location_insert(merch_t *merch, location_t *location)
-{
-    ioopm_list_t *stock = merch->stock;
-
-    if (ioopm_linked_list_is_empty(stock) || strcmp(location->shelf, shelf_get(ioopm_linked_list_get(stock, 0).void_ptr)) < 0)
-    {
-        ioopm_linked_list_prepend(stock, void_elem(location));
-    }
-    else
-    {
-        size_t index = 0;
-
-        while (index < ioopm_linked_list_size(stock) - 1)
-        {
-            location_t *current_location = (location_t *)ioopm_linked_list_get(stock, index).void_ptr;
-            location_t *next_location = (location_t *)ioopm_linked_list_get(stock, index + 1).void_ptr;
-
-            if (strcmp(location->shelf, current_location->shelf) >= 0 && strcmp(location->shelf, next_location->shelf) < 0)
-            {
-                ioopm_linked_list_insert(stock, index + 1, void_elem(location));
-                return;
-            }
-
-            index++;
-        }
-        ioopm_linked_list_append(stock, void_elem(location));
-    }
 }
 
 static void location_insert(ioopm_merch_t *merch, location_t *location)
@@ -330,23 +287,6 @@ bool ioopm_merch_exists(ioopm_store_t *store, char *name)
         }
     }
     return false; 
-}
-
-static bool shelf_other_merch_exists(elem_t value, void *shelf)
-{
-    return !strcmp(shelf_get(value.void_ptr), shelf); 
-}
-
-static bool merch_search(elem_t name, elem_t merch, void *shelf)
-{
-    return ioopm_linked_list_any(stock_get(merch.void_ptr), shelf_other_merch_exists, shelf); 
-}
-
-bool ioopm_store_shelf_exists(store_t *store, merch_t *merch, char *shelf)
-{
-    if (shelf_exists(merch, shelf)) return false; 
-
-    return ioopm_hash_table_any(store->merch_details, merch_search, shelf);
 }
 
 static bool shelf_other_merch_exists(elem_t value, void *shelf)

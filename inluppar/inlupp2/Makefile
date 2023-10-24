@@ -40,17 +40,13 @@ shop_test_coverage.out: shop_cart_tests.o shop_cart.c hash_table.o linked_list.o
 ui_test_coverage.out: ui.c shop_cart.o hash_table.o linked_list.o merch_storage.o hash_fun.o utils.o
 	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) $(C_GCOV)
 
-cov_ui: ui_test_coverage.out
+cov: merch_test_coverage.out shop_test_coverage.out ui_test_coverage.out
 	./ui_test_coverage.out < tests/ui_tests.txt
 	gcov -b -c ui_test_coverage.out-ui.c
-
-cov: merch_test_coverage.out shop_test_coverage.out ui_test_coverage.out
 	./merch_test_coverage.out	
 	gcov -b -c merch_test_coverage.out-merch_storage.c
 	./shop_test_coverage.out
 	gcov -b -c shop_test_coverage.out-shop_cart.c
-	./ui_test_coverage.out
-	gcov -b -c ui_test_coverage.out-ui.c
 
 
 ui_prof.out: ui.c hash_table.c linked_list.c utils.c merch_storage.c shop_cart.c hash_fun.c

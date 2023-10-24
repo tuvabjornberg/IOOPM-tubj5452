@@ -96,8 +96,8 @@ bool ioopm_merch_exists(ioopm_store_t *store, char *name);
 /// @brief will check if the shelf is already in use by a merch
 /// @param store the store to check
 /// @param shelf the shelf to find or not find
-/// @return false if no merch uses teh shelf or if current merch uses shelf, true if in useby other merch
-bool ioopm_store_shelf_exists(store_t *store, merch_t *merch, char *shelf);
+/// @return false if no merch uses the shelf or if current merch uses shelf, true if in useby other merch
+bool ioopm_store_shelf_exists(ioopm_store_t *store, ioopm_merch_t *merch, char *shelf);
 
 /// @brief checks if store is emty
 /// @param store the store operated upon
