@@ -3,10 +3,12 @@
 #include <stdlib.h>
 #include "../utils/utils.h"
 #include "../utils/hash_fun.h"
-#include "ui.h"
+#include "../logic/shop_cart.h"
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
+
+#define PRINT_AT_A_TIME 20
 
 static char *merch_exist_check(store_t *store, bool should_exist)
 {
@@ -43,6 +45,7 @@ static int merch_quantity_check(store_t *store, char *merch_name, int current_am
     if (current_amount == merch->stock_size) 
     {
         puts("There are no more items in stock to add to cart"); 
+        free(merch_name); 
         return -1; 
     }
 
@@ -59,6 +62,7 @@ static int merch_quantity_check(store_t *store, char *merch_name, int current_am
         }
         else
         {
+            free(merch_name); 
             free(new_alt);
             return -1;
         }
@@ -100,6 +104,7 @@ static char *merch_in_cart_check(ioopm_hash_table_t *cart_items)
 
         if (toupper(*new_alt) == 'Y')
         {
+            free(input_name); 
             input_name = ioopm_ask_question_string("\nWrite the merch to remove items from: "); 
         }
         else
@@ -138,6 +143,31 @@ static int cart_quantity_check(carts_t *storage_carts, int input_id, char *input
     return input_quantity; 
 }
 
+static char *shelf_exists_check(store_t *store, merch_t *merch)
+{
+    char *input_shelf = ioopm_ask_question_shelf("\nEnter a shelf to add stock to: ");
+
+    if (ioopm_store_shelf_exists(store, merch, input_shelf))
+    {
+        char *new_alt = ioopm_ask_question_string("\nThere is already a merch on this shelf, do you want to write another one (y/n)? "); 
+
+        if (toupper(*new_alt) == 'Y')
+        {
+            free(input_shelf); 
+            input_shelf = ioopm_ask_question_string("\nEnter a shelf to add stock to:  "); 
+        }
+        else
+        {
+            free(input_shelf); 
+            free(new_alt);
+            return NULL;
+        }
+        free(new_alt); 
+    }
+
+    return input_shelf; 
+}
+
 static merch_t *merch_input(char *name)
 {
     char *description = ioopm_ask_question_string("\nWrite a description of the merch: "); 
@@ -168,28 +198,32 @@ void merch_list(store_t *store)
     }
 
     int i = 0;
-    for (; i < store->merch_count && i < PRINT_AT_A_TIME; i++)
-    {
-      puts(store->merch_names[i]);
-    }
+    int total_items = store->merch_count;
+    int rotations = 1;
 
-    if (store->merch_count > PRINT_AT_A_TIME)
+    do
     {
-        char *descision = ioopm_ask_question_string("Press any key to see more items, N/n to return");
-	    while (toupper(descision[0]) != 'N' && i < store->merch_count)
+        for (; i < total_items && i < PRINT_AT_A_TIME * rotations; i++)
         {
-	      for (; i < store->merch_count && i < store->merch_count + PRINT_AT_A_TIME; i++)
-          {
-		    puts(store->merch_names[i]);
-	      }
+          puts(store->merch_names[i]);
+        }
 
-	      free(descision);
-	      descision = ioopm_ask_question_string("Press any key to see more items, N/n to return");
-	    }
+        if (i < total_items)
+        {
+            char *descision = ioopm_ask_question_string("Press any key to see more items, N/n to return");
 
-	    free(descision);
-    }    
-}
+	        if (toupper(descision[0]) == 'N')
+            {
+	            free(descision);
+                return;
+	        }
+            rotations++; 
+            free(descision); 
+        }  
+    } while (i < total_items);  
+    
+    printf("\nNo more items to display\n");
+} 
 
 void merch_remove(store_t *store, carts_t *storage_carts)
 {
@@ -233,6 +267,7 @@ void merch_edit(store_t *store, carts_t *storage_carts)
     char *conf_edit = ioopm_ask_question_string("\nAre you sure you want to edit this merch? (y/n)"); 
     if (!(toupper(*conf_edit) == 'Y'))
     { 
+        free(input_name); 
         free(conf_edit);	
 	    free(new_name);
         free(new_description); 
@@ -281,14 +316,11 @@ void stock_replenish(store_t *store)
     merch_t *merch = ioopm_merch_get(store, input_name); 
     free(input_name); 
 
-    printf("\nYou selected this merch:\n"); 
+    printf("\nYou selected this merch:"); 
     ioopm_merch_print(merch); 
 
-    char *input_shelf = ioopm_ask_question_shelf("\nEnter a shelf to add stock to: ");
-
-    //TODO: Not duplicate shelf, not more than one merch on each shelf
-    //Idea: add an element to the store-struct of an ht(?)/list(?) of each shelf in use. 
-    //char *input_shelf = shelf_exist_check(store); 
+    char *input_shelf = shelf_exists_check(store, merch);
+    if (input_shelf == NULL) return;  
 
     int input_amount = ioopm_ask_question_int("\nEnter an amount to increase the stock: "); 
     while (input_amount < 1)

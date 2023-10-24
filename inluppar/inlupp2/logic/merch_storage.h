@@ -20,8 +20,6 @@
  * The hash table assumes a suitable hash_function (hash_fun) and equality function 
  * to fit the ioopm_eq_function in common.h.
  * 
- * Dependencies: hash_table.h, merch_storage.h, hash_fun.h
- * 
  * It is assumed that the user ensures proper memory management after creating and adding 
  * items to the store, as these structures involve dynamic memory allocation.
  */
@@ -94,6 +92,12 @@ void ioopm_location_add(merch_t *merch, char *shelf, int amount);
 /// @param name the name of the merch to find
 /// @return a truth value of if the merch is found
 bool ioopm_merch_exist(store_t *store, char *name); 
+
+/// @brief will check if the shelf is already in use by a merch
+/// @param store the store to check
+/// @param shelf the shelf to find or not find
+/// @return false if no merch uses teh shelf or if current merch uses shelf, true if in useby other merch
+bool ioopm_store_shelf_exists(store_t *store, merch_t *merch, char *shelf);
 
 /// @brief checks if store is emty
 /// @param store the store operated upon

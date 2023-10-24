@@ -113,7 +113,7 @@ void ioopm_linked_list_insert(ioopm_list_t *list, int index, elem_t value)
     }
     else
     {
-        while (index > 0 && index < linked_list_size - 1 && counter <= index)
+        while (index > 0 && index < linked_list_size - 1 && counter < index)
         {
             if (counter == index - 1)
             {

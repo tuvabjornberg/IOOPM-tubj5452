@@ -15,11 +15,6 @@ store_t *ioopm_store_create()
     return new_store;
 }
 
-//TODO: Not in use, is needed still(?)
-static bool location_eq(elem_t a, elem_t b){
-    return !strcmp((*(location_t*)a.void_ptr).shelf, (*(location_t*)b.void_ptr).shelf);
-}
-
 merch_t *ioopm_merch_create(char *name, char *description, int price, ioopm_list_t *stock, int stock_size)
 {
     merch_t *new_merch = calloc(1, sizeof(merch_t));
@@ -216,7 +211,7 @@ static location_t *location_get(merch_t *merch, char *shelf)
     return (location_t *) NULL; 
 }
 
-static bool shelf_exist(merch_t *merch, char *shelf)
+static bool shelf_exists(merch_t *merch, char *shelf)
 {
     location_t *location = location_get(merch, shelf); 
     if (location == NULL)
@@ -238,9 +233,38 @@ static int stock_size_get(merch_t *merch)
     return merch->stock_size; 
 }
 
+static void location_insert(merch_t *merch, location_t *location)
+{
+    ioopm_list_t *stock = merch->stock;
+
+    if (ioopm_linked_list_is_empty(stock) || strcmp(location->shelf, shelf_get(ioopm_linked_list_get(stock, 0).void_ptr)) < 0)
+    {
+        ioopm_linked_list_prepend(stock, void_elem(location));
+    }
+    else
+    {
+        size_t index = 0;
+
+        while (index < ioopm_linked_list_size(stock) - 1)
+        {
+            location_t *current_location = (location_t *)ioopm_linked_list_get(stock, index).void_ptr;
+            location_t *next_location = (location_t *)ioopm_linked_list_get(stock, index + 1).void_ptr;
+
+            if (strcmp(location->shelf, current_location->shelf) >= 0 && strcmp(location->shelf, next_location->shelf) < 0)
+            {
+                ioopm_linked_list_insert(stock, index + 1, void_elem(location));
+                return;
+            }
+
+            index++;
+        }
+        ioopm_linked_list_append(stock, void_elem(location));
+    }
+}
+
 void ioopm_location_add(merch_t *merch, char *shelf, int amount)
 {
-    if (shelf_exist(merch, shelf))
+    if (shelf_exists(merch, shelf))
     {
         location_t *location = location_get(merch, shelf);
         location->quantity = quantity_get(location) + amount;
@@ -250,28 +274,50 @@ void ioopm_location_add(merch_t *merch, char *shelf, int amount)
     else
     {
         location_t *location = location_create(shelf, amount); 
-        ioopm_linked_list_append(merch->stock, void_elem(location)); 
+        location_insert(merch, location); 
         merch->stock_size = stock_size_get(merch) + amount; 
     }
 }
 
-bool ioopm_merch_exist(store_t *store, char *name) {
+bool ioopm_merch_exist(store_t *store, char *name) 
+{
     char **start = store->merch_names;
     char **end = store->merch_names + store->merch_count-1;
     char **center;
 
-    while (start <= end) {
+    while (start <= end) 
+    {
         center = start + (end - start) / 2;
 
         int comparison = strcmp(name, *center);
         if (comparison == 0) return true; 
-        if (comparison > 0) {
+        if (comparison > 0) 
+        {
             start = center + 1;
-        } else {
+        } 
+        else 
+        {
             end = center - 1;
         }
     }
     return false; 
+}
+
+static bool shelf_other_merch_exists(elem_t value, void *shelf)
+{
+    return !strcmp(shelf_get(value.void_ptr), shelf); 
+}
+
+static bool merch_search(elem_t name, elem_t merch, void *shelf)
+{
+    return ioopm_linked_list_any(stock_get(merch.void_ptr), shelf_other_merch_exists, shelf); 
+}
+
+bool ioopm_store_shelf_exists(store_t *store, merch_t *merch, char *shelf)
+{
+    if (shelf_exists(merch, shelf)) return false; 
+
+    return ioopm_hash_table_any(store->merch_details, merch_search, shelf);
 }
 
 bool ioopm_store_is_empty(store_t *store)
