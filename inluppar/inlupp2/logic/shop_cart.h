@@ -79,12 +79,12 @@ void ioopm_cart_remove(ioopm_hash_table_t *cart_items, char *merch_name, int amo
 /// @param storage_carts the cart storage to find the cart from
 /// @param id the id of the cart to be operated upon
 /// @return the total cost of the current items
-int ioopm_cost_calculate(store_t *store, carts_t *storage_carts, int id);
+int ioopm_cost_calculate(ioopm_store_t *store, carts_t *storage_carts, int id);
 
 /// @brief checks out a cart from the store adn decreases its stock
 /// @param storage_carts the storage carts to find the cart from
 /// @param id the id of the cart to checkout
-void ioopm_cart_checkout(carts_t *storage_carts, int id); 
+void ioopm_cart_checkout(ioopm_store_t *store, carts_t *storage_carts, int id); 
 
 /// @brief destroys a cart and frees its memory
 /// @param storage_carts the cart storage to remove cart from

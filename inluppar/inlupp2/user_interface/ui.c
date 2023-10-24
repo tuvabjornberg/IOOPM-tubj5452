@@ -8,11 +8,11 @@
 #include <ctype.h>
 #include <time.h>
 
-static char *merch_exist_check(store_t *store, bool should_exist)
+static char *merch_exist_check(ioopm_store_t *store, bool should_exist)
 {
     char *input_name = ioopm_ask_question_string("\nWrite the name of the merch: ");
 
-    while (ioopm_merch_exist(store, input_name) != should_exist)
+    while (ioopm_merch_exists(store, input_name) != should_exist)
     {
         char *new_alt = ioopm_ask_question_string(
             should_exist
@@ -37,16 +37,16 @@ static char *merch_exist_check(store_t *store, bool should_exist)
     return input_name;
 }
 
-static int merch_quantity_check(store_t *store, char *merch_name, int current_amount)
+static int merch_quantity_check(ioopm_store_t *store, char *merch_name, int current_amount)
 {
-    merch_t *merch = ioopm_merch_get(store, merch_name); 
+    ioopm_merch_t *merch = ioopm_merch_get(store, merch_name); 
     if (current_amount == merch->stock_size) 
     {
         puts("There are no more items in stock to add to cart"); 
         return -1; 
     }
 
-    printf("Amount in stock: %d", merch->stock_size); 
+    printf("Amount available: %d", merch->stock_size - merch->reserved_stock); 
     int input_amount = ioopm_ask_question_int("\nEnter the amount of the merch to add to cart: "); 
 
     while (input_amount > merch->stock_size - current_amount)
@@ -138,28 +138,28 @@ static int cart_quantity_check(carts_t *storage_carts, int input_id, char *input
     return input_quantity; 
 }
 
-static merch_t *merch_input(char *name)
+static ioopm_merch_t *merch_input(char *name)
 {
     char *description = ioopm_ask_question_string("\nWrite a description of the merch: "); 
     int price = ioopm_ask_question_int("\nWrite the price of the merch: ");
     int stock_size = 0; 
 
-    merch_t *new_merch = ioopm_merch_create(name, description, price, ioopm_linked_list_create(ioopm_string_eq), stock_size); 
+    ioopm_merch_t *new_merch = ioopm_merch_create(name, description, price, ioopm_linked_list_create(ioopm_string_eq), stock_size); 
 
     return new_merch; 
 }
 
-void merch_add(store_t *store)
+void merch_add(ioopm_store_t *store)
 {    
     char *input_name = merch_exist_check(store, false);
     if (input_name == NULL) return;
 
-    merch_t *input = merch_input(input_name); 
+    ioopm_merch_t *input = merch_input(input_name); 
 
     ioopm_store_add(store, input); 
 }
 
-void merch_list(store_t *store)
+void merch_list(ioopm_store_t *store)
 {
     if (ioopm_store_is_empty(store)) 
     {
@@ -191,7 +191,7 @@ void merch_list(store_t *store)
     }    
 }
 
-void merch_remove(store_t *store, carts_t *storage_carts)
+void merch_remove(ioopm_store_t *store, carts_t *storage_carts)
 {
     if (ioopm_store_is_empty(store)) 
     {
@@ -212,7 +212,7 @@ void merch_remove(store_t *store, carts_t *storage_carts)
     free(input_name); 
 }
 
-void merch_edit(store_t *store, carts_t *storage_carts)
+void merch_edit(ioopm_store_t *store, carts_t *storage_carts)
 {
     if (ioopm_store_is_empty(store)) 
     {
@@ -223,7 +223,7 @@ void merch_edit(store_t *store, carts_t *storage_carts)
     char *input_name = merch_exist_check(store, true);
     if (input_name == NULL) return; 
     
-    merch_t *merch = ioopm_merch_get(store, input_name); 
+    ioopm_merch_t *merch = ioopm_merch_get(store, input_name); 
 
     puts("\nNew name: ");
     char *new_name = merch_exist_check(store, false);
@@ -249,7 +249,7 @@ void merch_edit(store_t *store, carts_t *storage_carts)
     free(input_name); 
 }
 
-void stock_list(store_t *store)
+void stock_list(ioopm_store_t *store)
 {
     if (ioopm_store_is_empty(store)) 
     {
@@ -260,14 +260,14 @@ void stock_list(store_t *store)
     char *input_name = merch_exist_check(store, true);
     if (input_name == NULL) return; 
 
-    merch_t *merch = ioopm_merch_get(store, input_name); 
+    ioopm_merch_t *merch = ioopm_merch_get(store, input_name); 
 
     ioopm_stock_print(merch); 
 
     free(input_name); 
 }
 
-void stock_replenish(store_t *store)
+void stock_replenish(ioopm_store_t *store)
 {
     if (ioopm_store_is_empty(store)) 
     {
@@ -278,7 +278,7 @@ void stock_replenish(store_t *store)
     char *input_name = merch_exist_check(store, true);
     if (input_name == NULL) return; 
 
-    merch_t *merch = ioopm_merch_get(store, input_name); 
+    ioopm_merch_t *merch = ioopm_merch_get(store, input_name); 
     free(input_name); 
 
     printf("\nYou selected this merch:\n"); 
@@ -307,7 +307,7 @@ void cart_create(carts_t *storage_carts)
     printf("\nYou have created a cart with the ID: %d", storage_carts->total_carts); 
 }   
 
-void cart_destroy(store_t *store, carts_t *storage_carts)
+void cart_destroy(ioopm_store_t *store, carts_t *storage_carts)
 {
     if (ioopm_carts_are_empty(storage_carts)) 
     {
@@ -331,7 +331,7 @@ void cart_destroy(store_t *store, carts_t *storage_carts)
 }
 
 //TODO: förmodligen implementerad fel mot beskrivningen
-void cart_add(store_t *store, carts_t *storage_carts)
+void cart_add(ioopm_store_t *store, carts_t *storage_carts)
 {
     if (ioopm_carts_are_empty(storage_carts)) 
     {
@@ -349,7 +349,7 @@ void cart_add(store_t *store, carts_t *storage_carts)
     int input_quantity = merch_quantity_check(store, input_name, merch_cart_amount); 
     if (input_quantity == -1) return; 
 
-    merch_t *merch = ioopm_merch_get(store, input_name);
+    ioopm_merch_t *merch = ioopm_merch_get(store, input_name);
     merch->reserved_stock += input_quantity; 
 
     ioopm_cart_add(storage_carts, input_id, merch->name, input_quantity); 
@@ -358,7 +358,7 @@ void cart_add(store_t *store, carts_t *storage_carts)
     free(input_name); 
 }
 
-void cart_remove(store_t *store, carts_t *storage_carts)
+void cart_remove(ioopm_store_t *store, carts_t *storage_carts)
 {
     if (ioopm_carts_are_empty(storage_carts)) 
     {
@@ -377,7 +377,7 @@ void cart_remove(store_t *store, carts_t *storage_carts)
     int input_quantity = cart_quantity_check(storage_carts, input_id, input_name); 
     if (input_quantity == -1) return; 
 
-    merch_t *merch = ioopm_merch_get(store, input_name);
+    ioopm_merch_t *merch = ioopm_merch_get(store, input_name);
     merch->reserved_stock -= input_quantity;
 
     ioopm_cart_remove(cart_items, input_name, input_quantity); 
@@ -385,7 +385,7 @@ void cart_remove(store_t *store, carts_t *storage_carts)
     free(input_name); 
 }
 
-void cart_cost_calculate(store_t *store, carts_t *storage_carts)
+void cart_cost_calculate(ioopm_store_t *store, carts_t *storage_carts)
 {
     if (ioopm_carts_are_empty(storage_carts))
     {
@@ -400,9 +400,17 @@ void cart_cost_calculate(store_t *store, carts_t *storage_carts)
     printf("The total cost of cart %d is %d SEK.\n", input_id + 1, total_cost);
 }
 
-void cart_checkout(store_t *store)
+void cart_checkout(ioopm_store_t *store, carts_t *storage_carts)
 {
+    if (ioopm_carts_are_empty(storage_carts))
+    {
+        puts("\nThere are no carts, please add one first");
+        return;
+    }
+    int input_id = cart_exists_check(storage_carts);
+    if (input_id == -1) return;
 
+    ioopm_cart_checkout(store, storage_carts, input_id);
 }
 
 void print_menu(void) 
@@ -413,7 +421,7 @@ void print_menu(void)
 
 }
 
-void event_loop(store_t *store, carts_t *storage_carts) 
+void event_loop(ioopm_store_t *store, carts_t *storage_carts) 
 {
     bool running = true; 
     char *quit_confirmation; 
@@ -458,7 +466,7 @@ void event_loop(store_t *store, carts_t *storage_carts)
 	            cart_cost_calculate(store, storage_carts); 
                 break; 
             case 'O': 
-                cart_checkout(store); 
+	      cart_checkout(store, storage_carts); 
                 break; 
             case 'Q':
                 quit_confirmation = ioopm_ask_question_string("Press 'Y' if you really want to quit");
@@ -479,7 +487,7 @@ void event_loop(store_t *store, carts_t *storage_carts)
 }
 
 int main() { 
-    store_t *store = ioopm_store_create(); 
+    ioopm_store_t *store = ioopm_store_create(); 
     carts_t *storage_carts = ioopm_cart_storage_create(); 
     event_loop(store, storage_carts); 
     return 0;
