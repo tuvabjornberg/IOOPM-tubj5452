@@ -62,6 +62,8 @@ void add_to_cart_test()
 
     ioopm_cart_add(storage_carts, id, merch_name, amount); 
     CU_ASSERT_EQUAL(ioopm_item_in_cart_amount(storage_carts, id, merch_name), 2); 
+    ioopm_cart_add(storage_carts, id, merch_name, amount); 
+    CU_ASSERT_EQUAL(ioopm_item_in_cart_amount(storage_carts, id, merch_name), 4); 
 
     ioopm_cart_storage_destroy(storage_carts); 
     ioopm_store_destroy(store); 

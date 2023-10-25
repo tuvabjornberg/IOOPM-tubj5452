@@ -1,8 +1,8 @@
 # Dependencies 
-1.  hash_table comes from Tuva’s Assignment 1
-2.  linked_list and iterator comes from Tuva’s Assignment 1 
-3.  utils comes from Marcus' bootstrap labs
-4.  common comes from Tuva's Assignment 1
+1.  `hash_table` comes from Tuva’s Assignment 1
+2.  `linked_list` and `iterator` comes from Tuva’s Assignment 1 
+3.  `utils` comes from Marcus' bootstrap labs
+4.  `common` comes from Tuva's Assignment 1
 
 
 # Make commands
@@ -46,7 +46,14 @@ $ make clean
    _Coverage tests done with gcov_\
    `merch_store.c`: 
 
-   `shop_cart.c`: 
+   `shop_cart.c`:\
+    Lines executed:100.00% of 93\
+    Branches executed:100.00% of 18\
+    Taken at least once:83.33% of 18\
+    Calls executed:100.00% of 37\
+    Lines executed:100.00% of 93\
+    
+   `ui.c`: 
 
    
    #### Performace tests:
