@@ -29,11 +29,11 @@ typedef struct hash_table ioopm_hash_table_t;
 typedef struct entry entry_t;
 
 typedef struct {
-    char *name;
-    char *description;
-    int price;
-    ioopm_list_t *stock;
-    int stock_size;
+  char *name;
+  char *description;
+  int price;
+  ioopm_list_t *stock;
+  int stock_size;
   int reserved_stock;
 } ioopm_merch_t;
 
