@@ -51,9 +51,14 @@ $ make clean
     Branches executed:100.00% of 18\
     Taken at least once:83.33% of 18\
     Calls executed:100.00% of 37\
-    Lines executed:100.00% of 93\
-    
-   `ui.c`: 
+    Lines executed:100.00% of 93
+
+   `ui.c`:\
+    Lines executed:100.00% of 291\
+    Branches executed:100.00% of 116\
+    Taken at least once:94.83% of 116\
+    Calls executed:100.00% of 128\
+    Lines executed:100.00% of 291
 
    
    #### Performace tests:
