@@ -170,30 +170,24 @@ static ioopm_list_t *stock_get(ioopm_merch_t *merch)
 
 static location_t *location_get(ioopm_merch_t *merch, char *shelf)
 {
-    if (merch->stock == NULL)
-    {
-        return NULL; 
-    }
-    else
-    {
-        ioopm_list_t *stock = merch->stock; 
-        size_t loc_size = shelves_size(merch); 
+    ioopm_list_t *stock = merch->stock; 
+    size_t loc_size = shelves_size(merch); 
 
-        ioopm_list_iterator_t *iter = ioopm_list_iterator(stock);
+    ioopm_list_iterator_t *iter = ioopm_list_iterator(stock);
 
-        location_t *location = ioopm_iterator_current(iter).void_ptr;
-        
-        for (int i = 0; i < loc_size; i++)
+    location_t *location = ioopm_iterator_current(iter).void_ptr;
+    
+    for (int i = 0; i < loc_size; i++)
+    {
+        if (!strcmp(shelf_get(location), shelf))
         {
-            if (!strcmp(shelf_get(location), shelf))
-            {
-                ioopm_iterator_destroy(iter); 
-                return location; 
-            }
-            location = ioopm_iterator_next(iter).void_ptr;
+            ioopm_iterator_destroy(iter); 
+            return location; 
         }
-        ioopm_iterator_destroy(iter); 
+        location = ioopm_iterator_next(iter).void_ptr;
     }
+    ioopm_iterator_destroy(iter); 
+
     return (location_t *) NULL; 
 }
 
@@ -204,13 +198,9 @@ static bool shelf_exists(ioopm_merch_t *merch, char *shelf)
     {
         return false; 
     }
-    else if (!strcmp(shelf_get(location), shelf))
+    else 
     {
         return true; 
-    }
-    else
-    {
-        return false; 
     }
 }
 
