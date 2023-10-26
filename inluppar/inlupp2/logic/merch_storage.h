@@ -3,7 +3,7 @@
 #include "../data_structures/linked_list.h"
 #include "../data_structures/iterator.h"
 
-#define INITIAL_CAPACAITY 10
+#define INITIAL_CAPACITY 10
 
 /**
  * @file merch_storage.h

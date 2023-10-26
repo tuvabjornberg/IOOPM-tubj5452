@@ -8,10 +8,10 @@
 ioopm_store_t *ioopm_store_create()
 {
     ioopm_store_t *new_store = calloc(1, sizeof(ioopm_store_t));
-    new_store->merch_names = calloc(INITIAL_CAPACAITY, sizeof(char*));
+    new_store->merch_names = calloc(INITIAL_CAPACITY, sizeof(char*));
     new_store->merch_details = ioopm_hash_table_create(ioopm_hash_fun_sum_key_string, ioopm_string_eq);
     new_store->merch_count = 0;
-    new_store->capacity = INITIAL_CAPACAITY;
+    new_store->capacity = INITIAL_CAPACITY;
     return new_store;
 }
 
@@ -30,52 +30,44 @@ ioopm_merch_t *ioopm_merch_create(char *name, char *description, int price, ioop
     return new_merch;
 }
 
-//Gets index of element in names array if it exists else gets index where it would be
+// Gets the index of the name in the names array. 
+// If the name doesn't exist, it returns the index where it should be inserted.
 static int names_index_of(ioopm_store_t *store, char *name) 
 {
     if (store->merch_count == 0) return 0;
 
     char **start = store->merch_names;
-    char **end = store->merch_names + store->merch_count-1;
-    char **center;
+    char **end = store->merch_names + store->merch_count;
+    char **mid;
 
-    while (start <= end) 
+    while (start < end) 
     {
-        center = start + (end - start) / 2;
+        mid = start + (end - start) / 2;
 
-        if (strcmp(name, *start) < 0) return start - store->merch_names;
-        if (strcmp(name, *end) > 0) return end - store->merch_names + 1;
-
-        int comparison = strcmp(name, *center);
-        if (comparison == 0) return center - store->merch_names; 
+        int comparison = strcmp(name, *mid);
+        if (comparison == 0) return mid - store->merch_names; 
         if (comparison > 0) 
         {
-            start = center + 1;
+            start = mid + 1;
         } 
         else 
         {
-            end = center - 1;
+            end = mid;
         }
     }
 
     return start - store->merch_names;
 }
 
-//inserts in names array at given index, doubles memory allocation of array if overflow
+// Inserts name in the names array at the given index. 
+// Doubles memory allocation of the array if overflow.
 static void names_insert(ioopm_store_t *store, int index, char *name)
 {
     int last = store->merch_count;
     if (last >= store->capacity)
     {
-        char **tmp = store->merch_names;
-        store->merch_names = calloc(last * 2, sizeof(char*));
-
-        for(int i = 0; i < last; i++)
-        {
-            store->merch_names[i] = tmp[i];
-        }
-        free(tmp);
-        store->capacity = last * 2;
+        store->capacity *= 2;
+        store->merch_names = realloc(store->merch_names, store->capacity * sizeof(char*));
     }
 
     for (int i = last; i > index; i--) 
@@ -85,6 +77,7 @@ static void names_insert(ioopm_store_t *store, int index, char *name)
 
     store->merch_names[index] = name;
 }
+
 
 static void names_remove(ioopm_store_t *store, int index) 
 {
