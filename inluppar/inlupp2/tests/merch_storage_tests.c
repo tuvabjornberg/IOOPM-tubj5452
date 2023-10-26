@@ -7,6 +7,8 @@
 #include "../utils/hash_fun.h"
 #include "../logic/shop_cart.h"
 
+#define NO_ITEMS 1000
+
 int init_suite(void)
 {
     return 0;
@@ -386,7 +388,7 @@ void boundary_cases_test()
 {
     ioopm_store_t *store = ioopm_store_create();
 
-    for (int i = 0; i < 1000; i++)
+    for (int i = 0; i < NO_ITEMS; i++)
     {
         char name[10];
         sprintf(name, "Item%d", i);
@@ -394,9 +396,9 @@ void boundary_cases_test()
         ioopm_store_add(store, item);
     }
 
-    CU_ASSERT_EQUAL(store->merch_count, 1000);
+    CU_ASSERT_EQUAL(store->merch_count, NO_ITEMS);
 
-    for (int i = 0; i < 1000; i++)
+    for (int i = 0; i < NO_ITEMS; i++)
     {
         char name[10];
         sprintf(name, "Item%d", i);
