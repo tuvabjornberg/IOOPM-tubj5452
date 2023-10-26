@@ -32,10 +32,8 @@ static char *merch_exist_check(ioopm_store_t *store, bool should_exist)
             free(input_name);
             return NULL;
         }
-
         free(new_alt);
     }
-
     return input_name;
 }
 
@@ -45,7 +43,6 @@ static int merch_quantity_check(ioopm_store_t *store, char *merch_name, int curr
     if (current_amount == merch->stock_size) 
     {
         puts("There are no more items in stock to add to cart"); 
-        free(merch_name); 
         return -1; 
     }
 
@@ -62,7 +59,6 @@ static int merch_quantity_check(ioopm_store_t *store, char *merch_name, int curr
         }
         else
         {
-            free(merch_name); 
             free(new_alt);
             return -1;
         }
@@ -135,7 +131,6 @@ static int cart_quantity_check(ioopm_carts_t *storage_carts, int input_id, char 
         else
         {
             free(new_alt);
-            free(input_name); 
             return -1;
         }
         free(new_alt);  
@@ -196,18 +191,18 @@ void merch_list(ioopm_store_t *store)
         return; 
     }
 
-    int i = 0;
+    int printed_items = 0;
     int total_items = store->merch_count;
     int rotations = 1;
 
     do
     {
-        for (; i < total_items && i < PRINT_AT_A_TIME * rotations; i++)
+        for (; printed_items < total_items && printed_items < PRINT_AT_A_TIME * rotations; printed_items++)
         {
-          puts(store->merch_names[i]);
+          puts(store->merch_names[printed_items]);
         }
 
-        if (i < total_items)
+        if (printed_items < total_items)
         {
             char *descision = ioopm_ask_question_string("Press any key to see more items, N/n to return");
 
@@ -219,7 +214,7 @@ void merch_list(ioopm_store_t *store)
             rotations++; 
             free(descision); 
         }  
-    } while (i < total_items);  
+    } while (printed_items < total_items);  
     
     printf("\nNo more items to display\n");
 }
@@ -276,9 +271,10 @@ void merch_edit(ioopm_store_t *store, ioopm_carts_t *storage_carts)
 
     ioopm_description_set(merch, new_description); 
     ioopm_price_set(merch, new_price); 
-    ioopm_name_set(store, merch, new_name, storage_carts->carts); 
 
-    printf("\nYou have edited: %s", input_name); 
+    printf("\nYou have edited %s to %s\n", input_name, new_name); 
+
+    ioopm_name_set(store, merch, new_name, storage_carts->carts); 
     
     free(input_name); 
 }
@@ -377,7 +373,11 @@ void cart_add(ioopm_store_t *store, ioopm_carts_t *storage_carts)
 
     int merch_cart_amount = ioopm_item_in_cart_amount(storage_carts, input_id, input_name); 
     int input_quantity = merch_quantity_check(store, input_name, merch_cart_amount); 
-    if (input_quantity == -1) return; 
+    if (input_quantity == -1) 
+    {
+        free(input_name); 
+        return; 
+    }
 
     ioopm_merch_t *merch = ioopm_merch_get(store, input_name);
     merch->reserved_stock += input_quantity; 
@@ -405,13 +405,17 @@ void cart_remove(ioopm_store_t *store, ioopm_carts_t *storage_carts)
     if (input_name == NULL) return;
 
     int input_quantity = cart_quantity_check(storage_carts, input_id, input_name); 
-    if (input_quantity == -1) return; 
+    if (input_quantity == -1) 
+    {
+        free(input_name); 
+        return; 
+    }
 
     ioopm_merch_t *merch = ioopm_merch_get(store, input_name);
     merch->reserved_stock -= input_quantity;
 
     ioopm_cart_remove(cart_items, input_name, input_quantity); 
-    
+
     printf("Removed %d %s from cart %d.\n", input_quantity, input_name, input_id + 1);
     free(input_name); 
 }

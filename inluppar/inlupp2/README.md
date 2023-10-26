@@ -74,7 +74,6 @@ $ make clean
 
    #### Time: 
    ```
-   $ make clean
    $ make ui.out
    $ command time --verbose ./ui.out < filename.txt
    ```
@@ -82,5 +81,5 @@ $ make clean
 
  # Notes and error handling
 
-  - Errors and edge-cases are handled, in some cases, by returning a NULL. merch_storage.c and shop_cart.c are mostly dependent on the error handeling in ui.c. Errors such as empty hashtables and invalid user inputs are handled with return messages to the user to retry their menu choice or other input.  
+  - Errors and edge-cases are handled, in some cases, by returning a NULL. merch_storage.c and shop_cart.c are mostly dependent on the error handeling in ui.c. Errors such as empty hashtables and invalid user inputs are handled with return messages to the user to retry their menu choice or choose another input.  
   - ui.c also ensures proper memory management when using the allocated memory from hash_table, linked_list and iterator, (through merch_table and shop_cart) including freeing the allocated for keys, values, lists, iterators and options after use. 

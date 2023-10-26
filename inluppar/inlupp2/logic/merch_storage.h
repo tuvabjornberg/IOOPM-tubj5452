@@ -20,6 +20,11 @@
  * The hash table assumes a suitable hash_function (hash_fun) and equality function 
  * to fit the ioopm_eq_function in common.h.
  * 
+ * Error handling, such as invalid inputs (NULL etc.), is mostly done in the frontend (ui.c). 
+ * Since this is a coherent project across several modules, the functions in this module wont 
+ * handle most edge cases and invalid inputs. All functions expect valid and existing inputs
+ * following the relevant stucts. 
+ * 
  * It is assumed that the user ensures proper memory management after creating and adding 
  * items to the store, as these structures involve dynamic memory allocation.
  */
@@ -110,16 +115,16 @@ bool ioopm_store_is_empty(ioopm_store_t *store);
 /// @return the merch sought
 ioopm_merch_t *ioopm_merch_get(ioopm_store_t *store, char *name); 
 
-/// @brief retrievs the price of a merch
-/// @param merch the merch operated upon, expects a valid existing merch with a price
+/// @brief retrievs the price of a merch, expects a valid existing merch with a price
+/// @param merch the merch operated upon
 /// @return the price of the merch
 int ioopm_price_get(ioopm_merch_t *merch); 
 
-/// @brief edits the name of a merch by copying the old merch and inserting a new
+/// @brief edits the name of a merch by copying and removing the old merch and inserting a new into the store
 /// @param store the store to insert the new merch
 /// @param old_merch the old merch to copy and remove, expects a valid existing merch
 /// @param new_name the new name to add to the new merch
-/// @param carts a hashtable of carts to replace the old merch with the new
+/// @param carts the carts to search for the old merch and replace with the new
 void ioopm_name_set(ioopm_store_t *store, ioopm_merch_t *old_merch, char *new_name, ioopm_hash_table_t *carts); 
 
 /// @brief edits the description of a merch
@@ -140,6 +145,7 @@ void ioopm_merch_print(ioopm_merch_t *merch);
 /// @param merch print its stock, expects a valid existing merch
 void ioopm_stock_print(ioopm_merch_t *merch); 
 
+//TODO: not finished??
 /// @brief removes a merch from the store and the carts it's in, as well as free its memory
 /// @param store the store to remove from
 /// @param carts the carts to remove from
