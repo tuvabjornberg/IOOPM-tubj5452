@@ -57,7 +57,6 @@ int ioopm_item_in_cart_amount(ioopm_carts_t *storage_carts, int id, char *merch_
     return current_amount; 
 }
 
-//TODO: förmodligen implementerad fel mot beskrivningen
 void ioopm_cart_add(ioopm_carts_t *storage_carts, int id, char *merch_name, int amount)
 { 
     ioopm_hash_table_t *cart_items = ioopm_items_in_cart_get(storage_carts, id); 
@@ -145,9 +144,6 @@ static void stock_update(elem_t name, elem_t *amount, void *store)
   }
 }
 
-//TODO:
-/*Decrease the stock for the merches in the cart.
-Remove the shopping cart from the system.*/
 void ioopm_cart_checkout(ioopm_store_t *store, ioopm_carts_t *storage_carts, int id)
 {
   ioopm_hash_table_t *cart = ioopm_items_in_cart_get(storage_carts, id);
