@@ -23,7 +23,7 @@
  * Error handling, such as invalid inputs (NULL etc.), is mostly done in the frontend (ui.c). 
  * Since this is a coherent project across several modules, the functions in this module wont 
  * handle most edge cases and invalid inputs. All functions expect valid and existing inputs
- * following the relevant stucts. 
+ * following the relevant structs. 
  * 
  * It is assumed that the user ensures proper memory management after creating and adding 
  * items to the store, as these structures involve dynamic memory allocation.
@@ -145,7 +145,6 @@ void ioopm_merch_print(ioopm_merch_t *merch);
 /// @param merch print its stock, expects a valid existing merch
 void ioopm_stock_print(ioopm_merch_t *merch); 
 
-//TODO: not finished??
 /// @brief removes a merch from the store and the carts it's in, as well as free its memory
 /// @param store the store to remove from
 /// @param carts the carts to remove from

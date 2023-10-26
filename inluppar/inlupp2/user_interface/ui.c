@@ -49,6 +49,11 @@ static int merch_quantity_check(ioopm_store_t *store, char *merch_name, int curr
     printf("Amount available: %d", merch->stock_size - merch->reserved_stock); 
     int input_amount = ioopm_ask_question_int("\n\nEnter the amount of the merch to add to cart: "); 
 
+    while (input_amount < 1)
+    {
+        input_amount = ioopm_ask_question_int("\nEnter at least 1: "); 
+    }
+
     while (input_amount > merch->stock_size - merch->reserved_stock)
     {
         char *new_alt = ioopm_ask_question_string("\nThe store doesn't carry that many items, do you want another try (y/n)? "); 

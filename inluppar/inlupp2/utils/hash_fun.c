@@ -12,7 +12,6 @@ bool ioopm_string_eq(elem_t e1, elem_t e2)
     return (strcmp(e1.string, e2.string) == 0);
 }
 
-
 unsigned ioopm_hash_fun_key_int(elem_t key)
 {
   return key.integer;

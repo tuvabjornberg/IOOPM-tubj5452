@@ -44,7 +44,12 @@ $ make clean
    $ make cov
    ```
    _Coverage tests done with gcov_\
-   `merch_store.c`: 
+   `merch_store.c`:\
+    Lines executed:100.00% of 228\
+    Branches executed:100.00% of 54\
+    Taken at least once:96.30% of 54\
+    Calls executed:100.00% of 75\
+    Lines executed:100.00% of 228
 
    `shop_cart.c`:\
     Lines executed:100.00% of 93\
@@ -54,11 +59,11 @@ $ make clean
     Lines executed:100.00% of 93
 
    `ui.c`:\
-    Lines executed:100.00% of 291\
-    Branches executed:100.00% of 116\
-    Taken at least once:94.83% of 116\
-    Calls executed:100.00% of 128\
-    Lines executed:100.00% of 291
+    Lines executed:100.00% of 295\
+    Branches executed:100.00% of 118\
+    Taken at least once:94.92% of 118\
+    Calls executed:100.00% of 130\
+    Lines executed:100.00% of 295
 
    
    #### Performace tests:

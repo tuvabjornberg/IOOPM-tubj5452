@@ -20,7 +20,7 @@
  * Error handling, such as invalid inputs (NULL etc.), is mostly done in the frontend (ui.c). 
  * Since this is a coherent project across several modules, the functions in this module wont 
  * handle most edge cases and invalid inputs. All functions expect valid and existing inputs
- * following the relevant stucts.
+ * following the relevant structs.
  * 
  * It is assumed that the user ensures proper memory management after creating and 
  * manipulating shopping carts, as these structures involve dynamic memory allocation.
