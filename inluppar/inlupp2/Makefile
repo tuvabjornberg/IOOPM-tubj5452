@@ -40,20 +40,38 @@ shop_test_coverage.out: shop_cart_tests.o shop_cart.c hash_table.o linked_list.o
 ui_test_coverage.out: ui.c shop_cart.o hash_table.o linked_list.o merch_storage.o hash_fun.o utils.o
 	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) $(C_GCOV)
 
+#cov: merch_test_coverage.out shop_test_coverage.out ui_test_coverage.out
+#	./ui_test_coverage.out < tests/ui_tests.txt
+#	gcov -b -c ui.c
+#	./merch_test_coverage.out	
+#	gcov -b -c merch_storage.c
+#	./shop_test_coverage.out
+#	gcov -b -c shop_cart.c
+
 cov: merch_test_coverage.out shop_test_coverage.out ui_test_coverage.out
 	./ui_test_coverage.out < tests/ui_tests.txt
-	gcov -b -c ui.c
+	gcov -b -c ui_test_coverage.out-ui.c
 	./merch_test_coverage.out	
-	gcov -b -c merch_storage.c
+	gcov -b -c merch_test_coverage.out-merch_storage.c
 	./shop_test_coverage.out
-	gcov -b -c shop_cart.c
+	gcov -b -c shop_test_coverage.out-shop_cart.c
 
 ui_prof.out: ui.c hash_table.c linked_list.c utils.c merch_storage.c shop_cart.c hash_fun.c
 	$(C_COMPILER) $(C_OPTIONS) $^ -o $@ $(C_PROF)
 
-prof: ui_prof.out
+merch_storage_prof.out: merch_storage_tests.c merch_storage.c shop_cart.c hash_table.c linked_list.c hash_fun.c	
+	$(C_COMPILER) $(C_OPTIONS) $^ -o $@ $(C_PROF) $(CUNIT_LINK) 
+
+shop_cart_prof.out: shop_cart_tests.c shop_cart.c hash_table.c linked_list.c merch_storage.c hash_fun.c
+	$(C_COMPILER) $(C_OPTIONS) $^ -o $@ $(C_PROF) $(CUNIT_LINK) 
+
+prof: ui_prof.out merch_storage_prof.out shop_cart_prof.out shop_cart_prof.out
 	./ui_prof.out < tests/ui_tests.txt
 	gprof ui_prof.out gmon.out > ui_tests.profiling
+	./merch_storage_prof.out 
+	gprof merch_storage_prof.out gmon.out > merch_storage_prof.profiling
+	./shop_cart_prof.out 
+	gprof shop_cart_prof.out gmon.out > shop_cart_prof.profiling
 
 
 clean:
