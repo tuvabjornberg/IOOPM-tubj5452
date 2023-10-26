@@ -1,8 +1,11 @@
 #include <CUnit/Basic.h>
+#include <CUnit/CUnit.h>
+#include <string.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include "../logic/merch_storage.h"
 #include "../utils/hash_fun.h"
+#include "../logic/shop_cart.h"
 
 int init_suite(void)
 {
@@ -12,6 +15,30 @@ int init_suite(void)
 int clean_suite(void)
 {
     return 0;
+}
+
+ioopm_store_t *store_with_inputs()
+{
+    ioopm_store_t *store = ioopm_store_create(); 
+
+    char *name = "Apple"; 
+    char *description = "Red"; 
+    int price = 10; 
+    int stock_size = 0; 
+
+    ioopm_merch_t *apple = ioopm_merch_create(strdup(name), strdup(description), price, ioopm_linked_list_create(ioopm_string_eq), stock_size); 
+
+    ioopm_store_add(store, apple); 
+
+    char *shelf[] = {"B36", "R62", "A4"}; 
+    int quantity[] = {0, 1, 4}; 
+
+    for (int i = 0; i < 3; i++)
+    {
+        ioopm_location_add(apple, strdup(shelf[i]), quantity[i]);
+    }
+
+    return store; 
 }
 
 void create_destroy_merch_test()
@@ -321,7 +348,63 @@ void shelves_exists_test()
 
     CU_ASSERT_TRUE(apple->stock_size == 8); 
 
-    ioopm_store_destroy(store); 
+    ioopm_store_destroy(store);
+}
+
+void merch_storage_cart_functions_test()
+{
+    ioopm_carts_t *storage_carts = ioopm_cart_storage_create(); 
+    ioopm_store_t *store = store_with_inputs(); 
+    ioopm_cart_create(storage_carts); 
+    storage_carts->total_carts++;
+
+    int id = 0; 
+    char *name = "Apple"; 
+    char *merch_name = ioopm_merch_get(store, name)->name; 
+    int amount = 2; 
+
+    ioopm_cart_add(storage_carts, id, merch_name, amount);
+    ioopm_cart_add(storage_carts, id, merch_name, amount);
+    ioopm_merch_t *old_merch = ioopm_merch_get(store, "Apple");
+    ioopm_stock_print(old_merch);
+    ioopm_merch_print(old_merch);
+    
+    char *new_name = strdup("Orange");
+    ioopm_name_set(store, old_merch, new_name, storage_carts->carts);
+
+    ioopm_store_remove(store, storage_carts->carts, "Orange");
+
+    ioopm_hash_table_t *cart = ioopm_items_in_cart_get(storage_carts, 0);
+    CU_ASSERT_FALSE(ioopm_hash_table_has_key(cart, str_elem("Orange")));
+    CU_ASSERT(ioopm_hash_table_is_empty(cart));
+
+    ioopm_cart_storage_destroy(storage_carts);
+    ioopm_store_destroy(store);
+}
+
+void boundary_cases_test()
+{
+    ioopm_store_t *store = ioopm_store_create();
+
+    for (int i = 0; i < 1000; i++)
+    {
+        char name[10];
+        sprintf(name, "Item%d", i);
+        ioopm_merch_t *item = ioopm_merch_create(strdup(name), strdup("Description"), 10, ioopm_linked_list_create(ioopm_string_eq), 0);
+        ioopm_store_add(store, item);
+    }
+
+    CU_ASSERT_EQUAL(store->merch_count, 1000);
+
+    for (int i = 0; i < 1000; i++)
+    {
+        char name[10];
+        sprintf(name, "Item%d", i);
+        ioopm_store_remove(store, NULL, name);
+    }
+    CU_ASSERT_EQUAL(store->merch_count, 0);    
+
+    ioopm_store_destroy(store);
 }
 
 int main()
@@ -356,6 +439,8 @@ int main()
          CU_add_test(my_test_suite, "test for editing description of merch", set_description_test) == NULL ||
          CU_add_test(my_test_suite, "test for editing price of merch", set_price_test) == NULL ||
          CU_add_test(my_test_suite, "test if store is empty", store_is_empty_test) == NULL ||
+	 CU_add_test(my_test_suite, "test some boundary cases", boundary_cases_test) == NULL ||
+	 CU_add_test(my_test_suite, "testing cart operations in merch_storage", merch_storage_cart_functions_test) == NULL ||	 
          CU_add_test(my_test_suite, "test for a merch's stock", shelves_exists_test) == NULL 
         )
     )
