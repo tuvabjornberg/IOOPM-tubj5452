@@ -24,7 +24,7 @@ merch_storage_tests.out: merch_storage_tests.o merch_storage.o shop_cart.o hash_
 	$(C_COMPILER) $(C_LINK_OPTIONS) $(C_OPTIONS) $^ -o $@ $(CUNIT_LINK)
 
 shop_cart_tests.out: shop_cart_tests.o shop_cart.o hash_table.o linked_list.o merch_storage.o hash_fun.o
-	$(C_COMPILER) $(C_LINK_OPTIONS) $^ -o $@ $(CUNIT_LINK) 
+	$(C_COMPILER) $(C_LINK_OPTIONS) $(C_OPTIONS) $^ -o $@ $(CUNIT_LINK) 
 
 tests: merch_storage_tests.out shop_cart_tests.out 
 	./merch_storage_tests.out 
