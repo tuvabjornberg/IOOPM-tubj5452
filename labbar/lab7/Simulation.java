@@ -10,7 +10,8 @@ public class Simulation
     private int customersServedTotal; 
     private int registersAmount; 
     private int maxWaitTime; 
-    private double averageTime; 
+    private double averageWaitTime; 
+    private int totalWaitTime;
 
     public Simulation(int registersAmount, int intensity, int maxGroceries, int thresholdForNewRegister)
     {
@@ -23,7 +24,8 @@ public class Simulation
         this.customersServedTotal = 0;
         this.registersAmount = registersAmount; 
         this.maxWaitTime = 0;
-        this.averageTime = 0; 
+        this.averageWaitTime = 0; 
+        this.totalWaitTime = 0; 
     }
 
     private void generateNewCustomer()
@@ -45,47 +47,49 @@ public class Simulation
             this.store.openNewRegister();
         }
     }
-
+    
     private int generateWaitTime(Customer currentCustomer)
     {
-        int waitTime = this.time - currentCustomer.getBornTime(); 
+        return this.time - currentCustomer.getBornTime();
+    }
+
+    private void generateMaxWaitTime(Customer currentCustomer)
+    {
+        int waitTime = generateWaitTime(currentCustomer); 
         if (waitTime > this.maxWaitTime)
         {
             this.maxWaitTime = waitTime;
         } 
-        return waitTime; 
+    }
+
+    private void generateTotalWaitTime(Register currentRegister, Customer currentCustomer)
+    {
+        if (currentRegister.currentCustomerIsDone())
+        {
+            this.totalWaitTime += generateWaitTime(currentCustomer); 
+        }
     }
 
     private void generateStatistics()
     {
-        int customersServedStep = 0;
-        int totalWaitTimeStep = 0;
-
         for (int i = 0; i < this.registersAmount; i++)
         {
             Register currentRegister = this.store.getRegister(i);
             if (currentRegister.isOpen())
-            {
-                Queue currentQueue = currentRegister.getQueue(); 
-                currentRegister.hasCustomers();
-                
+            {                
                 int groceriesAmount = 0; 
 
-                int queueLength = currentRegister.getQueueLength();
-                if (queueLength > 0)
+                if (currentRegister.hasCustomers())
                 {
-                    Customer currentCustomer = currentQueue.first();
+                    Customer currentCustomer = currentRegister.getQueue().first();
 
                     groceriesAmount = currentCustomer.getGroceries();
 
-                    int waitTime = this.generateWaitTime(currentCustomer);
-                    totalWaitTimeStep += waitTime;
-                    customersServedStep++;
-
+                    this.generateMaxWaitTime(currentCustomer);
+                    this.generateTotalWaitTime(currentRegister, currentCustomer); 
                 }
 
-                this.averageTime = customersServedStep > 0 ? (double) totalWaitTimeStep / customersServedStep : 0;
-                 
+                int queueLength = currentRegister.getQueueLength();
                 System.out.println("    [" + groceriesAmount + "]" + " Customers in queue: " + queueLength);
             }
             else 
@@ -93,12 +97,15 @@ public class Simulation
                 System.out.println("X   [ ]");         
             }
         }
-        
+
         Customer doneCustomers[] = this.store.getDoneCustomers(); 
         this.customersServedTotal += doneCustomers.length;
+
+        this.averageWaitTime = customersServedTotal > 0 ? (double) totalWaitTime / (double) customersServedTotal : 0;
+
         System.out.println("Number of customers checked out: " + this.customersServedTotal);
         System.out.println("Max wait time: " + this.maxWaitTime);
-        System.out.println("Average wait time: " + this.averageTime); 
+        System.out.printf("Average wait time: %.2f\n", this.averageWaitTime); 
     }
 
     public void step()
