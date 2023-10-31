@@ -85,9 +85,9 @@ public class Queue
     {
         Queue queue = new Queue(); 
 
-        queue.enqueue(new Customer()); 
-        queue.enqueue(new Customer()); 
-        queue.enqueue(new Customer()); 
+        queue.enqueue(new Customer(0, 3)); 
+        queue.enqueue(new Customer(0, 4)); 
+        queue.enqueue(new Customer(0, 5)); 
 
         System.out.println("Queue length: " + queue.length);
         System.out.println(queue.first.element);

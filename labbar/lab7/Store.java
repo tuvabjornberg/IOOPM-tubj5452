@@ -16,20 +16,28 @@ public class Store
         {
             registers[i] = new Register(); 
         }
-         
         registers[0].open();
     }
 
-    public int getAverageQueueLength()
+    public Register getRegister(int index)
+    {
+        return this.registers[index]; 
+    }
+
+    public double getAverageQueueLength()
     {
         int totalLength = 0;
+        int openRegisters = 0; 
 
         for (Register r : this.registers)
         {
-            totalLength += r.getQueueLength(); 
+            if (r.isOpen())
+            {
+                openRegisters++; 
+                totalLength += r.getQueueLength(); 
+            }
         }
-        
-        return totalLength / registers.length; 
+        return (double) totalLength / openRegisters; 
     }
 
     public void newCustomer(Customer c)
@@ -47,7 +55,6 @@ public class Store
             }
         }
         shortestR.addToQueue(c);
-        
     }
 
     public void step()
@@ -56,10 +63,9 @@ public class Store
         {
             if (r.isOpen() && r.hasCustomers())
             {
-                r.registerStep();
+                r.step();
             }
         }
-
     }
 
     public void openNewRegister()
@@ -98,19 +104,14 @@ public class Store
         }
 
         return doneCustomers; 
-
     }
 
     public static void main(String[] args)
     {
         Store store = new Store(2); 
-        Customer firstCustomer = new Customer(); 
-        Customer secondCustomer = new Customer(); 
-        Customer thirdCustomer = new Customer();
-
-        firstCustomer.addGroceries(3);
-        secondCustomer.addGroceries(4);
-        thirdCustomer.addGroceries(5);
+        Customer firstCustomer = new Customer(0, 3); 
+        Customer secondCustomer = new Customer(0, 4); 
+        Customer thirdCustomer = new Customer(0, 5);
 
         store.newCustomer(firstCustomer);
         store.newCustomer(secondCustomer);
@@ -131,6 +132,4 @@ public class Store
             System.out.println(customer);
         }
     }
-
-    
 }

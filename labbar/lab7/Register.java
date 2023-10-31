@@ -25,7 +25,7 @@ public class Register
         return this.open; 
     }
 
-    public void registerStep()
+    public void step()
     {
         this.queue.first().serve();
     }
@@ -55,16 +55,17 @@ public class Register
         return this.queue.length(); 
     }
 
+    public Queue getQueue()
+    {
+        return this.queue;
+    }
+
     public static void main(String[] args)
     {
         Register register = new Register(); 
-        Customer firstCustomer = new Customer(); 
-        Customer secondCustomer = new Customer(); 
-        Customer thirdCustomer = new Customer();
-
-        firstCustomer.addGroceries(3);
-        secondCustomer.addGroceries(4);
-        thirdCustomer.addGroceries(5);
+        Customer firstCustomer = new Customer(0, 3); 
+        Customer secondCustomer = new Customer(0, 4); 
+        Customer thirdCustomer = new Customer(0, 5);
 
         register.addToQueue(firstCustomer); 
         register.addToQueue(secondCustomer); 
@@ -78,9 +79,9 @@ public class Register
         System.out.println("The queue has customers: " + register.hasCustomers());
         System.out.println("The current customer is done: " + register.currentCustomerIsDone()); 
 
-        register.registerStep();
-        register.registerStep();
-        register.registerStep();
+        register.step();
+        register.step();
+        register.step();
 
         System.out.println("The current customer is done: " + register.currentCustomerIsDone()); 
 

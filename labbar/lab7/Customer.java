@@ -4,10 +4,10 @@ public class Customer
     private int bornTime; 
     private int groceries; 
 
-    public Customer()
+    public Customer(int bornTime, int groceries)
     {
-        this.bornTime = 0;
-        this.groceries = 0; 
+        this.bornTime = bornTime;
+        this.groceries = groceries; 
     }
 
     public void serve()
@@ -16,6 +16,7 @@ public class Customer
         {        
             this.groceries--; 
         }
+
     }
 
     public boolean isDone()
@@ -28,10 +29,19 @@ public class Customer
         this.groceries += groceries;
     }
 
+    public int getGroceries()
+    {
+        return this.groceries; 
+    }
+
+    public int getBornTime()
+    {
+        return this.bornTime; 
+    }
+
     public static void main(String[] args)
     {
-        Customer customer = new Customer();
-        customer.addGroceries(3); 
+        Customer customer = new Customer(0, 3);
 
         for (int i = 0; i < 3; i++)
         {
