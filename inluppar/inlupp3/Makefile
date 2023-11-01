@@ -1,17 +1,17 @@
-JAVAC = javac
-SRC_DIR = src
-CLASSES_DIR = classes
-MAIN_CLASS = org.ioopm.calculator.ast.Main
-AST_DIR = src/org/ioopm/calculator/ast/
-PARSER_DIR = src/org/ioopm/calculator/parser/
-
+SRC_DIR = src/org/ioopm/calculator/
 compile:
-	$(JAVAC) -d $(CLASSES_DIR) -sourcepath $(SRC_DIR) $(AST_DIR)*.java $(PARSER_DIR)*.java $(SRC_DIR)/org/ioopm/calculator/*.java
+	javac -d classes -sourcepath src $(SRC_DIR)Calculator.java
 
 run:
-	java -cp $(CLASSES_DIR) $(MAIN_CLASS)
+	java -cp classes org.ioopm.calculator.Calculator
+
+standard_tests.out: 
+	javac -cp  ..lib/junit-platform-console-standalone-1.8.1.jar $(SRC_DIR)StandardTests.java
+
+tests: standard_tests.out
+	java -jartform-console-standalone-1.8.1.jar -cp classes -c StandardTests
 
 clean:
-	rm -rf $(CLASSES_DIR)
+	rm -rf classes
 
 .PHONY: compile run clean
