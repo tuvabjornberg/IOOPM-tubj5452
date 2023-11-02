@@ -5,4 +5,8 @@ public class Cos extends Unary {
     public Cos(SymbolicExpression operand) {
         super(operand); 
     }
+
+    public String getName() {
+        return "cos"; 
+    }
 }

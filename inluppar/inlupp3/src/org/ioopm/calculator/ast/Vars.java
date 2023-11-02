@@ -5,4 +5,8 @@ public class Vars extends Command {
     public Vars() {
         
     }
+
+    public String getName() {
+        return "vars"; 
+    }
 }
