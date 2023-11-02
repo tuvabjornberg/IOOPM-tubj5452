@@ -15,6 +15,10 @@ astCompile:
 parseCompile: 
 	javac -d $(OUT_DIR) -sourcepath src $(SRC_DIR)/parser/*.java
 
+test: astCompile
+	javac -d $(OUT_DIR) -sourcepath src $(SRC_DIR)/Test.java
+	java -cp $(OUT_DIR) $(CLASSPATH).Test
+
 run:
 	java -cp $(OUT_DIR) $(CLASSPATH).Calculator
 
@@ -27,4 +31,4 @@ tests: testCompile
 clean:
 	rm -rf $(OUT_DIR)
 
-.PHONY: compile run clean testCompile tests
+.PHONY: compile run clean testCompile tests test
