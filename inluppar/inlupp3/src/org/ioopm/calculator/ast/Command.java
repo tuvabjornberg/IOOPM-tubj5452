@@ -1,6 +1,8 @@
 package org.ioopm.calculator.ast;
 
-public class Command {
+public class Command extends SymbolicExpression {
 
-    
+    public Command() {
+
+    }
 }
