@@ -2,8 +2,8 @@ package org.ioopm.calculator.ast;
 
 public class Cos extends Unary {
 
-    public Cos(SymbolicExpression operand) {
-        super(operand); 
+    public Cos(SymbolicExpression argument) {
+        super(argument); 
     }
 
     public String getName() {

@@ -5,5 +5,6 @@ public class Atom extends SymbolicExpression {
     public Atom() {
 
     }
+
     
 }
