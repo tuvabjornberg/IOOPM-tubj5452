@@ -11,4 +11,15 @@ public class Variable extends Atom {
         return String.valueOf(this.identifier); 
     }
     
+    public boolean equals(Object other) {
+        if (other instanceof Variable) {
+            return this.equals((Variable) other);
+        } else {
+            return false;
+        }
+    }
+    
+    public boolean equals(Variable other) {
+        return this.identifier == other.identifier;
+    }
 }

@@ -24,4 +24,35 @@ public abstract class Binary extends SymbolicExpression {
             return this.lhs.toString() + " " + this.getName() + " " + this.rhs.toString(); 
         }
     }
+
+    public boolean equals(Object other) {
+        if (other instanceof Binary) {
+            return this.equals((Binary) other); 
+        } else {
+            return false; 
+        }
+    }
+
+    public boolean equals(Binary other) {
+        //same operator
+        //same lhs
+        //same rhs
+        String operator1 = this.getName(); 
+        String operator2 = other.getName(); 
+        boolean sameOperator = operator1.equals(operator2); 
+
+        String lhs1 = this.lhs.toString(); 
+        String lhs2 = other.lhs.toString(); 
+
+        String rhs1 = this.rhs.toString(); 
+        String rhs2 = other.rhs.toString(); 
+        
+        boolean sameLhs = lhs1.equals(lhs2) || lhs1.equals(rhs2); 
+        boolean sameRhs = rhs1.equals(rhs2) || rhs1.equals(lhs2); 
+
+        // 1 + x
+        // x + 1 
+
+        return sameOperator && sameLhs && sameRhs; //&& same lhs && same rhs x + 1 = 1 + x  
+    }
 }

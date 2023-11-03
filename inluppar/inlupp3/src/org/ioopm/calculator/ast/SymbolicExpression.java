@@ -23,4 +23,8 @@ public abstract class SymbolicExpression
     public double getValue() {
         throw new RuntimeException("getValue() called on expression with no operator"); 
     }
+
+    public SymbolicExpression eval() {
+        return this;  
+    }
 }
