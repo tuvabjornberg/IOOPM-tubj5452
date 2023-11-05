@@ -17,7 +17,7 @@ parseCompile:
 
 test: astCompile
 	javac -d $(OUT_DIR) -sourcepath src $(SRC_DIR)/Test.java
-	java -cp $(OUT_DIR) $(CLASSPATH).Test
+	java -ea -cp $(OUT_DIR) $(CLASSPATH).Test
 
 run:
 	java -cp $(OUT_DIR) $(CLASSPATH).Calculator

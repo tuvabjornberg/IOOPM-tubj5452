@@ -14,4 +14,15 @@ public class Addition extends Binary {
         return 50; 
     }
 
+    public SymbolicExpression eval(Environment vars) {
+        SymbolicExpression lhsEvaluated = this.getLhs().eval(vars); 
+        SymbolicExpression rhsEvaluated = this.getRhs().eval(vars); 
+        
+        if (lhsEvaluated.isConstant() && rhsEvaluated.isConstant()) {
+            double result = lhsEvaluated.getValue() + rhsEvaluated.getValue(); 
+            return new Constant(result); 
+        } else {
+            return new Addition(lhsEvaluated, rhsEvaluated); 
+        }
+    }
 }

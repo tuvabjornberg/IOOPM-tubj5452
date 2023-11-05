@@ -9,6 +9,14 @@ public abstract class Binary extends SymbolicExpression {
         this.rhs = rhs; 
     }
 
+    public SymbolicExpression getLhs() {
+        return lhs; 
+    }
+
+    public SymbolicExpression getRhs() {
+        return rhs; 
+    }
+
     public String toString() {
         int lhsPriority = this.lhs.getPriority(); 
         int rhsPriority = this.rhs.getPriority(); 
@@ -34,9 +42,6 @@ public abstract class Binary extends SymbolicExpression {
     }
 
     public boolean equals(Binary other) {
-        //same operator
-        //same lhs
-        //same rhs
         String operator1 = this.getName(); 
         String operator2 = other.getName(); 
         boolean sameOperator = operator1.equals(operator2); 
@@ -47,12 +52,14 @@ public abstract class Binary extends SymbolicExpression {
         String rhs1 = this.rhs.toString(); 
         String rhs2 = other.rhs.toString(); 
         
-        boolean sameLhs = lhs1.equals(lhs2) || lhs1.equals(rhs2); 
-        boolean sameRhs = rhs1.equals(rhs2) || rhs1.equals(lhs2); 
+        //boolean sameLhs = lhs1.equals(lhs2) || (lhs1.equals(rhs2) && rhs1.equals(lhs2)); 
+        //boolean sameRhs = rhs1.equals(rhs2); 
 
         // 1 + x
         // x + 1 
-
-        return sameOperator && sameLhs && sameRhs; //&& same lhs && same rhs x + 1 = 1 + x  
+        boolean sameToSame = lhs1.equals(lhs2) && rhs1.equals(rhs2);
+        boolean sameToOposite = lhs1.equals(rhs2) && rhs1.equals(lhs2);
+        return sameToSame || sameToOposite;
+        //return sameOperator && sameLhs && sameRhs;  
     }
 }

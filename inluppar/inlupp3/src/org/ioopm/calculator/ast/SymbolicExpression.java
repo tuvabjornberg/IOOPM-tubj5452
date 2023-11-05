@@ -1,6 +1,4 @@
 package org.ioopm.calculator.ast;
-
-
 public abstract class SymbolicExpression
 {
 
@@ -12,7 +10,7 @@ public abstract class SymbolicExpression
         return false; 
     }
 
-    public String getName() {
+    public String getName() throws RuntimeException {
         throw new RuntimeException("getName() called on expression with no operator"); 
     }
 
@@ -20,11 +18,13 @@ public abstract class SymbolicExpression
         return 100; 
     }
 
-    public double getValue() {
+    public double getValue() throws RuntimeException {
         throw new RuntimeException("getValue() called on expression with no operator"); 
     }
 
-    public SymbolicExpression eval() {
-        return this;  
+    public Variable getVariable() throws RuntimeException {
+        throw new RuntimeException("gatVariable() called on expression with no variable"); 
     }
+
+    public abstract SymbolicExpression eval(Environment vars);
 }

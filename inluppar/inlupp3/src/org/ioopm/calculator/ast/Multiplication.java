@@ -9,4 +9,16 @@ public class Multiplication extends Binary {
     public String getName() {
         return "*"; 
     }
+
+    public SymbolicExpression eval(Environment vars) {
+        SymbolicExpression lhsEvaluated = this.getLhs().eval(vars); 
+        SymbolicExpression rhsEvaluated = this.getRhs().eval(vars); 
+        
+        if (lhsEvaluated.isConstant() && rhsEvaluated.isConstant()) {
+            double result = lhsEvaluated.getValue() * rhsEvaluated.getValue(); 
+            return new Constant(result); 
+        } else {
+            return new Multiplication(lhsEvaluated, rhsEvaluated); 
+        }
+    }
 }

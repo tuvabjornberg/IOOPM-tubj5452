@@ -1,10 +1,14 @@
 package org.ioopm.calculator.ast;
 
-public class Unary extends SymbolicExpression {
-    private SymbolicExpression argument; 
+public abstract class Unary extends SymbolicExpression {
+    private SymbolicExpression argument = null; 
 
     public Unary(SymbolicExpression argument) {
         this.argument = argument; 
+    }
+
+    public SymbolicExpression getArg() {
+        return this.argument; 
     }
 
     public String toString() {

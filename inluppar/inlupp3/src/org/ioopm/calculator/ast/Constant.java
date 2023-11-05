@@ -30,4 +30,8 @@ public class Constant extends Atom {
     public boolean equals(Constant other) {
         return this.value == other.value;
     } 
+
+    public SymbolicExpression eval(Environment vars) {
+        return new Constant(this.value); 
+    }
 }
