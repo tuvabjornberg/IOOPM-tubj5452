@@ -169,31 +169,28 @@ public class Test {
         
         Assignment invalid = new Assignment(new Constant(43), answer); 
         testEvaluating(new Constant(43), invalid, vars);
-        //testEvaluating(new Constant(42), answer, vars);
     }
 
-    public static void testsForVarsSingleton() {
+    public static void testsForCommandSingleton() {
         Vars v1 = Vars.instance();  
         Vars v2 = Vars.instance(); 
-
         assert v1 == v2 : "Vars instance not the same"; 
-
         System.out.println("Vars Singleton Test Passed");
-    }
 
-    private static void testsForQuitSingleton() {
         Quit quit1 = Quit.instance();
         Quit quit2 = Quit.instance();
-
         assert quit1 == quit2 : "Quit instances are not the same";
-
         System.out.println("Quit Singleton Test Passed");
+
+        Clear clear1 = Clear.instance(); 
+        Clear clear2 = Clear.instance(); 
+        assert clear1 == clear2 : "Clear instances are not the same";
+        System.out.println("Clear Singleton Test Passed");
     }
     
     public static void main(String[] args) {
         testsForPrinting();
         testsForEvaluating();
-        testsForVarsSingleton(); 
-        testsForQuitSingleton(); 
+        testsForCommandSingleton(); 
     }
 }

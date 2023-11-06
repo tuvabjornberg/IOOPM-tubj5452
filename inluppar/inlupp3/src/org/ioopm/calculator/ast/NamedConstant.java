@@ -1,6 +1,6 @@
 package org.ioopm.calculator.ast;
 
-public class NamedConstant extends SymbolicExpression{
+public class NamedConstant extends Atom{
     private String name; 
     private double value; 
 
