@@ -1,9 +1,12 @@
 package org.ioopm.calculator.ast;
 
 public class Vars extends Command {
+    private static final Vars theInstance = new Vars();
 
-    public Vars() {
-        
+    private Vars() {}
+
+    public static Vars instance() {
+        return theInstance;
     }
 
     public String getName() {
@@ -13,4 +16,9 @@ public class Vars extends Command {
     public SymbolicExpression eval(Environment vars) {
         throw new RuntimeException("Error: Commands may not be evaluated"); 
     }
+
+    public boolean isCommand() {
+        return true; 
+    }
+
 }

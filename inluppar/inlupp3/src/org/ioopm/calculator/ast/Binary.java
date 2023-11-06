@@ -52,14 +52,9 @@ public abstract class Binary extends SymbolicExpression {
         String rhs1 = this.rhs.toString(); 
         String rhs2 = other.rhs.toString(); 
         
-        //boolean sameLhs = lhs1.equals(lhs2) || (lhs1.equals(rhs2) && rhs1.equals(lhs2)); 
-        //boolean sameRhs = rhs1.equals(rhs2); 
-
-        // 1 + x
-        // x + 1 
         boolean sameToSame = lhs1.equals(lhs2) && rhs1.equals(rhs2);
-        boolean sameToOposite = lhs1.equals(rhs2) && rhs1.equals(lhs2);
-        return sameToSame || sameToOposite;
-        //return sameOperator && sameLhs && sameRhs;  
+        boolean sameToOposite = lhs1.equals(rhs2) && rhs1.equals(lhs2); 
+
+        return (sameToSame || sameToOposite) && sameOperator;
     }
 }

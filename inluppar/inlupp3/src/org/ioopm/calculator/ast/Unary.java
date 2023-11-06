@@ -40,5 +40,4 @@ public abstract class Unary extends SymbolicExpression {
 
         return sameOperator && sameArgument; 
     }
-    
 }

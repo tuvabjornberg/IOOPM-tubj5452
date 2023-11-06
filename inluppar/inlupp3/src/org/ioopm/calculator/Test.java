@@ -1,5 +1,7 @@
 package org.ioopm.calculator;
 
+import javax.naming.BinaryRefAddr;
+
 import org.ioopm.calculator.ast.*;
 
 public class Test {
@@ -158,9 +160,29 @@ public class Test {
         Assignment xEquals = new Assignment(new Constant(8), x2);
         testEvaluating(new Constant(26), new Multiplication(new Addition(new Constant(5), xEquals), two), vars);
     }
+
+    public static void testsForVarsSingleton() {
+        Vars v1 = Vars.instance();  
+        Vars v2 = Vars.instance(); 
+
+        assert v1 == v2 : "Vars instance not the same"; 
+
+        System.out.println("Vars Singleton Test Passed");
+    }
+
+    private static void testsForQuitSingleton() {
+        Quit quit1 = Quit.instance();
+        Quit quit2 = Quit.instance();
+
+        assert quit1 == quit2 : "Quit instances are not the same";
+
+        System.out.println("Quit Singleton Test Passed");
+    }
     
     public static void main(String[] args) {
         testsForPrinting();
         testsForEvaluating();
+        testsForVarsSingleton(); 
+        testsForQuitSingleton(); 
     }
 }
