@@ -159,6 +159,17 @@ public class Test {
         Variable x2 = new Variable("x"); 
         Assignment xEquals = new Assignment(new Constant(8), x2);
         testEvaluating(new Constant(26), new Multiplication(new Addition(new Constant(5), xEquals), two), vars);
+
+        vars = new Environment(); 
+
+        NamedConstant answer = new NamedConstant("Answer", 42); 
+        SymbolicExpression life = new Constant(42); 
+        testEvaluating(life, answer, vars);
+        testEvaluating(new Constant(84), new Addition(answer, answer), vars); 
+        
+        Assignment invalid = new Assignment(new Constant(43), answer); 
+        testEvaluating(new Constant(43), invalid, vars);
+        //testEvaluating(new Constant(42), answer, vars);
     }
 
     public static void testsForVarsSingleton() {
