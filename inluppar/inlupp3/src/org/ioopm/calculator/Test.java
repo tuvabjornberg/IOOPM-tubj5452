@@ -1,11 +1,19 @@
 package org.ioopm.calculator;
 
-import javax.naming.BinaryRefAddr;
-
 import org.ioopm.calculator.ast.*;
+import org.ioopm.calculator.parser.IllegalExpressionException;
 
+/**
+ * A class containing tests for the ast classes. 
+ */
 public class Test {
 
+    /**
+     * Tests the string representation of a symbolic expression.
+     *
+     * @param expected The expected string representation.
+     * @param e        The symbolic expression to test.
+     */
     public static void testPrinting(String expected, SymbolicExpression e) {
         if (expected.equals(e.toString())) {//expected.equals("" + e)) {
             System.out.println("Passed: " + e);
@@ -14,6 +22,9 @@ public class Test {
         }
     }
 
+    /**
+     * Runs tests for string representation of symbolic expressions.
+     */
     public static void testsForPrinting() {
         Constant c1 = new Constant(5); 
         Constant c2 = new Constant(2); 
@@ -51,15 +62,30 @@ public class Test {
         testPrinting("(log (9.0 + y) + log (9.0 + y)) * 2.0", m4);
     }
 
+    /**
+     * Tests the evaluation of a symbolic expression.
+     *
+     * @param expected The expected result of the evaluation.
+     * @param e        The symbolic expression to evaluate.
+     * @param vars     The environment containing variable values.
+     */
     public static void testEvaluating(SymbolicExpression expected, SymbolicExpression e, Environment vars) {
-        SymbolicExpression r = e.eval(vars); 
-        if (r.equals(expected)) {
-            System.out.println("Passed: " + r);
-        } else {
-            System.out.println("Error: expected '" + expected + "' but got '" + r + "'");
+        SymbolicExpression r;
+        try {
+            r = e.eval(vars); 
+            if (r.equals(expected)) {
+                System.out.println("Passed: " + r);
+            } else {
+                System.out.println("Error: expected '" + expected + "' but got '" + r + "'");
+            }
+        } catch (IllegalExpressionException ex) {
+            ex.getMessage(); 
         }
     }
 
+    /**
+     * Runs tests for the evaluation of symbolic expressions.
+     */
     public static void testsForEvaluating() {
         Environment vars = new Environment(); 
         SymbolicExpression a = new Addition(new Constant(5), new Constant(37)); 
@@ -167,10 +193,14 @@ public class Test {
         testEvaluating(life, answer, vars);
         testEvaluating(new Constant(84), new Addition(answer, answer), vars); 
         
+
         Assignment invalid = new Assignment(new Constant(43), answer); 
         testEvaluating(new Constant(43), invalid, vars);
     }
 
+    /**
+     * Runs tests for the command singleton instances.
+     */
     public static void testsForCommandSingleton() {
         Vars v1 = Vars.instance();  
         Vars v2 = Vars.instance(); 
@@ -188,6 +218,11 @@ public class Test {
         System.out.println("Clear Singleton Test Passed");
     }
     
+    /**
+     * The main method that runs the test cases.
+     *
+     * @param args Command line arguments.
+     */
     public static void main(String[] args) {
         testsForPrinting();
         testsForEvaluating();

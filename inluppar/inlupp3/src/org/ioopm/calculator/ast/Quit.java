@@ -13,11 +13,5 @@ public class Quit extends Command {
         return "quit"; 
     }
 
-    public SymbolicExpression eval(Environment vars) {
-        throw new RuntimeException("Error: Commands may not be evaluated"); 
-    }
 
-    public boolean isCommand() {
-        return true; 
-    }
 }

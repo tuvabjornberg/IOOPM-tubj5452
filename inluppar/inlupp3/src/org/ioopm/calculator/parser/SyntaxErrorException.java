@@ -1,7 +1,24 @@
 package org.ioopm.calculator.parser;
 
-class SyntaxErrorException extends RuntimeException { //TODO: If Exception instead of RuntimeException try/catch need to be added
+/**
+ * A subclass of RuntimeException. It is thrown when a syntax error 
+ * during the parsing occurs. 
+ */
+public class SyntaxErrorException extends RuntimeException {
+
+    /**
+     * Constructs a new SyntaxErrorException with no message.
+     */
+    public SyntaxErrorException() {
+        super();
+    }
+
+    /**
+     * Constructs a new SyntaxErrorException with the specified message.
+     *
+     * @param msg The message.
+     */
     public SyntaxErrorException(String msg) {
-        System.out.println(msg);
+        super(msg);
     }
 }

@@ -13,11 +13,6 @@ public class Clear extends Command{
         return "clear"; 
     }
 
-    public SymbolicExpression eval(Environment vars) {
-        throw new RuntimeException("Error: Commands may not be evaluated"); 
-    }
+    
 
-    public boolean isCommand() {
-        return true; 
-    }
 }
