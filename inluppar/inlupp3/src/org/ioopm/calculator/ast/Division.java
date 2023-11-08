@@ -20,6 +20,7 @@ public class Division extends Binary {
      *
      * @return The string representation of the division operator ("/").
      */
+    @Override
     public String getName() {
         return "/";
     }
@@ -31,6 +32,7 @@ public class Division extends Binary {
      * @param vars The environment containing variable values.
      * @return SymbolicExpression The result of the division operation.
      */
+    @Override
     public SymbolicExpression eval(Environment vars) {
         SymbolicExpression lhsEvaluated = this.getLhs().eval(vars);
         SymbolicExpression rhsEvaluated = this.getRhs().eval(vars);

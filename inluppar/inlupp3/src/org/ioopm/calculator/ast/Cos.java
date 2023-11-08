@@ -19,6 +19,7 @@ public class Cos extends Unary {
      *
      * @return The string representation of the cosine operator ("cos").
      */
+    @Override
     public String getName() {
         return "cos";
     }
@@ -30,6 +31,7 @@ public class Cos extends Unary {
      * @param vars The environment containing variable values.
      * @return SymbolicExpression The result of the cosine operation.
      */
+    @Override
     public SymbolicExpression eval(Environment vars) {
         SymbolicExpression arg = this.getArg().eval(vars);
 

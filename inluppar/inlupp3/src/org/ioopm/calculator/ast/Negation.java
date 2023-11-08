@@ -19,6 +19,7 @@ public class Negation extends Unary {
      *
      * @return The string representation of the negation operator ("-").
      */
+    @Override
     public String getName() {
         return "-";
     }
@@ -29,6 +30,7 @@ public class Negation extends Unary {
      * @param vars The environment containing variable values.
      * @return SymbolicExpression The result of the negation operation.
      */
+    @Override
     public SymbolicExpression eval(Environment vars) {
         SymbolicExpression arg = getArg().eval(vars);
 

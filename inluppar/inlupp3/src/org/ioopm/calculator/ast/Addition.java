@@ -4,7 +4,6 @@ package org.ioopm.calculator.ast;
  * A subclass of Binary, representing the addition operation. 
  */
 public class Addition extends Binary {
-
     /**
      * Constructs an Addition object with the given left-hand side and right-hand side operands.
      *
@@ -20,6 +19,7 @@ public class Addition extends Binary {
      *
      * @return The string representation of the addition operator ("+").
      */
+    @Override
     public String getName() {
         return "+";
     }
@@ -29,6 +29,7 @@ public class Addition extends Binary {
      *
      * @return The priority value of 50 for addition.
      */
+    @Override
     public int getPriority() {
         return 50;
     }
@@ -40,6 +41,7 @@ public class Addition extends Binary {
      * @param vars The environment containing variable values.
      * @return SymbolicExpression The result of the addition operation.
      */
+    @Override
     public SymbolicExpression eval(Environment vars) {
         SymbolicExpression lhsEvaluated = this.getLhs().eval(vars);
         SymbolicExpression rhsEvaluated = this.getRhs().eval(vars);

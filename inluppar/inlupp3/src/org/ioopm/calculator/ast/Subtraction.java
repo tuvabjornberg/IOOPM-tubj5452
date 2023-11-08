@@ -20,6 +20,7 @@ public class Subtraction extends Binary {
      *
      * @return The string representation of the subtraction operator ("-").
      */
+    @Override
     public String getName() {
         return "-";
     }
@@ -29,6 +30,7 @@ public class Subtraction extends Binary {
      *
      * @return The priority value of 50 for subtraction.
      */
+    @Override
     public int getPriority() {
         return 50;
     }
@@ -40,6 +42,7 @@ public class Subtraction extends Binary {
      * @param vars The environment containing variable values.
      * @return SymbolicExpression The result of the subtraction operation.
      */
+    @Override
     public SymbolicExpression eval(Environment vars) {
         SymbolicExpression lhsEvaluated = this.getLhs().eval(vars);
         SymbolicExpression rhsEvaluated = this.getRhs().eval(vars);

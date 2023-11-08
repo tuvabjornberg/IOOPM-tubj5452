@@ -20,6 +20,7 @@ public class Variable extends Atom {
      *
      * @return The Variable object.
      */
+    @Override
     public Variable getVariable() {
         return this;
     }
@@ -65,6 +66,7 @@ public class Variable extends Atom {
      * @param vars The environment containing variable values.
      * @return SymbolicExpression The result of the variable evaluation.
      */
+    @Override
     public SymbolicExpression eval(Environment vars) {
         SymbolicExpression retrieved = vars.get(this.getVariable());
 

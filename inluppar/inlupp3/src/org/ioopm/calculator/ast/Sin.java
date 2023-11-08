@@ -19,6 +19,7 @@ public class Sin extends Unary {
      *
      * @return The string representation of the sine operator ("sin").
      */
+    @Override
     public String getName() {
         return "sin";
     }
@@ -29,6 +30,7 @@ public class Sin extends Unary {
      * @param vars The environment containing variable values.
      * @return SymbolicExpression The result of the sine operation.
      */
+    @Override
     public SymbolicExpression eval(Environment vars) {
         SymbolicExpression arg = getArg().eval(vars);
 

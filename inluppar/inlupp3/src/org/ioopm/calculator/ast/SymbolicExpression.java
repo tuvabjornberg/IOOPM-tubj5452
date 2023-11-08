@@ -17,6 +17,15 @@ public abstract class SymbolicExpression {
     public boolean isConstant() {
         return false;
     }
+    
+    /**
+     * Checks if the symbolic expression is a command.
+     *
+     * @return true if the expression is a command, false otherwise.
+     */
+    public boolean isCommand() {
+        return false;
+    }
 
     /**
      * Returns the name of the symbolic expression.
@@ -64,13 +73,4 @@ public abstract class SymbolicExpression {
      * @return The result of evaluating the expression.
      */
     public abstract SymbolicExpression eval(Environment vars);
-
-    /**
-     * Checks if the symbolic expression is a command.
-     *
-     * @return true if the expression is a command, false otherwise.
-     */
-    public boolean isCommand() {
-        return false;
-    }
 }

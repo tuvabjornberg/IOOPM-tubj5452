@@ -20,6 +20,7 @@ public class Constant extends Atom {
      *
      * @return True.
      */
+    @Override
     public boolean isConstant() {
         return true;
     }
@@ -29,6 +30,7 @@ public class Constant extends Atom {
      *
      * @return The numeric value of the constant.
      */
+    @Override
     public double getValue() {
         return this.value;
     }

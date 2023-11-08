@@ -16,6 +16,7 @@ public abstract class Command extends SymbolicExpression {
      *
      * @return true, indicating that the expression is a command.
      */
+    @Override
     public boolean isCommand() {
         return true;
     }
@@ -30,6 +31,7 @@ public abstract class Command extends SymbolicExpression {
      * @throws RuntimeException Always throws a RuntimeException with the error message
      *         "Error: Commands may not be evaluated".
      */
+    @Override
     public SymbolicExpression eval(Environment vars) {
         throw new RuntimeException("Error: Commands may not be evaluated");
     }

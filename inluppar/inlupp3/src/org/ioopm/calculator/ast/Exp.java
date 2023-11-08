@@ -21,6 +21,7 @@ public class Exp extends Unary {
      *
      * @return The string representation of the exponential operator ("e^").
      */
+    @Override
     public String getName() {
         return "e^";
     }
@@ -31,6 +32,7 @@ public class Exp extends Unary {
      * @param vars The environment containing variable values.
      * @return SymbolicExpression The result of the exponential operation.
      */
+    @Override
     public SymbolicExpression eval(Environment vars) {
         SymbolicExpression arg = getArg().eval(vars);
 

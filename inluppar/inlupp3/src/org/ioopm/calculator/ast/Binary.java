@@ -25,7 +25,7 @@ public abstract class Binary extends SymbolicExpression {
      */
     public SymbolicExpression getLhs() {
         return lhs;
-    }
+    }   
 
     /**
      * Retrieves the right-hand side operand of the binary expression.

@@ -17,10 +17,6 @@ test:
 	javac -d $(OUT_DIR) -sourcepath src $(SRC_DIR)/Test.java
 	java -ea -cp $(OUT_DIR) $(CLASSPATH).Test
 
-testAst: 
-	javac -cp $(JUNIT_JAR) -d $(OUT_DIR) -sourcepath src $(SRC_DIR)/tests/AstTests.java
-	java -cp $(JUNIT_JAR):$(OUT_DIR) -jar $(JUNIT_JAR) -cp $(OUT_DIR) -c $(CLASSPATH).ast.AstTests
-
 clean:
 	rm -rf $(OUT_DIR)
 

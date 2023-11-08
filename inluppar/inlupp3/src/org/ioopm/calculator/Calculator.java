@@ -56,6 +56,7 @@ public class Calculator {
                     SymbolicExpression evaluated = expression.eval(vars);
 
                     if (evaluated != null) {
+                        vars.put(new Variable("ans"), evaluated); 
                         expressionSuccessfulCounter++;
                         if (evaluated.isConstant()) {
                             fullyEvaluated++;

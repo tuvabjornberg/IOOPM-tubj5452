@@ -22,6 +22,7 @@ public class Assignment extends Binary {
      *
      * @return The string representation of the assignment operator ("=").
      */
+    @Override
     public String getName() {
         return "=";
     }
@@ -31,6 +32,7 @@ public class Assignment extends Binary {
      *
      * @return The priority value of 0 for assignment.
      */
+    @Override
     public int getPriority() {
         return 0;
     }
@@ -43,6 +45,7 @@ public class Assignment extends Binary {
      * @return SymbolicExpression The result of the assignment operation.
      * @throws IllegalExpressionException If trying to redefine a named constant.
      */
+    @Override
     public SymbolicExpression eval(Environment vars) {
         SymbolicExpression lhsEvaluated = this.getLhs().eval(vars);
         SymbolicExpression rhs = this.getRhs();

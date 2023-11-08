@@ -23,6 +23,7 @@ public class NamedConstant extends Atom {
      *
      * @return True.
      */
+    @Override
     public boolean isConstant() {
         return true;
     }
@@ -41,6 +42,7 @@ public class NamedConstant extends Atom {
      *
      * @return The numeric value of the named constant.
      */
+    @Override
     public double getValue() {
         return this.value;
     }
@@ -51,6 +53,7 @@ public class NamedConstant extends Atom {
      * @param vars The environment containing variable values.
      * @return SymbolicExpression The result of the named constant evaluation.
      */
+    @Override
     public SymbolicExpression eval(Environment vars) {
         return new Constant(this.value);
     }

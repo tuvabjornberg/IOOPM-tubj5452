@@ -19,6 +19,7 @@ public class Log extends Unary {
      *
      * @return The string representation of the logarithm operator ("log").
      */
+    @Override
     public String getName() {
         return "log";
     }
@@ -29,6 +30,7 @@ public class Log extends Unary {
      * @param vars The environment containing variable values.
      * @return SymbolicExpression The result of the logarithm operation.
      */
+    @Override
     public SymbolicExpression eval(Environment vars) {
         SymbolicExpression arg = getArg().eval(vars);
 
