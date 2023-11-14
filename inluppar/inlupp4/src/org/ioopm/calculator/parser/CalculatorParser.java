@@ -64,7 +64,7 @@ public class CalculatorParser {
         }
 
         if (this.st.ttype == this.st.TT_WORD) { // vilken typ det senaste tecken vi läste in hade.
-            if (this.st.sval.equals("Quit") || this.st.sval.equals("Vars") || this.st.sval.equals("Clear")) { // sval = string Variable
+            if (this.st.sval.equals("quit") || this.st.sval.equals("vars") || this.st.sval.equals("clear")) { // sval = string Variable
                 result = command();
             } else {
                 result = assignment(); // går vidare med uttrycket.
@@ -90,9 +90,9 @@ public class CalculatorParser {
      * @throws IOException by nextToken() if it reads invalid input
      */
     private SymbolicExpression command() throws IOException {
-        if (this.st.sval.equals("Quit")) {
+        if (this.st.sval.equals("quit")) {
             return Quit.instance();
-        } else if (this.st.sval.equals("Clear")) {
+        } else if (this.st.sval.equals("clear")) {
             return Clear.instance();
         } else {
             return Vars.instance();

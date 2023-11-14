@@ -1,0 +1,51 @@
+Welcome to the parser!
+Please enter an expression: 
+Error: Expected number
+Please enter an expression: 
+expected ')'
+Please enter an expression: 
+Error: Numbers cannot be used as a variable name
+Please enter an expression: 
+x + y
+Please enter an expression: 
+expected ')'
+Please enter an expression: 
+Error: Unexpected '+'
+Please enter an expression: 
+a + b
+Please enter an expression: 
+Error: Not a valid assignment of a variable
+Please enter an expression: 
+2.0 * x
+Please enter an expression: 
+Error: Expected number
+Please enter an expression: 
+Error: Unexpected '('
+Please enter an expression: 
+1.0 / 0.0
+Please enter an expression: 
+NaN
+Please enter an expression: 
+expected ')'
+Please enter an expression: 
+Error: Unexpected '+'
+Please enter an expression: 
+invalidCommand
+Please enter an expression: 
+Error: Expected number
+Please enter an expression: 
+Error: Unexpected '('
+Please enter an expression: 
+1.0 + x
+Please enter an expression: 
+c = a + b
+d = a + b
+ans = 1.0 + x
+y = 2.0 * x
+z = 2.0 * x
+Please enter an expression: 
+
+You have quit the program
+Total entered expression(s): 20
+Successful evaluated expression(s): 7
+Expression(s) that were fully evaluated: 1

@@ -1,0 +1,28 @@
+log(100)
+6 = x
+x + 5 = x
+2 * x = x
+x / y = z
+exp(2.5)
+sin(pi/2)
+cos(pi)
+clear
+1
+ans + 10
+ans = result
+result
+result - 5 = result
+result * 2
+vars
+z + y = r
+r * 2
+7 = y
+sin r
+5 + r = r
+vars
+z + y = r
+r * 2
+sin r
+5 + r = r
+vars
+quit

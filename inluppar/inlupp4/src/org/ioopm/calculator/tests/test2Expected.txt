@@ -1,0 +1,67 @@
+Welcome to the parser!
+Please enter an expression: 
+4.605170185988092
+Please enter an expression: 
+6.0
+Please enter an expression: 
+11.0
+Please enter an expression: 
+22.0
+Please enter an expression: 
+22.0 / y
+Please enter an expression: 
+12.182493960703473
+Please enter an expression: 
+1.0
+Please enter an expression: 
+-1.0
+Please enter an expression: 
+Please enter an expression: 
+1.0
+Please enter an expression: 
+11.0
+Please enter an expression: 
+11.0
+Please enter an expression: 
+11.0
+Please enter an expression: 
+6.0
+Please enter an expression: 
+12.0
+Please enter an expression: 
+result = 6.0
+ans = 12.0
+Please enter an expression: 
+z + y
+Please enter an expression: 
+(z + y) * 2.0
+Please enter an expression: 
+7.0
+Please enter an expression: 
+sin (z + y)
+Please enter an expression: 
+5.0 + z + y
+Please enter an expression: 
+result = 6.0
+r = 5.0 + z + y
+ans = 5.0 + z + y
+y = 7.0
+Please enter an expression: 
+z + 7.0
+Please enter an expression: 
+(z + 7.0) * 2.0
+Please enter an expression: 
+sin (z + 7.0)
+Please enter an expression: 
+5.0 + z + 7.0
+Please enter an expression: 
+result = 6.0
+r = 5.0 + z + 7.0
+ans = 5.0 + z + 7.0
+y = 7.0
+Please enter an expression: 
+
+You have quit the program
+Total entered expression(s): 27
+Successful evaluated expression(s): 23
+Expression(s) that were fully evaluated: 14

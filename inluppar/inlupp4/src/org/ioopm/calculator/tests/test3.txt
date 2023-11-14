@@ -1,0 +1,14 @@
+log(2 + (sin(pi/2) * cos(pi/4)))
+2 * 3 = y
+5 + y = x
+(x + y) * (x - y) = x
+exp(2 * (sin(pi/4) + cos(pi/3)))
+3 + 2 = c
+c - 1 = a
+a = b
+sin(cos(a + b))
+(ans + 10) * (ans - 5) = result
+result / (result * result + 1) = result 
+result + (3 * (result - 2))
+vars
+quit

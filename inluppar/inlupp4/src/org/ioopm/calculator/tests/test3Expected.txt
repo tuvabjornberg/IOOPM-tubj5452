@@ -1,0 +1,39 @@
+Welcome to the parser!
+Please enter an expression: 
+0.9958804561735533
+Please enter an expression: 
+6.0
+Please enter an expression: 
+11.0
+Please enter an expression: 
+85.0
+Please enter an expression: 
+11.180973760547916
+Please enter an expression: 
+5.0
+Please enter an expression: 
+4.0
+Please enter an expression: 
+4.0
+Please enter an expression: 
+-0.14498719803267052
+Please enter an expression: 
+-50.703914702569996
+Please enter an expression: 
+-0.019714674622021214
+Please enter an expression: 
+-6.0788586984880855
+Please enter an expression: 
+result = -0.019714674622021214
+a = 4.0
+b = 4.0
+c = 5.0
+ans = -6.0788586984880855
+x = 85.0
+y = 6.0
+Please enter an expression: 
+
+You have quit the program
+Total entered expression(s): 13
+Successful evaluated expression(s): 12
+Expression(s) that were fully evaluated: 12

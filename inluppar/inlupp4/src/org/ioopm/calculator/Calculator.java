@@ -2,6 +2,7 @@ package org.ioopm.calculator;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Scanner;
 
 import org.ioopm.calculator.ast.*;
 import org.ioopm.calculator.parser.*;
@@ -24,10 +25,12 @@ public class Calculator {
         int expressionSuccessfulCounter = 0;
         int expressionCounter = 0;
         int fullyEvaluated = 0;
+        Scanner sc = new Scanner(System.in);
 
         while (true) {
             System.out.println("Please enter an expression: ");
-            String input = System.console().readLine();
+            //Scanner sc = new Scanner(System.in); and then using sc.nextLine()
+            String input = sc.nextLine(); //System.console().readLine();
 
             SymbolicExpression expression = null;
             try {

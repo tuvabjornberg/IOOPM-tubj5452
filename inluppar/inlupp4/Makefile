@@ -13,23 +13,35 @@ calcCompRun:
 	javac -d $(OUT_DIR) -sourcepath src $(SRC_DIR)/Calculator.java
 	java -cp $(OUT_DIR) $(CLASSPATH).Calculator
 
-test: 
-	javac -d $(OUT_DIR) -sourcepath src $(SRC_DIR)/Test.java
-	java -ea -cp $(OUT_DIR) $(CLASSPATH).Test
-
 astTestCompile: 
-	javac -cp $(JUNIT_JAR) -d $(OUT_DIR) -sourcepath src $(SRC_DIR)/AstTests.java
+	javac -cp $(JUNIT_JAR) -d $(OUT_DIR) -sourcepath src $(SRC_DIR)/tests/AstTests.java
 
 astTests: astTestCompile
-	java -cp $(JUNIT_JAR):$(OUT_DIR) -jar $(JUNIT_JAR) -cp $(OUT_DIR) -c $(CLASSPATH).AstTests 
+	java -cp $(JUNIT_JAR):$(OUT_DIR) -jar $(JUNIT_JAR) -cp $(OUT_DIR) -c $(CLASSPATH).tests.AstTests 
 
 integrationTestCompile: 
-	javac -cp $(JUNIT_JAR) -d $(OUT_DIR) -sourcepath src $(SRC_DIR)/IntegrationTests.java
+	javac -cp $(JUNIT_JAR) -d $(OUT_DIR) -sourcepath src $(SRC_DIR)/tests/IntegrationTests.java
 
 integrationTests: integrationTestCompile
-	java -cp $(JUNIT_JAR):$(OUT_DIR) -jar $(JUNIT_JAR) -cp $(OUT_DIR) -c $(CLASSPATH).IntegrationTests 
+	java -cp $(JUNIT_JAR):$(OUT_DIR) -jar $(JUNIT_JAR) -cp $(OUT_DIR) -c $(CLASSPATH).tests.IntegrationTests 
+
+systemTests: 
+	javac -d $(OUT_DIR) -sourcepath src $(SRC_DIR)/Calculator.java
+	java  -cp $(OUT_DIR) $(CLASSPATH).Calculator < $(SRC_DIR)/tests/test1.txt > $(SRC_DIR)/tests/output/output1.txt
+	java  -cp $(OUT_DIR) $(CLASSPATH).Calculator < $(SRC_DIR)/tests/test2.txt > $(SRC_DIR)/tests/output/output2.txt
+	java  -cp $(OUT_DIR) $(CLASSPATH).Calculator < $(SRC_DIR)/tests/test3.txt > $(SRC_DIR)/tests/output/output3.txt
+	java  -cp $(OUT_DIR) $(CLASSPATH).Calculator < $(SRC_DIR)/tests/invalid.txt > $(SRC_DIR)/tests/output/outputInvalid.txt
+
+diff: 
+	diff $(SRC_DIR)/tests/output/output1.txt $(SRC_DIR)/tests/test1Expected.txt
+	diff $(SRC_DIR)/tests/output/output2.txt $(SRC_DIR)/tests/test2Expected.txt
+	diff $(SRC_DIR)/tests/output/output3.txt $(SRC_DIR)/tests/test3Expected.txt
+	diff $(SRC_DIR)/tests/output/outputInvalid.txt $(SRC_DIR)/tests/invalidExpected.txt
+
+tests: astTests integrationTests systemTests diff
 
 clean:
-	rm -rf $(OUT_DIR)
+	rm -rf $(OUT_DIR) 
+	rm -f $(SRC_DIR)/tests/output/*.txt
 
-.PHONY: compile run clean calcCompRun test  astTestCompile astTests
+.PHONY: compile run clean calcCompRun tests astTestCompile astTests integrationTestCompile integrationTests systemTests diff

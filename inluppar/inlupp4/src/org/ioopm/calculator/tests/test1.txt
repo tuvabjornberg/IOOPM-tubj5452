@@ -1,0 +1,19 @@
+2*(5-2)
+1/(2+8) 
+2 = x = y 
+(x+y=z) - (z-1)*(1=x) 
+-sin(exp(a*a*10)) 
+1=a
+-sin(exp(a*a*10)) 
+ans 
+-ans+2
+- - -x
+b 
+1 = a
+a + b
+b + a = c 
+2 = b   
+c 
+2*x = y
+vars  
+quit
