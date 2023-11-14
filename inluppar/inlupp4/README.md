@@ -13,11 +13,24 @@ $ make clean
    ```
    #### Build and run calculator:
    ``` 
-   $ make calcCompRun
+   $ make all
    ```
    #### Run tests:
    ```
-   $ make test
+   $ make tests
+   ```
+   #### Run AST tests
+   ```
+   $ make astTests
+   ```
+   #### Run parser tests
+   ```
+   $ make parserTests
+   ```
+   #### Run and compare system tests
+   ```
+   $ make systemTests
+   $ make diff
    ```
 
  # Notes and error handling
