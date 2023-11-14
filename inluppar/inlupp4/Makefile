@@ -19,11 +19,15 @@ test:
 
 astTestCompile: 
 	javac -cp $(JUNIT_JAR) -d $(OUT_DIR) -sourcepath src $(SRC_DIR)/AstTests.java
-#$(SRC_DIR)/tests/AstTests.java
 
 astTests: astTestCompile
 	java -cp $(JUNIT_JAR):$(OUT_DIR) -jar $(JUNIT_JAR) -cp $(OUT_DIR) -c $(CLASSPATH).AstTests 
-#.ast.
+
+integrationTestCompile: 
+	javac -cp $(JUNIT_JAR) -d $(OUT_DIR) -sourcepath src $(SRC_DIR)/IntegrationTests.java
+
+integrationTests: integrationTestCompile
+	java -cp $(JUNIT_JAR):$(OUT_DIR) -jar $(JUNIT_JAR) -cp $(OUT_DIR) -c $(CLASSPATH).IntegrationTests 
 
 clean:
 	rm -rf $(OUT_DIR)
