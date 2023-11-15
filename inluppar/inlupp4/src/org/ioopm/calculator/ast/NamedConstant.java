@@ -1,5 +1,6 @@
 package org.ioopm.calculator.ast;
 
+import org.ioopm.calculator.visitor.*; 
 /**
  * A subclass of Atom, representing a named constant with a specific value in a symbolic expression.
  */
@@ -48,13 +49,12 @@ public class NamedConstant extends Atom {
     }
 
     /**
-     * Evaluates the named constant expression by returning a new constant with the specified value.
-     *
-     * @param vars The environment containing variable values.
-     * @return SymbolicExpression The result of the named constant evaluation.
+     * Accepts a visitor for the Visitor pattern.
+     * @param v The visitor instance.
+     * @return Result of the visitor's processing.
      */
     @Override
-    public SymbolicExpression eval(Environment vars) {
-        return new Constant(this.value);
+    public SymbolicExpression accept(Visitor v) {
+        return v.visit(this);
     }
 }

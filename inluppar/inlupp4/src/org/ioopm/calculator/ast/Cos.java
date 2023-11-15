@@ -1,5 +1,6 @@
 package org.ioopm.calculator.ast;
 
+import org.ioopm.calculator.visitor.*; 
 /**
  * A subclass of Unary, representing the cos operation.
  */
@@ -25,20 +26,12 @@ public class Cos extends Unary {
     }
 
     /**
-     * Evaluates the cosine expression, either performing the cosine if the operand is constant,
-     * or returning a new Cos expression with the evaluated operand.
-     *
-     * @param vars The environment containing variable values.
-     * @return SymbolicExpression The result of the cosine operation.
+     * Accepts a visitor for the Visitor pattern.
+     * @param v The visitor instance.
+     * @return Result of the visitor's processing.
      */
     @Override
-    public SymbolicExpression eval(Environment vars) {
-        SymbolicExpression arg = this.getArg().eval(vars);
-
-        if (arg.isConstant()) {
-            return new Constant(Math.cos(arg.getValue()));
-        } else {
-            return new Cos(arg);
-        }
+    public SymbolicExpression accept(Visitor v) {
+        return v.visit(this);
     }
 }

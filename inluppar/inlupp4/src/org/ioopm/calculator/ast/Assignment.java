@@ -1,6 +1,6 @@
 package org.ioopm.calculator.ast;
 
-import org.ioopm.calculator.parser.IllegalExpressionException;
+import org.ioopm.calculator.visitor.*; 
 
 /**
  * A subclass of Binary, representing the assignment operation. 
@@ -38,28 +38,12 @@ public class Assignment extends Binary {
     }
 
     /**
-     * Evaluates the assignment expression, updating the environment with the assigned variable
-     * and returning the value of the assigned variable or constant.
-     *
-     * @param vars The environment containing variable values.
-     * @return SymbolicExpression The result of the assignment operation.
-     * @throws IllegalExpressionException If trying to redefine a named constant.
+     * Accepts a visitor for the Visitor pattern.
+     * @param v The visitor instance.
+     * @return Result of the visitor's processing.
      */
     @Override
-    public SymbolicExpression eval(Environment vars) {
-        SymbolicExpression lhsEvaluated = this.getLhs().eval(vars);
-        SymbolicExpression rhs = this.getRhs();
-
-        if (!rhs.isConstant()) {
-            vars.put(new Variable(rhs.toString()), lhsEvaluated);
-
-            if (lhsEvaluated.isConstant()) {
-                return new Constant(lhsEvaluated.getValue());
-            } else {
-                return lhsEvaluated;
-            }
-        } else {
-            throw new IllegalExpressionException("Error: cannot redefine named constant");
-        }
+    public SymbolicExpression accept(Visitor v) {
+        return v.visit(this);
     }
 }

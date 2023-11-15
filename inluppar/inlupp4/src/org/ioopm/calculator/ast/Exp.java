@@ -1,6 +1,6 @@
 package org.ioopm.calculator.ast;
 
-import java.lang.Math;
+import org.ioopm.calculator.visitor.*; 
 
 /**
  * A subclass of Unary, representing the exponential (e^x) operation.
@@ -27,19 +27,12 @@ public class Exp extends Unary {
     }
 
     /**
-     * Evaluates the exponential expression.
-     *
-     * @param vars The environment containing variable values.
-     * @return SymbolicExpression The result of the exponential operation.
+     * Accepts a visitor for the Visitor pattern.
+     * @param v The visitor instance.
+     * @return Result of the visitor's processing.
      */
     @Override
-    public SymbolicExpression eval(Environment vars) {
-        SymbolicExpression arg = getArg().eval(vars);
-
-        if (arg.isConstant()) {
-            return new Constant(Math.exp(arg.getValue()));
-        } else {
-            return new Exp(arg);
-        }
+    public SymbolicExpression accept(Visitor v) {
+        return v.visit(this);
     }
 }

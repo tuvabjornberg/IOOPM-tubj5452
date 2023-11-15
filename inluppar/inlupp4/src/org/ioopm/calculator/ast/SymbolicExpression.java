@@ -1,4 +1,8 @@
 package org.ioopm.calculator.ast; 
+
+import javax.management.RuntimeErrorException;
+
+import org.ioopm.calculator.visitor.*;
 /**
  * An abstract superclass representing a common interface for symbolic expressions. 
  */
@@ -30,11 +34,11 @@ public abstract class SymbolicExpression {
     /**
      * Returns the name of the symbolic expression.
      *
-     * @return The name of the expression.
+     * @return A RuntimeException is always thrown. 
      * @throws RuntimeException If called on an expression with no operator.
      */
     public String getName() throws RuntimeException {
-        throw new RuntimeException("getName() called on expression with no operator");
+        throw new RuntimeException("getName() called on expression with no name");
     }
 
     /**
@@ -49,7 +53,7 @@ public abstract class SymbolicExpression {
     /**
      * Returns the numerical value of the symbolic expression.
      *
-     * @return The numerical value of the expression.
+     * @return A RuntimeException is always thrown. 
      * @throws RuntimeException If called on an expression with no operator.
      */
     public double getValue() throws RuntimeException {
@@ -59,7 +63,7 @@ public abstract class SymbolicExpression {
     /**
      * Returns the variable contained in the symbolic expression.
      *
-     * @return The variable in the expression.
+     * @return A RuntimeException is always thrown. 
      * @throws RuntimeException If called on an expression with no variable.
      */
     public Variable getVariable() throws RuntimeException {
@@ -72,5 +76,15 @@ public abstract class SymbolicExpression {
      * @param vars The environment containing variable values.
      * @return The result of evaluating the expression.
      */
-    public abstract SymbolicExpression eval(Environment vars);
+    //public abstract SymbolicExpression eval(Environment vars);
+
+    /**
+     * Accepts a visitor for the Visitor pattern.
+     * @param v The visitor instance.
+     * @return A RuntimeException is always thrown.
+     * @throws RuntimeException If called on expression which does not allow accept. 
+     */
+    public SymbolicExpression accept(Visitor v) {
+        throw new RuntimeException("accept() called on invalid expression"); 
+    }
 }

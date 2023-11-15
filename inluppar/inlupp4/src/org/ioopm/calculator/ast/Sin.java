@@ -1,5 +1,6 @@
 package org.ioopm.calculator.ast;
 
+import org.ioopm.calculator.visitor.*; 
 /**
  * A subclass of Unary, representing the sin operation.
  */
@@ -23,21 +24,14 @@ public class Sin extends Unary {
     public String getName() {
         return "sin";
     }
+
     /**
-     * Evaluates the sine expression, either performing the sine if the operand is constant,
-     * or returning a new Sin expression with the evaluated operand.
-     *
-     * @param vars The environment containing variable values.
-     * @return SymbolicExpression The result of the sine operation.
+     * Accepts a visitor for the Visitor pattern.
+     * @param v The visitor instance.
+     * @return Result of the visitor's processing.
      */
     @Override
-    public SymbolicExpression eval(Environment vars) {
-        SymbolicExpression arg = getArg().eval(vars);
-
-        if (arg.isConstant()) {
-            return new Constant(Math.sin(arg.getValue()));
-        } else {
-            return new Sin(arg);
-        }
+    public SymbolicExpression accept(Visitor v) {
+        return v.visit(this);
     }
 }

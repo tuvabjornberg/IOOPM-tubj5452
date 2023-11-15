@@ -1,5 +1,7 @@
 package org.ioopm.calculator.ast;
 
+import org.ioopm.calculator.visitor.*; 
+
 /**
  *A subclass of Binary, representing the subtraction operation.
  */
@@ -36,22 +38,12 @@ public class Subtraction extends Binary {
     }
 
     /**
-     * Evaluates the subtraction expression, either performing the subtraction if both operands are constants,
-     * or returning a new Subtraction expression with the evaluated operands.
-     *
-     * @param vars The environment containing variable values.
-     * @return SymbolicExpression The result of the subtraction operation.
+     * Accepts a visitor for the Visitor pattern.
+     * @param v The visitor instance.
+     * @return Result of the visitor's processing.
      */
     @Override
-    public SymbolicExpression eval(Environment vars) {
-        SymbolicExpression lhsEvaluated = this.getLhs().eval(vars);
-        SymbolicExpression rhsEvaluated = this.getRhs().eval(vars);
-
-        if (lhsEvaluated.isConstant() && rhsEvaluated.isConstant()) {
-            double result = lhsEvaluated.getValue() - rhsEvaluated.getValue();
-            return new Constant(result);
-        } else {
-            return new Subtraction(lhsEvaluated, rhsEvaluated);
-        }
+    public SymbolicExpression accept(Visitor v) {
+        return v.visit(this);
     }
 }

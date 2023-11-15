@@ -1,5 +1,7 @@
 package org.ioopm.calculator.ast;
 
+import org.ioopm.calculator.visitor.*; 
+
 /**
  * A subclass of Binary, representing the addition operation. 
  */
@@ -24,8 +26,6 @@ public class Addition extends Binary {
         return "+";
     }
 
-    //SymbolicExpression s = new Addition(new Constant(1), new Constant(2)); 
-
     /**
      * Returns the priority of the addition operation.
      *
@@ -37,22 +37,12 @@ public class Addition extends Binary {
     }
 
     /**
-     * Evaluates the addition expression, either performing the addition if both operands are constants,
-     * or returning a new Addition expression with the evaluated operands.
-     *
-     * @param vars The environment containing variable values.
-     * @return SymbolicExpression The result of the addition operation.
+     * Accepts a visitor for the Visitor pattern.
+     * @param v The visitor instance.
+     * @return Result of the visitor's processing.
      */
     @Override
-    public SymbolicExpression eval(Environment vars) {
-        SymbolicExpression lhsEvaluated = this.getLhs().eval(vars);
-        SymbolicExpression rhsEvaluated = this.getRhs().eval(vars);
-
-        if (lhsEvaluated.isConstant() && rhsEvaluated.isConstant()) {
-            double result = lhsEvaluated.getValue() + rhsEvaluated.getValue();
-            return new Constant(result);
-        } else {
-            return new Addition(lhsEvaluated, rhsEvaluated);
-        }
+    public SymbolicExpression accept(Visitor v) {
+        return v.visit(this);
     }
 }

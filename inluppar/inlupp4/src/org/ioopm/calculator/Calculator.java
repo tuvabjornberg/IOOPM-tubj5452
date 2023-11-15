@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 import org.ioopm.calculator.ast.*;
 import org.ioopm.calculator.parser.*;
+import org.ioopm.calculator.visitor.EvaluationVisitor;
 
 /**
  * A simple calculator interface for parsing and evaluating expressions.
@@ -14,6 +15,7 @@ import org.ioopm.calculator.parser.*;
 public class Calculator {
     private static final CalculatorParser parser = new CalculatorParser();
     private static final Environment vars = new Environment();
+    private static final EvaluationVisitor evaluator = new EvaluationVisitor(); 
 
     /**
      * The main method that runs the calculator interface.
@@ -29,8 +31,7 @@ public class Calculator {
 
         while (true) {
             System.out.println("Please enter an expression: ");
-            //Scanner sc = new Scanner(System.in); and then using sc.nextLine()
-            String input = sc.nextLine(); //System.console().readLine();
+            String input = sc.nextLine(); 
 
             SymbolicExpression expression = null;
             try {
@@ -56,7 +57,8 @@ public class Calculator {
                     }
                 } else {
                     // Evaluate non-command expressions
-                    SymbolicExpression evaluated = expression.eval(vars);
+                    //SymbolicExpression evaluated = expression.eval(vars);
+                    SymbolicExpression evaluated = evaluator.evaluate(expression, vars); 
 
                     if (evaluated != null) {
                         vars.put(new Variable("ans"), evaluated); 

@@ -1,5 +1,6 @@
 package org.ioopm.calculator.ast;
 
+import org.ioopm.calculator.visitor.*; 
 /**
  * A subclass of Unary, representing logarithm (log) operation.
  */
@@ -25,19 +26,12 @@ public class Log extends Unary {
     }
 
     /**
-     * Evaluates the logarithm expression.
-     *
-     * @param vars The environment containing variable values.
-     * @return SymbolicExpression The result of the logarithm operation.
+     * Accepts a visitor for the Visitor pattern.
+     * @param v The visitor instance.
+     * @return Result of the visitor's processing.
      */
     @Override
-    public SymbolicExpression eval(Environment vars) {
-        SymbolicExpression arg = getArg().eval(vars);
-
-        if (arg.isConstant()) {
-            return new Constant(Math.log(arg.getValue()));
-        } else {
-            return new Log(arg);
-        }
+    public SymbolicExpression accept(Visitor v) {
+        return v.visit(this);
     }
 }

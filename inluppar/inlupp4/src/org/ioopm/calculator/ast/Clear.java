@@ -1,5 +1,7 @@
 package org.ioopm.calculator.ast;
 
+import org.ioopm.calculator.visitor.*; 
+
 /**
  * A subclass of Command, representing to clear. 
  */
@@ -27,5 +29,15 @@ public class Clear extends Command{
      */
     public String getName() {
         return "clear"; 
+    }
+
+    /**
+     * Accepts a visitor for the Visitor pattern.
+     * @param v The visitor instance.
+     * @return Result of the visitor's processing.
+     */
+    @Override
+    public SymbolicExpression accept(Visitor v) {
+        return v.visit(this);
     }
 }

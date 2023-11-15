@@ -1,5 +1,6 @@
 package org.ioopm.calculator.ast;
 
+import org.ioopm.calculator.visitor.*; 
 /**
  * A subclass of Binary, representing the division operation. 
  */
@@ -26,22 +27,12 @@ public class Division extends Binary {
     }
 
     /**
-     * Evaluates the division expression, either performing the division if both operands are constants,
-     * or returning a new Division expression with the evaluated operands.
-     *
-     * @param vars The environment containing variable values.
-     * @return SymbolicExpression The result of the division operation.
+     * Accepts a visitor for the Visitor pattern.
+     * @param v The visitor instance.
+     * @return Result of the visitor's processing.
      */
     @Override
-    public SymbolicExpression eval(Environment vars) {
-        SymbolicExpression lhsEvaluated = this.getLhs().eval(vars);
-        SymbolicExpression rhsEvaluated = this.getRhs().eval(vars);
-
-        if (lhsEvaluated.isConstant() && rhsEvaluated.isConstant() && rhsEvaluated.getValue() != 0) {
-            double result = lhsEvaluated.getValue() / rhsEvaluated.getValue();
-            return new Constant(result);
-        } else {
-            return new Division(lhsEvaluated, rhsEvaluated);
-        }
+    public SymbolicExpression accept(Visitor v) {
+        return v.visit(this);
     }
 }

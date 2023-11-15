@@ -9,9 +9,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import org.ioopm.calculator.ast. *; 
+import org.ioopm.calculator.ast.*; 
+import org.ioopm.calculator.visitor.*; 
 
 public class AstTests {
+    private EvaluationVisitor evaluator; 
 
     @BeforeAll
     static void initAll() {
@@ -19,6 +21,7 @@ public class AstTests {
 
     @BeforeEach
     void init() {
+        evaluator = new EvaluationVisitor(); 
     }
 
     @Test
@@ -42,12 +45,12 @@ public class AstTests {
 
         assertEquals("1.0 + 6.0", a1.toString()); 
 
-        SymbolicExpression aEval = a1.eval(vars); 
+        SymbolicExpression aEval = evaluator.evaluate(a1, vars);  
         assertTrue(aEval.equals(new Constant(7))); 
 
-        Exception exception2 = assertThrows(RuntimeException.class, () -> {
+        assertThrows(RuntimeException.class, () -> {
             Addition a2 = new Addition(null, null);
-            a2.eval(vars); 
+            evaluator.evaluate(a2, vars); 
         });
 
         Addition a3 = new Addition(new Constant(3), new Constant(5));
@@ -75,19 +78,19 @@ public class AstTests {
 
         assertEquals("3.0 = x", a1.toString()); 
 
-        SymbolicExpression a1Eval = a1.eval(vars); 
+        SymbolicExpression a1Eval = evaluator.evaluate(a1, vars); 
         assertTrue(a1Eval.equals(new Constant(3)));
         assertEquals(new Constant(3), vars.get(new Variable("x")));
 
         Assignment a2 = new Assignment(new Subtraction(new Variable("y"), new Division(new Cos(new Constant(0)), new Subtraction(new Constant(2), new Constant(1)))), new Variable("x")); 
         assertEquals("y - cos 0.0 / (2.0 - 1.0) = x", a2.toString()); 
 
-        SymbolicExpression a2Eval = a2.eval(vars); 
+        SymbolicExpression a2Eval = evaluator.evaluate(a2, vars); 
         assertTrue(a2Eval.equals(new Subtraction(new Variable("y"), new Constant(1))));
 
-        Exception exception2 = assertThrows(RuntimeException.class, () -> {
+        assertThrows(RuntimeException.class, () -> {
             Assignment a3 = new Assignment(null, null);
-            a3.eval(vars); 
+            evaluator.evaluate(a3, vars); 
         });
 
         Assignment a4 = new Assignment(new Variable("a"), new Constant(5));
@@ -107,7 +110,7 @@ public class AstTests {
         assertFalse(a1.isCommand());
         assertFalse(a2.isCommand());
 
-        Exception exception = assertThrows(RuntimeException.class, () -> {
+        assertThrows(RuntimeException.class, () -> {
             a1.getName(); 
             a2.getName(); 
 
@@ -118,8 +121,8 @@ public class AstTests {
             a2.getVariable(); 
         });
 
-        assertEquals(a1.eval(vars).toString(), "4.0");
-        assertEquals(a2.eval(vars), a2);
+        assertEquals(evaluator.evaluate(a1, vars).toString(), "4.0");
+        assertEquals(evaluator.evaluate(a2, vars), a2);
     }
 
     @Test
@@ -142,13 +145,13 @@ public class AstTests {
         Binary b5 = new Multiplication(new Variable("b"), new Constant(2));
         assertFalse(b4.equals(b5));
     
-        Exception exception = assertThrows(RuntimeException.class, () -> {
+        assertThrows(RuntimeException.class, () -> {
             b1.getName(); 
             b1.getValue(); 
             b1.getVariable();  
         });
 
-        assertEquals(b5.eval(vars), b5);
+        assertEquals(evaluator.evaluate(b5, vars) , b5);
     }
 
     @Test
@@ -164,10 +167,10 @@ public class AstTests {
         assertFalse(c1.isConstant());
         assertEquals(c1.getPriority(), 100);
 
-        Exception exception = assertThrows(RuntimeException.class, () -> {
+        assertThrows(RuntimeException.class, () -> {
             c1.getValue(); 
             c1.getVariable(); 
-            c1.eval(vars); 
+            evaluator.evaluate(c1, vars); 
         });
 
         Vars v = Vars.instance(); 
@@ -183,10 +186,10 @@ public class AstTests {
         assertTrue(c1.isCommand());
         assertFalse(c1.isConstant());
 
-        Exception exception = assertThrows(RuntimeException.class, () -> {
+        assertThrows(RuntimeException.class, () -> {
             c1.getValue(); 
             c1.getVariable(); 
-            c1.eval(vars); 
+            evaluator.evaluate(c1, vars);  
             c1.getName(); 
         });
     }
@@ -205,23 +208,14 @@ public class AstTests {
             c1.getName(); 
         });
     
-        String expectedMessage = "getName() called on expression with no operator"; 
+        String expectedMessage = "getName() called on expression with no name"; 
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
 
         assertEquals("6.0", c1.toString()); 
 
-        SymbolicExpression c1Eval = c1.eval(vars); 
+        SymbolicExpression c1Eval = evaluator.evaluate(c1, vars);  
         assertTrue(c1Eval.equals(new Constant(6)));
-    }
-
-    @Test
-    void namedConstantsTest() {
-        assertEquals(Math.PI, Constants.namedConstants.get("pi"));
-        assertEquals(Math.E, Constants.namedConstants.get("e"));
-        assertEquals(42.0, Constants.namedConstants.get("Answer"));
-        assertEquals(6.022140857 * Math.pow(10, 23), Constants.namedConstants.get("L"));
-        assertNull(Constants.namedConstants.get("UnknownConstant"));
     }
 
     @Test
@@ -244,18 +238,18 @@ public class AstTests {
 
         assertEquals("cos 0.0", c1.toString()); 
 
-        SymbolicExpression c1Eval = c1.eval(vars); 
+        SymbolicExpression c1Eval = evaluator.evaluate(c1, vars); 
         assertTrue(c1Eval.equals(new Constant(1)));
 
         Addition c2 = new Addition(new Cos(new Multiplication(new Addition(new Constant(3), new Variable("r")), new Variable("u"))), new Constant(4)); 
         assertEquals("cos ((3.0 + r) * u) + 4.0", c2.toString()); 
 
         Assignment a1 = new Assignment(new Negation(new Constant(3)), new Variable("r")); 
-        a1.eval(vars); 
+        evaluator.evaluate(a1, vars); 
         Assignment a2 = new Assignment(new Constant(1), new Variable("u")); 
-        a2.eval(vars); 
+        evaluator.evaluate(a2, vars); 
         
-        SymbolicExpression c2Eval = c2.eval(vars); 
+        SymbolicExpression c2Eval = evaluator.evaluate(c2, vars); 
         assertEquals("5.0", c2Eval.toString()); 
 
         assertTrue(c2Eval.equals(new Constant(5)));
@@ -282,12 +276,12 @@ public class AstTests {
 
         assertEquals("3.0 / 6.0", d1.toString()); 
 
-        SymbolicExpression d1Eval = d1.eval(vars); 
+        SymbolicExpression d1Eval = evaluator.evaluate(d1, vars); 
         assertTrue(d1Eval.equals(new Constant(0.5))); 
 
-        Exception exception2 = assertThrows(RuntimeException.class, () -> {
+        assertThrows(RuntimeException.class, () -> {
             Division d2 = new Division(null, null);
-            d2.eval(vars); 
+            evaluator.evaluate(d2, vars); 
         });
 
         Division d3 = new Division(new Constant(3), new Constant(5));
@@ -315,7 +309,7 @@ public class AstTests {
 
         assertEquals("e^ 0.0", e1.toString()); 
 
-        SymbolicExpression e1Eval = e1.eval(vars); 
+        SymbolicExpression e1Eval = evaluator.evaluate(e1, vars); 
         assertEquals("1.0", e1Eval.toString()); 
         assertTrue(e1Eval.equals(new Constant(1)));
 
@@ -323,11 +317,11 @@ public class AstTests {
         assertEquals("e^ (cos ((3.0 + r) * u)) + 4.0", e2.toString()); 
 
         Assignment a1 = new Assignment(new Negation(new Constant(3)), new Variable("r")); 
-        a1.eval(vars); 
+        evaluator.evaluate(a1, vars); 
         Assignment a2 = new Assignment(new Constant(1), new Variable("u")); 
-        a2.eval(vars); 
+        evaluator.evaluate(a2, vars); 
         
-        SymbolicExpression e2Eval = e2.eval(vars); 
+        SymbolicExpression e2Eval = evaluator.evaluate(e2, vars); 
         assertTrue(e2Eval.equals(new Constant(Math.E + 4)));
     }
 
@@ -351,7 +345,7 @@ public class AstTests {
 
         assertEquals("log 1.0", l1.toString()); 
 
-        SymbolicExpression l1Eval = l1.eval(vars); 
+        SymbolicExpression l1Eval = evaluator.evaluate(l1, vars); 
         assertEquals("0.0", l1Eval.toString()); 
         assertTrue(l1Eval.equals(new Constant(0)));
 
@@ -359,11 +353,11 @@ public class AstTests {
         assertEquals("log (cos ((3.0 + r) * u)) + 4.0", l2.toString()); 
 
         Assignment a1 = new Assignment(new Negation(new Constant(3)), new Variable("r")); 
-        a1.eval(vars); 
+        evaluator.evaluate(a1, vars); 
         Assignment a2 = new Assignment(new Constant(1), new Variable("u")); 
-        a2.eval(vars); 
+        evaluator.evaluate(a2, vars); 
         
-        SymbolicExpression l2Eval = l2.eval(vars); 
+        SymbolicExpression l2Eval = evaluator.evaluate(l2, vars); 
         assertTrue(l2Eval.equals(new Constant(4)));
     }
 
@@ -388,12 +382,12 @@ public class AstTests {
 
         assertEquals("2.0 * 6.0", m1.toString()); 
 
-        SymbolicExpression m1Eval = m1.eval(vars); 
+        SymbolicExpression m1Eval = evaluator.evaluate(m1, vars); 
         assertTrue(m1Eval.equals(new Constant(12))); 
 
-        Exception exception2 = assertThrows(RuntimeException.class, () -> {
+        assertThrows(RuntimeException.class, () -> {
             Multiplication m2 = new Multiplication(null, null);
-            m2.eval(vars); 
+            evaluator.evaluate(m2, vars);  
         });
 
         Multiplication m3 = new Multiplication(new Constant(3), new Constant(5));
@@ -401,8 +395,14 @@ public class AstTests {
         assertNotEquals(m3, c1);
     }
 
-        @Test
-        void NamesconstantsTest() {
+    @Test
+    void NamesconstantsTest() {
+        assertEquals(Math.PI, Constants.namedConstants.get("pi"));
+        assertEquals(Math.E, Constants.namedConstants.get("e"));
+        assertEquals(42.0, Constants.namedConstants.get("Answer"));
+        assertEquals(6.022140857 * Math.pow(10, 23), Constants.namedConstants.get("L"));
+        assertNull(Constants.namedConstants.get("UnknownConstant"));
+        
         Environment vars = new Environment(); 
         NamedConstant n1 = new NamedConstant("x", 6); 
 
@@ -415,13 +415,13 @@ public class AstTests {
             n1.getName(); 
         });
     
-        String expectedMessage = "getName() called on expression with no operator"; 
+        String expectedMessage = "getName() called on expression with no name"; 
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
 
         assertEquals("x", n1.toString()); 
 
-        SymbolicExpression n1Eval = n1.eval(vars); 
+        SymbolicExpression n1Eval = evaluator.evaluate(n1, vars); 
         assertTrue(n1Eval.equals(new Constant(6)));
     }
 
@@ -447,8 +447,8 @@ public class AstTests {
         assertEquals("- 4.0", n1.toString()); 
         assertEquals("- (10.0 / 5.0)", n2.toString()); 
 
-        SymbolicExpression n1Eval = n1.eval(vars); 
-        SymbolicExpression n2Eval = n2.eval(vars); 
+        SymbolicExpression n1Eval = evaluator.evaluate(n1, vars); 
+        SymbolicExpression n2Eval = evaluator.evaluate(n2, vars);  
         assertTrue(n1Eval.equals(new Constant(-4)));
         assertTrue(n2Eval.equals(new Constant(-2)));
     }
@@ -466,10 +466,10 @@ public class AstTests {
         assertFalse(q1.isConstant());
         assertEquals(q1.getPriority(), 100);
 
-        Exception exception = assertThrows(RuntimeException.class, () -> {
+        assertThrows(RuntimeException.class, () -> {
             q1.getValue(); 
             q1.getVariable(); 
-            q1.eval(vars); 
+            evaluator.evaluate(q1, vars); 
         });
 
         Vars v = Vars.instance(); 
@@ -497,16 +497,16 @@ public class AstTests {
 
         assertEquals("sin 90.0", new Sin(new Constant(90)).toString()); 
 
-        SymbolicExpression s1Eval = s1.eval(vars); 
+        SymbolicExpression s1Eval = evaluator.evaluate(s1, vars); 
         assertTrue(s1Eval.equals(new Constant(1)));
 
         Addition s2 = new Addition(new Sin(new Multiplication(new Constant(Math.PI/2), new Variable("u"))), new Constant(4)); 
         Assignment a1 = new Assignment(new Negation(new Constant(87)), new Variable("r")); 
-        a1.eval(vars); 
+        evaluator.evaluate(a1, vars); 
         Assignment a2 = new Assignment(new Constant(1), new Variable("u")); 
-        a2.eval(vars); 
+        evaluator.evaluate(a2, vars); 
         
-        SymbolicExpression s2Eval = s2.eval(vars); 
+        SymbolicExpression s2Eval = evaluator.evaluate(s2, vars); 
         assertTrue(s2Eval.equals(new Constant(5)));
     }
 
@@ -531,13 +531,13 @@ public class AstTests {
 
         assertEquals("1.0 - 6.0", s1.toString()); 
 
-        SymbolicExpression s1Eval = s1.eval(vars); 
-        SymbolicExpression s2Eval = new Negation(new Constant(5)).eval(vars); 
+        SymbolicExpression s1Eval = evaluator.evaluate(s1, vars); 
+        SymbolicExpression s2Eval = evaluator.evaluate(new Negation(new Constant(5)),vars); 
         assertTrue(s1Eval.equals(s2Eval)); 
 
-        Exception exception2 = assertThrows(RuntimeException.class, () -> {
+        assertThrows(RuntimeException.class, () -> {
             Subtraction s2 = new Subtraction(null, null);
-            s2.eval(vars); 
+            evaluator.evaluate(s2, vars); 
         });
 
         Subtraction d3 = new Subtraction(new Constant(3), new Constant(5));
@@ -556,7 +556,7 @@ public class AstTests {
         SymbolicExpression s3 = Quit.instance(); 
         assertTrue(s3.isCommand());
 
-        Exception exception = assertThrows(RuntimeException.class, () -> {
+        assertThrows(RuntimeException.class, () -> {
             s1.getName(); 
             s2.getName(); 
             s3.getName(); 
@@ -569,11 +569,11 @@ public class AstTests {
             s2.getVariable(); 
             s3.getVariable(); 
 
-            s3.eval(vars); 
+            evaluator.evaluate(s3, vars);  
         });
 
-        assertEquals(s1.eval(vars), new Constant(1)); 
-        assertEquals(s2.eval(vars).toString(), "0.0 * x"); 
+        assertEquals(evaluator.evaluate(s1, vars), new Constant(1)); 
+        assertEquals(evaluator.evaluate(s2, vars).toString(), "0.0 * x"); 
     }
 
     @Test
@@ -594,13 +594,13 @@ public class AstTests {
         assertFalse(u1.isCommand());
         assertFalse(u1.isConstant());
 
-        Exception exception = assertThrows(RuntimeException.class, () -> {
+        assertThrows(RuntimeException.class, () -> {
             u1.getName(); 
             u1.getValue(); 
             u1.getVariable();  
         });
 
-        assertEquals(u4.eval(vars), new Constant(-2));
+        assertEquals(evaluator.evaluate(u4, vars), new Constant(-2));
     }
 
     @Test
@@ -625,13 +625,13 @@ public class AstTests {
             v1.getName(); 
         });
     
-        String expectedMessage2 = "getName() called on expression with no operator"; 
+        String expectedMessage2 = "getName() called on expression with no name"; 
         String actualMessage2 = exception2.getMessage();
         assertTrue(actualMessage2.contains(expectedMessage2));
 
         assertEquals("x", v1.toString()); 
 
-        SymbolicExpression v1Eval = v1.eval(vars); 
+        SymbolicExpression v1Eval = evaluator.evaluate(v1, vars); 
         assertTrue(v1Eval.equals(new Variable("x")));
     }
 
@@ -648,10 +648,10 @@ public class AstTests {
         assertFalse(v1.isConstant());
         assertEquals(v1.getPriority(), 100);
 
-        Exception exception = assertThrows(RuntimeException.class, () -> {
+        assertThrows(RuntimeException.class, () -> {
             v1.getValue(); 
             v1.getVariable(); 
-            v1.eval(vars); 
+            evaluator.evaluate(v1, vars); 
         });
 
         Clear c = Clear.instance(); 

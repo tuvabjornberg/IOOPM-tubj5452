@@ -1,5 +1,6 @@
 package org.ioopm.calculator.ast;
 
+import org.ioopm.calculator.visitor.*; 
 /**
  * A subclass of Atom, representing a variable in a symbolic expression.
  */
@@ -60,29 +61,21 @@ public class Variable extends Atom {
     }
 
     /**
-     * Evaluates the variable expression by retrieving its value from the given environment.
-     * If the variable is not found in the environment, a new variable with the same identifier is returned.
-     *
-     * @param vars The environment containing variable values.
-     * @return SymbolicExpression The result of the variable evaluation.
-     */
-    @Override
-    public SymbolicExpression eval(Environment vars) {
-        SymbolicExpression retrieved = vars.get(this.getVariable());
-
-        if (retrieved != null) {
-            return retrieved;
-        } else {
-            return new Variable(this.identifier);
-        }
-    }
-
-    /**
      * Returns the hash code value for the variable.
      *
      * @return The hash code value for the variable.
      */
     public int hashCode() {
         return this.identifier.hashCode();
+    }
+
+    /**
+     * Accepts a visitor for the Visitor pattern.
+     * @param v The visitor instance.
+     * @return Result of the visitor's processing.
+     */
+    @Override
+    public SymbolicExpression accept(Visitor v) {
+        return v.visit(this);
     }
 }

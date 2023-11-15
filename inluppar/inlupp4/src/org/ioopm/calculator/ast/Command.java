@@ -20,19 +20,4 @@ public abstract class Command extends SymbolicExpression {
     public boolean isCommand() {
         return true;
     }
-
-    /**
-     * If a command tries to be evaluated an exception will be thrown as commands 
-     * may not be evaluated.
-     *
-     * @param vars The environment containing variable values.
-     * @return SymbolicExpression This method throws a RuntimeException indicating that
-     *         commands may not be evaluated.
-     * @throws RuntimeException Always throws a RuntimeException with the error message
-     *         "Error: Commands may not be evaluated".
-     */
-    @Override
-    public SymbolicExpression eval(Environment vars) {
-        throw new RuntimeException("Error: Commands may not be evaluated");
-    }
 }
