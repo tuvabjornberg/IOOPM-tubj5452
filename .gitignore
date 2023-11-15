@@ -51,3 +51,6 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Other
+inluppar/inlupp4/src/org/ioopm/calculator/tests/output/*.txt

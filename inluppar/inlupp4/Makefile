@@ -13,6 +13,10 @@ all:
 	javac -d $(OUT_DIR) -sourcepath src $(SRC_DIR)/Calculator.java
 	java -cp $(OUT_DIR) $(CLASSPATH).Calculator
 
+visitor: 
+	javac -d $(OUT_DIR) -sourcepath src $(SRC_DIR)/visitor/Visitor.java
+#java -cp $(OUT_DIR) $(CLASSPATH).Visitor
+
 astTestCompile: 
 	javac -cp $(JUNIT_JAR) -d $(OUT_DIR) -sourcepath src $(SRC_DIR)/tests/AstTests.java
 
