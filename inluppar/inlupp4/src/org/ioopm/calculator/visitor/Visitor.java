@@ -2,6 +2,9 @@ package org.ioopm.calculator.visitor;
 
 import org.ioopm.calculator.ast.*; 
 
+/**
+ * The Visitor interface for the AST nodes.
+ */
 public interface Visitor {
     public SymbolicExpression visit(Addition n);
     public SymbolicExpression visit(Assignment n);

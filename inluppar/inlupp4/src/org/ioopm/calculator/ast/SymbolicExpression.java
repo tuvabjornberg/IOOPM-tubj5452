@@ -1,7 +1,5 @@
 package org.ioopm.calculator.ast; 
 
-import javax.management.RuntimeErrorException;
-
 import org.ioopm.calculator.visitor.*;
 /**
  * An abstract superclass representing a common interface for symbolic expressions. 

@@ -6,7 +6,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import org.ioopm.calculator.ast.*; 
@@ -55,7 +54,7 @@ public class AstTests {
 
         Addition a3 = new Addition(new Constant(3), new Constant(5));
         Constant c1 = new Constant(8);
-        assertNotEquals(a1, c1);
+        assertNotEquals(a3, c1);
     }
 
     @Test

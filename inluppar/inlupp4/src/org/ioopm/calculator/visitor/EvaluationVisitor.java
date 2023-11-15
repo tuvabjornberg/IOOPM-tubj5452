@@ -3,9 +3,19 @@ package org.ioopm.calculator.visitor;
 import org.ioopm.calculator.ast.*;
 import org.ioopm.calculator.parser.IllegalExpressionException; 
 
+/**
+ * Visitor for evaluating SymbolicExpressions.
+ */
 public class EvaluationVisitor implements Visitor {
     private Environment env = null;
 
+    /**
+     * Evaluates a top-level SymbolicExpression within the environment.
+     *
+     * @param topLevel The SymbolicExpression to evaluate.
+     * @param env The environment with variable assignments.
+     * @return The result of the evaluation.
+     */
     public SymbolicExpression evaluate(SymbolicExpression topLevel, Environment env) {
         this.env = env;
         return topLevel.accept(this);
