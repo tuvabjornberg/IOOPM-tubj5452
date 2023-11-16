@@ -73,6 +73,7 @@ public class Constant extends Atom {
 
     /**
      * Accepts a visitor for the Visitor pattern.
+     * 
      * @param v The visitor instance.
      * @return Result of the visitor's processing.
      */

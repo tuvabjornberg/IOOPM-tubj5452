@@ -27,6 +27,7 @@ public class Cos extends Unary {
 
     /**
      * Accepts a visitor for the Visitor pattern.
+     * 
      * @param v The visitor instance.
      * @return Result of the visitor's processing.
      */
