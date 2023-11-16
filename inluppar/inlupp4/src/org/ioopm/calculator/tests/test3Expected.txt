@@ -24,11 +24,12 @@ Please enter an expression:
 Please enter an expression: 
 -6.0788586984880855
 Please enter an expression: 
-result = -0.019714674622021214
+Variables: 
 a = 4.0
+ans = -6.0788586984880855
 b = 4.0
 c = 5.0
-ans = -6.0788586984880855
+result = -0.019714674622021214
 x = 85.0
 y = 6.0
 Please enter an expression: 

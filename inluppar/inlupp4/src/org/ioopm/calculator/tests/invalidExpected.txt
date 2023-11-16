@@ -38,9 +38,10 @@ Error: Unexpected '('
 Please enter an expression: 
 1.0 + x
 Please enter an expression: 
+Variables: 
+ans = 1.0 + x
 c = a + b
 d = a + b
-ans = 1.0 + x
 y = 2.0 * x
 z = 2.0 * x
 Please enter an expression: 

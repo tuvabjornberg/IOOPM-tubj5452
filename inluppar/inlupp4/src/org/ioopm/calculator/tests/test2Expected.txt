@@ -29,8 +29,9 @@ Please enter an expression:
 Please enter an expression: 
 12.0
 Please enter an expression: 
-result = 6.0
+Variables: 
 ans = 12.0
+result = 6.0
 Please enter an expression: 
 z + y
 Please enter an expression: 
@@ -42,9 +43,10 @@ sin (z + y)
 Please enter an expression: 
 5.0 + z + y
 Please enter an expression: 
-result = 6.0
-r = 5.0 + z + y
+Variables: 
 ans = 5.0 + z + y
+r = 5.0 + z + y
+result = 6.0
 y = 7.0
 Please enter an expression: 
 z + 7.0
@@ -55,9 +57,10 @@ sin (z + 7.0)
 Please enter an expression: 
 5.0 + z + 7.0
 Please enter an expression: 
-result = 6.0
-r = 5.0 + z + 7.0
+Variables: 
 ans = 5.0 + z + 7.0
+r = 5.0 + z + 7.0
+result = 6.0
 y = 7.0
 Please enter an expression: 
 
