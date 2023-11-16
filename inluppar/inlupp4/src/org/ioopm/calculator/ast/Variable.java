@@ -4,7 +4,7 @@ import org.ioopm.calculator.visitor.*;
 /**
  * A subclass of Atom, representing a variable in a symbolic expression.
  */
-public class Variable extends Atom {
+public class Variable extends Atom implements Comparable<Variable> {
     private String identifier;
 
     /**
@@ -71,11 +71,23 @@ public class Variable extends Atom {
 
     /**
      * Accepts a visitor for the Visitor pattern.
+     * 
      * @param v The visitor instance.
      * @return Result of the visitor's processing.
      */
     @Override
     public SymbolicExpression accept(Visitor v) {
         return v.visit(this);
+    }
+
+    /**
+     * Compares the current variable to a variable other. 
+     * 
+     * @param other The variable to compare to. 
+     * @return 0 if the varaibles are equal, < 0 or > 0 if not equal.
+     */
+    @Override
+    public int compareTo(Variable other) {
+        return this.identifier.compareTo(other.identifier); 
     }
 }

@@ -69,15 +69,8 @@ public abstract class SymbolicExpression {
     }
 
     /**
-     * Evaluates the symbolic expression using the provided environment of variables.
-     *
-     * @param vars The environment containing variable values.
-     * @return The result of evaluating the expression.
-     */
-    //public abstract SymbolicExpression eval(Environment vars);
-
-    /**
      * Accepts a visitor for the Visitor pattern.
+     * 
      * @param v The visitor instance.
      * @return A RuntimeException is always thrown.
      * @throws RuntimeException If called on expression which does not allow accept. 

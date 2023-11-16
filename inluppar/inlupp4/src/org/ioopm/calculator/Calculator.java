@@ -41,9 +41,7 @@ public class Calculator {
                 if (expression.isCommand()) {
                     // Handle command expressions
                     if (expression == Vars.instance()) {
-                        for (Map.Entry<Variable, SymbolicExpression> set : vars.entrySet()) {
-                            System.out.println(set.getKey() + " = " + set.getValue());
-                        }
+                        System.out.println(vars.toString());
                     } else if (expression == Clear.instance()) {
                         vars.clear();
                     } else if (expression == Quit.instance()) {
@@ -57,7 +55,6 @@ public class Calculator {
                     }
                 } else {
                     // Evaluate non-command expressions
-                    //SymbolicExpression evaluated = expression.eval(vars);
                     SymbolicExpression evaluated = evaluator.evaluate(expression, vars); 
 
                     if (evaluated != null) {
