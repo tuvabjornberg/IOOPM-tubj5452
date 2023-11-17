@@ -6,7 +6,10 @@ import java.util.Scanner;
 
 import org.ioopm.calculator.ast.*;
 import org.ioopm.calculator.parser.*;
-import org.ioopm.calculator.visitor.EvaluationVisitor;
+import org.ioopm.calculator.visitor.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List; 
 
 /**
  * A simple calculator interface for parsing and evaluating expressions.
@@ -54,18 +57,33 @@ public class Calculator {
                         throw new SyntaxErrorException("Invalid command operation");
                     }
                 } else {
-                    // Evaluate non-command expressions
-                    SymbolicExpression evaluated = evaluator.evaluate(expression, vars); 
+                    NamedConstantChecker checker = new NamedConstantChecker(); 
 
-                    if (evaluated != null) {
-                        vars.put(new Variable("ans"), evaluated); 
-                        expressionSuccessfulCounter++;
-                        if (evaluated.isConstant()) {
-                            fullyEvaluated++;
+                    boolean noIllegalAssignments = checker.check(expression); 
+
+                    if (!noIllegalAssignments) {
+                        List<Assignment> illegalAssignments = checker.getIllegalAssignments(); 
+                        
+                        System.out.println("Error, assignments to named constants:");
+
+                        for (Assignment illegal : illegalAssignments) {
+                            System.out.println(illegal.toString());
                         }
+                        
+                    } else {
+                        // Evaluate non-command expressions
+                        SymbolicExpression evaluated = evaluator.evaluate(expression, vars); 
+                        
+                        if (evaluated != null) {
+                            vars.put(new Variable("ans"), evaluated); 
+                            expressionSuccessfulCounter++;
+                            if (evaluated.isConstant()) {
+                                fullyEvaluated++;
+                            }
+                        }
+                    
+                        System.out.println(evaluated);
                     }
-
-                    System.out.println(evaluated);
                 }
 
             } catch (SyntaxErrorException e) {

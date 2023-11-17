@@ -11,4 +11,5 @@ sin(cos(a + b))
 result / (result * result + 1) = result 
 result + (3 * (result - 2))
 vars
+(1 = pi) + (42 = L)
 quit
