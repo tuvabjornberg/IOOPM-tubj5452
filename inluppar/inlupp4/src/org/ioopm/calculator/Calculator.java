@@ -1,14 +1,11 @@
 package org.ioopm.calculator;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Scanner;
 
 import org.ioopm.calculator.ast.*;
 import org.ioopm.calculator.parser.*;
 import org.ioopm.calculator.visitor.*;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List; 
 
 /**
@@ -73,7 +70,7 @@ public class Calculator {
                     } else {
                         // Evaluate non-command expressions
                         SymbolicExpression evaluated = evaluator.evaluate(expression, vars); 
-                        
+
                         if (evaluated != null) {
                             vars.put(new Variable("ans"), evaluated); 
                             expressionSuccessfulCounter++;
@@ -81,7 +78,7 @@ public class Calculator {
                                 fullyEvaluated++;
                             }
                         }
-                    
+
                         System.out.println(evaluated);
                     }
                 }

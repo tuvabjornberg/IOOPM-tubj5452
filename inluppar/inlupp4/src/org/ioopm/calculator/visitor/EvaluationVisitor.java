@@ -1,7 +1,5 @@
 package org.ioopm.calculator.visitor;
 
-import java.util.List;
-
 import org.ioopm.calculator.ast.*;
 import org.ioopm.calculator.parser.IllegalExpressionException; 
 
@@ -30,21 +28,10 @@ public class EvaluationVisitor implements Visitor {
      * @param n The Addition node to visit.
      * @return Resulting SymbolicExpression after evaluation.
     */
-    // This method gets called from Addition.accept(Visitor v) -- you should
-    // be able to see from the eval() methods how these should behave (i.e., 
-    // compare this method with your Addition::eval() and Symbolic.addition) 
     public SymbolicExpression visit(Addition n) {
-        // Visit the left hand side and right hand side subexpressions
         SymbolicExpression left = n.getLhs().accept(this);
         SymbolicExpression right = n.getRhs().accept(this);
-        // When we come back here, the visitor has visited all subexpressions, 
-        // meaning left and right point to newly created trees reduced to 
-        // the extent possible (best case -- both are constants)
 
-        // If subexpressions are fully evaluated, replace them in
-        // the tree with a constant whose value is the sub of the
-        // subexpressions, if not, simply construct a new addition
-        // node from the new subexpressions
         if (left.isConstant() && right.isConstant()) {
             return new Constant(left.getValue() + right.getValue());
         } else {
