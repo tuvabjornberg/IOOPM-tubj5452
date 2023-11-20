@@ -8,7 +8,7 @@ Please enter an expression:
 Please enter an expression: 
 85.0
 Please enter an expression: 
-11.180973760547916
+11.180973760547914
 Please enter an expression: 
 5.0
 Please enter an expression: 
