@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/tuva/ioopm",
-      "program": "/home/tuva/ioopm/build/Debug/outDebug",
+      "cwd": "/home/tubj5452/ioopm/inluppar/inlupp1",
+      "program": "/home/tubj5452/ioopm/inluppar/inlupp1/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
