@@ -24,10 +24,13 @@ public class Calculator {
      */
     public static void main(String[] args) {
         System.out.println("Welcome to the parser!");
+
         int expressionSuccessfulCounter = 0;
         int expressionCounter = 0;
         int fullyEvaluated = 0;
+
         Scanner sc = new Scanner(System.in);
+        ReassignmentChecker Rchecker = new ReassignmentChecker(); 
 
         while (true) {
             System.out.println("Please enter an expression: ");
@@ -54,21 +57,25 @@ public class Calculator {
                         throw new SyntaxErrorException("Invalid command operation");
                     }
                 } else {
-                    NamedConstantChecker checker = new NamedConstantChecker(); 
-
-                    boolean noIllegalAssignments = checker.check(expression); 
+                    NamedConstantChecker NCchecker = new NamedConstantChecker(); 
+                    boolean noIllegalAssignments = NCchecker.check(expression); 
+              
+                    boolean noReassignments = Rchecker.check(expression, vars); 
 
                     if (!noIllegalAssignments) {
-                        List<Assignment> illegalAssignments = checker.getIllegalAssignments(); 
+                        List<Assignment> illegalAssignments = NCchecker.getIllegalAssignments(); 
                         
                         System.out.println("Error, assignments to named constants:");
 
                         for (Assignment illegal : illegalAssignments) {
                             System.out.println(illegal.toString());
                         }
+                    } else if (!noReassignments) {
+                        Variable variableInUse = Rchecker.getLastReassigned(); 
                         
+                        System.out.println("Error, the variable " + variableInUse + " is reassigned");
                     } else {
-                        // Evaluate non-command expressions
+                        // Evaluate non-command expressions that passed the checks
                         SymbolicExpression evaluated = evaluator.evaluate(expression, vars); 
 
                         if (evaluated != null) {
@@ -78,11 +85,9 @@ public class Calculator {
                                 fullyEvaluated++;
                             }
                         }
-
                         System.out.println(evaluated);
                     }
                 }
-
             } catch (SyntaxErrorException e) {
                 System.out.println(e.getMessage());
             } catch (IllegalExpressionException e) {
@@ -94,6 +99,5 @@ public class Calculator {
                 expressionCounter++;
             }
         }
-
     }
 }
