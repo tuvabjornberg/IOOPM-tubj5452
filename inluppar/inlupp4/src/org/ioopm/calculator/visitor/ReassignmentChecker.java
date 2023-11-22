@@ -8,20 +8,17 @@ import java.util.HashSet;
  */
 public class ReassignmentChecker implements Visitor {
     private HashSet<Variable> currentAssignments;  
-    private boolean variableInUse; 
+    private boolean variableNotInUse; 
     private Variable lastReassigned;
-    private boolean reassignedDuringCheck;  
 
     /**
      * Constructs a ReassignmentChecker as an array, a control if a
-     * variable is in use, the last variable reassigned and a control
-     * if a reassignment happens in the current expression.  
+     * variable is in use, the last variable reassigned.
      */
     public ReassignmentChecker() {
         this.currentAssignments = new HashSet<>(); 
-        this.variableInUse = true; 
+        this.variableNotInUse = true; 
         this.lastReassigned = null; 
-        this.reassignedDuringCheck = false; 
     }
 
     /**
@@ -35,23 +32,18 @@ public class ReassignmentChecker implements Visitor {
 
     /**
      * Checks a top-level SymbolicExpression for reassigned variables.
-     * If reassignment happens in the top-level expression it is removed
-     * from the set of variables currently in use. 
+     * Compares with the current environment and removes irregulatities. 
      *
      * @param topLevel The SymbolicExpression to check.
      * @return True if no reassignments are found, false otherwise.
      */
     public boolean check(SymbolicExpression topLevel, Environment vars) {
-        this.variableInUse = true;    
-        this.reassignedDuringCheck = false; 
+        this.variableNotInUse = true;    
+        currentAssignments.removeIf(variable -> !vars.containsKey(variable)); 
 
         topLevel.accept(this);
 
-        if (reassignedDuringCheck) {
-            currentAssignments.removeIf(variable -> !vars.containsKey(variable));
-        }
-
-        return this.variableInUse; 
+        return this.variableNotInUse; 
     }
 
     /**
@@ -82,8 +74,7 @@ public class ReassignmentChecker implements Visitor {
             if (!currentAssignments.contains(a.getRhs())) {
                 currentAssignments.add(a.getRhs().getVariable()); 
             } else {
-                this.variableInUse = false; 
-                this.reassignedDuringCheck = true; 
+                this.variableNotInUse = false; 
                 this.lastReassigned = a.getRhs().getVariable(); 
             }
         }

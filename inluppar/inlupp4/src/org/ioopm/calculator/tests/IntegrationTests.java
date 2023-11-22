@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import org.ioopm.calculator.ast. *; 
 import org.ioopm.calculator.parser. *;
+import org.ioopm.calculator.visitor.EvaluationVisitor;
 import org.ioopm.calculator.visitor.NamedConstantChecker;
 import org.ioopm.calculator.visitor.ReassignmentChecker; 
 
@@ -183,12 +184,14 @@ public class IntegrationTests {
 
     @Test
     void ReassignmentTest() throws IOException {
-        ReassignmentChecker Rchecker = new ReassignmentChecker(); 
+        ReassignmentChecker Rchecker = new ReassignmentChecker();
+        EvaluationVisitor evaluator = new EvaluationVisitor();  
 
         SymbolicExpression s1 = new Assignment(new Constant(2), new Variable("x")); 
         String strS1 = s1.toString(); 
         SymbolicExpression e1 = parser.parse(strS1, vars);
         assertTrue(Rchecker.check(e1, vars)); 
+        evaluator.evaluate(e1, vars); 
 
         SymbolicExpression s2 = new Assignment(new Constant(4), new Variable("x")); 
         String strS2 = s2.toString(); 
@@ -200,10 +203,17 @@ public class IntegrationTests {
         e1 = parser.parse(strS3, vars); 
         assertFalse(Rchecker.check(e1, vars));
 
-        SymbolicExpression s4 = new Assignment(new Constant(2), new Variable("y")); 
+        SymbolicExpression s4 = new Assignment(new Constant(4), new Variable("y")); 
         String strS4 = s4.toString(); 
         e1 = parser.parse(strS4, vars); 
         assertTrue(Rchecker.check(e1, vars));
+        evaluator.evaluate(e1, vars);
+
+        vars.clear();
+        SymbolicExpression s5 = new Assignment(new Constant(10), new Variable("x")); 
+        String strS5 = s5.toString(); 
+        e1 = parser.parse(strS5, vars);
+        assertTrue(Rchecker.check(e1, vars)); 
     }
 
     @AfterEach
