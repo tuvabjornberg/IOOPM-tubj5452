@@ -46,23 +46,18 @@ public class EvaluationVisitor implements Visitor {
      * 
      * @param n The Assignment node to visit.
      * @return Resulting SymbolicExpression after evaluation.
-     * @throws IllegalExpressionException If trying to redefine a named constant.
     */
     @Override
     public SymbolicExpression visit(Assignment n) {
         SymbolicExpression lhsEvaluated = n.getLhs().accept(this);
         SymbolicExpression rhs = n.getRhs();
 
-        if (!rhs.isConstant()) {
-            env.put(new Variable(rhs.toString()), lhsEvaluated);
+        env.put(new Variable(rhs.toString()), lhsEvaluated);
 
-            if (lhsEvaluated.isConstant()) {
-                return new Constant(lhsEvaluated.getValue());
-            } else {
-                return lhsEvaluated;
-            }
+        if (lhsEvaluated.isConstant()) {
+            return new Constant(lhsEvaluated.getValue());
         } else {
-            throw new IllegalExpressionException("Error: cannot redefine named constant");
+            return lhsEvaluated;
         }
     }
 
