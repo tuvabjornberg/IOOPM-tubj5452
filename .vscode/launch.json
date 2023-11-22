@@ -2,14 +2,77 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "java",
+      "name": "IntegrationTests",
+      "request": "launch",
+      "mainClass": "org.ioopm.calculator.IntegrationTests",
+      "projectName": "ioopm_7eb6d404"
+    },
+    {
+      "type": "java",
+      "name": "Calculator",
+      "request": "launch",
+      "mainClass": "org.ioopm.calculator.Calculator",
+      "projectName": "ioopm_7eb6d404"
+    },
+    {
+      "type": "java",
+      "name": "Test",
+      "request": "launch",
+      "mainClass": "org.ioopm.calculator.Test",
+      "projectName": "ioopm_7eb6d404"
+    },
+    {
+      "type": "java",
+      "name": "Simulator",
+      "request": "launch",
+      "mainClass": "Simulator",
+      "projectName": "ioopm_7eb6d404"
+    },
+    {
+      "type": "java",
+      "name": "Simulation",
+      "request": "launch",
+      "mainClass": "Simulation",
+      "projectName": "ioopm_7eb6d404"
+    },
+    {
+      "type": "java",
+      "name": "Customer",
+      "request": "launch",
+      "mainClass": "labbar.lab7.Customer",
+      "projectName": "ioopm_7eb6d404"
+    },
+    {
+      "type": "java",
+      "name": "Queue",
+      "request": "launch",
+      "mainClass": "Queue",
+      "projectName": "ioopm_7eb6d404"
+    },
+    {
+      "type": "java",
+      "name": "Register",
+      "request": "launch",
+      "mainClass": "Register",
+      "projectName": "ioopm_7eb6d404"
+    },
+    {
+      "type": "java",
+      "name": "Store",
+      "request": "launch",
+      "mainClass": "Store",
+      "projectName": "ioopm_7eb6d404"
+    },
+    {
       "name": "C/C++ Runner: Debug Session",
       "type": "cppdbg",
       "request": "launch",
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/tuva/ioopm",
-      "program": "/home/tuva/ioopm/build/Debug/outDebug",
+      "cwd": "/home/tuva/ioopm/inluppar/inlupp1",
+      "program": "/home/tuva/ioopm/inluppar/inlupp1/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

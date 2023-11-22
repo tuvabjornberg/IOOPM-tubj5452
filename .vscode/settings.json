@@ -1,10 +1,17 @@
 {
+  "java.project.sourcePaths": [
+    "labbar/lab6",
+    "labbar/lab7",
+    "inluppar/inlupp3/src",
+    "lib",
+    "inluppar/inlupp4/src"
+  ],
+  "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.cCompilerPath": "gcc",
   "C_Cpp_Runner.cppCompilerPath": "g++",
   "C_Cpp_Runner.debuggerPath": "gdb",
   "C_Cpp_Runner.cStandard": "",
   "C_Cpp_Runner.cppStandard": "",
-  "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.useMsvc": false,
   "C_Cpp_Runner.warnings": [
     "-Wall",
@@ -55,13 +62,6 @@
   "C_Cpp_Runner.useLeakSanitizer": false,
   "C_Cpp_Runner.showCompilationTime": false,
   "C_Cpp_Runner.useLinkTimeOptimization": false,
-  "files.associations": {
-    "functional": "c",
-    "stdbool.h": "c",
-    "system_error": "c",
-    "array": "c",
-    "tuple": "c",
-    "type_traits": "c",
-    "utility": "c"
-  }
+  "C_Cpp_Runner.msvcSecureNoWarnings": false,
+  "java.debug.settings.onBuildFailureProceed": true
 }
