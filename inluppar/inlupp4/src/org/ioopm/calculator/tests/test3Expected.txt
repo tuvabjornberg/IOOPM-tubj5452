@@ -6,7 +6,7 @@ Please enter an expression:
 Please enter an expression: 
 11.0
 Please enter an expression: 
-85.0
+Error, the variable x is reassigned
 Please enter an expression: 
 11.180973760547916
 Please enter an expression: 
@@ -20,17 +20,17 @@ Please enter an expression:
 Please enter an expression: 
 -50.703914702569996
 Please enter an expression: 
--0.019714674622021214
+Error, the variable result is reassigned
 Please enter an expression: 
--6.0788586984880855
+-208.81565881027998
 Please enter an expression: 
 Variables: 
 a = 4.0
-ans = -6.0788586984880855
+ans = -208.81565881027998
 b = 4.0
 c = 5.0
-result = -0.019714674622021214
-x = 85.0
+result = -50.703914702569996
+x = 11.0
 y = 6.0
 Please enter an expression: 
 Error, assignments to named constants:
@@ -40,5 +40,5 @@ Please enter an expression:
 
 You have quit the program
 Total entered expression(s): 14
-Successful evaluated expression(s): 12
-Expression(s) that were fully evaluated: 12
+Successful evaluated expression(s): 10
+Expression(s) that were fully evaluated: 10

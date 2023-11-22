@@ -3,6 +3,7 @@ package org.ioopm.calculator.tests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -11,7 +12,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import org.ioopm.calculator.ast. *; 
-import org.ioopm.calculator.parser. *; 
+import org.ioopm.calculator.parser. *;
+import org.ioopm.calculator.visitor.NamedConstantChecker;
+import org.ioopm.calculator.visitor.ReassignmentChecker; 
 
 public class IntegrationTests {
 
@@ -155,6 +158,52 @@ public class IntegrationTests {
 
         assertEquals("(5.0 + x) / 2.0 * 1.0 / (9.0 - sin 9.0)", strS2);
         afterParseTest(s2, strS2);
+    }
+
+    @Test
+    void namedConstantTest() throws IOException {
+        SymbolicExpression s1 = new Addition(new Assignment(new Constant(2), new Variable("pi")), new Assignment(new Constant(42), new Variable("L"))); 
+        String strS1 = s1.toString(); 
+        SymbolicExpression e1 = parser.parse(strS1, vars); 
+        assertTrue(e1.equals(s1)); 
+
+        NamedConstantChecker NCchecker1 = new NamedConstantChecker(); 
+        boolean noIllegalAssignments1 = NCchecker1.check(e1); 
+        assertFalse(noIllegalAssignments1);
+       
+        SymbolicExpression s2 = new Addition(new Assignment(new Constant(2), new Variable("x")), new Constant(7)); 
+        String strS2 = s2.toString(); 
+        e1 = parser.parse(strS2, vars); 
+        assertTrue(e1.equals(s2)); 
+
+        NamedConstantChecker NCchecker2 = new NamedConstantChecker(); 
+        boolean noIllegalAssignments2 = NCchecker2.check(e1); 
+        assertTrue(noIllegalAssignments2);
+    }
+
+    @Test
+    void ReassignmentTest() throws IOException {
+        ReassignmentChecker Rchecker = new ReassignmentChecker(); 
+
+        SymbolicExpression s1 = new Assignment(new Constant(2), new Variable("x")); 
+        String strS1 = s1.toString(); 
+        SymbolicExpression e1 = parser.parse(strS1, vars);
+        assertTrue(Rchecker.check(e1, vars)); 
+
+        SymbolicExpression s2 = new Assignment(new Constant(4), new Variable("x")); 
+        String strS2 = s2.toString(); 
+        e1 = parser.parse(strS2, vars); 
+        assertFalse(Rchecker.check(e1, vars));
+
+        SymbolicExpression s3 = new Addition(new Assignment(new Constant(2), new Variable("y")), new Assignment(new Constant(6), new Variable("y"))); 
+        String strS3 = s3.toString(); 
+        e1 = parser.parse(strS3, vars); 
+        assertFalse(Rchecker.check(e1, vars));
+
+        SymbolicExpression s4 = new Assignment(new Constant(2), new Variable("y")); 
+        String strS4 = s4.toString(); 
+        e1 = parser.parse(strS4, vars); 
+        assertTrue(Rchecker.check(e1, vars));
     }
 
     @AfterEach

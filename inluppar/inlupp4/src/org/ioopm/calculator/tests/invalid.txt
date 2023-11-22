@@ -17,5 +17,7 @@ invalidCommand
 3**5 ++ x 
 foo(x+y)
 1      + x   
+(1 = x) + (2 = x)
+(1 = x) + (1 = x)
 vars
 quit

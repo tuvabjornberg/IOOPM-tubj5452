@@ -16,7 +16,7 @@ a + b
 Please enter an expression: 
 Error: Not a valid assignment of a variable
 Please enter an expression: 
-2.0 * x
+Error, the variable z is reassigned
 Please enter an expression: 
 Error: Expected number
 Please enter an expression: 
@@ -38,15 +38,18 @@ Error: Unexpected '('
 Please enter an expression: 
 1.0 + x
 Please enter an expression: 
+Error, the variable x is reassigned
+Please enter an expression: 
+Error, the variable x is reassigned
+Please enter an expression: 
 Variables: 
 ans = 1.0 + x
 c = a + b
 d = a + b
-y = 2.0 * x
-z = 2.0 * x
+z = x + y
 Please enter an expression: 
 
 You have quit the program
-Total entered expression(s): 20
-Successful evaluated expression(s): 7
+Total entered expression(s): 22
+Successful evaluated expression(s): 6
 Expression(s) that were fully evaluated: 1
