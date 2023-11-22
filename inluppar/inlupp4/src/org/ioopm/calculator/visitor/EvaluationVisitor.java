@@ -28,6 +28,7 @@ public class EvaluationVisitor implements Visitor {
      * @param n The Addition node to visit.
      * @return Resulting SymbolicExpression after evaluation.
     */
+    @Override
     public SymbolicExpression visit(Addition n) {
         SymbolicExpression left = n.getLhs().accept(this);
         SymbolicExpression right = n.getRhs().accept(this);
@@ -47,6 +48,7 @@ public class EvaluationVisitor implements Visitor {
      * @return Resulting SymbolicExpression after evaluation.
      * @throws IllegalExpressionException If trying to redefine a named constant.
     */
+    @Override
     public SymbolicExpression visit(Assignment n) {
         SymbolicExpression lhsEvaluated = n.getLhs().accept(this);
         SymbolicExpression rhs = n.getRhs();
@@ -70,6 +72,7 @@ public class EvaluationVisitor implements Visitor {
      * @return A RuntimeException is always thrown.
      * @throws RuntimeException Always thrown with the message "Error: Clear may not be evaluated".
     */
+    @Override
     public SymbolicExpression visit(Clear n) {
         throw new RuntimeException("Error: Clear may not be evaluated");
     }
@@ -80,6 +83,7 @@ public class EvaluationVisitor implements Visitor {
      * @param n The Constant node to visit. 
      * @return The constant. 
      */
+    @Override
     public SymbolicExpression visit(Constant n) {
         return new Constant(n.getValue());
     }
@@ -91,6 +95,7 @@ public class EvaluationVisitor implements Visitor {
      * @param n The Constant node to visit. 
      * @return The result of the cosine operation.  
     */
+    @Override
     public SymbolicExpression visit(Cos n) {
         SymbolicExpression arg = n.getArg().accept(this);
 
@@ -109,6 +114,7 @@ public class EvaluationVisitor implements Visitor {
      * @param n The Division node to visit
      * @return The result of the division operation.
     */
+    @Override
     public SymbolicExpression visit(Division n) {
         SymbolicExpression lhsEvaluated = n.getLhs().accept(this);
         SymbolicExpression rhsEvaluated = n.getRhs().accept(this);
@@ -128,6 +134,7 @@ public class EvaluationVisitor implements Visitor {
      * @param n The Exp node to visit
      * @return The result of the exponential operation.
     */
+    @Override
     public SymbolicExpression visit(Exp n) {
         SymbolicExpression arg = n.getArg().accept(this);
 
@@ -145,6 +152,7 @@ public class EvaluationVisitor implements Visitor {
      * @param n The Log node to visit. 
      * @return The result of the logarithm operation.
     */
+    @Override
     public SymbolicExpression visit(Log n) {
         SymbolicExpression arg = n.getArg().accept(this);
 
@@ -163,6 +171,7 @@ public class EvaluationVisitor implements Visitor {
      * @param n The Multiplication node to visit. 
      * @return The result of the multiplication operation.
     */
+    @Override
     public SymbolicExpression visit(Multiplication n) {
         SymbolicExpression lhsEvaluated = n.getLhs().accept(this); 
         SymbolicExpression rhsEvaluated = n.getRhs().accept(this); 
@@ -181,6 +190,7 @@ public class EvaluationVisitor implements Visitor {
      * @param n The NamedConsatnt node to visit. 
      * @return The result of the named constant evaluation.
     */
+    @Override
     public SymbolicExpression visit(NamedConstant n) {
         return new Constant(n.getValue());
     }
@@ -191,6 +201,7 @@ public class EvaluationVisitor implements Visitor {
      * @param n The Negation node to visit. 
      * @return The result of the negation operation.
     */
+    @Override
     public SymbolicExpression visit(Negation n) {
         SymbolicExpression arg = n.getArg().accept(this);
 
@@ -207,6 +218,7 @@ public class EvaluationVisitor implements Visitor {
      * @return This method always throws a RuntimeException.
      * @throws RuntimeException Always thrown with the message "Error: Quit may not be evaluated".
     */
+    @Override
     public SymbolicExpression visit(Quit n) {
         throw new RuntimeException("Error: Quit may not be evaluated");
     }
@@ -218,6 +230,7 @@ public class EvaluationVisitor implements Visitor {
      * @param n The Sin node to visit. 
      * @return The result of the sine operation.
     */
+    @Override
     public SymbolicExpression visit(Sin n) {
         SymbolicExpression arg = n.getArg().accept(this);
 
@@ -236,6 +249,7 @@ public class EvaluationVisitor implements Visitor {
      * @param n The Subtraction node to visit. 
      * @return The result of the subtraction operation.
     */
+    @Override
     public SymbolicExpression visit(Subtraction n) {
         SymbolicExpression lhsEvaluated = n.getLhs().accept(this); 
         SymbolicExpression rhsEvaluated = n.getRhs().accept(this); 
@@ -256,6 +270,7 @@ public class EvaluationVisitor implements Visitor {
      * @param n The Variable node to visit. 
      * @return The result of the variable evaluation.
     */
+    @Override
     public SymbolicExpression visit(Variable n) {
         SymbolicExpression retrieved = env.get(n);
         if (retrieved != null) {
@@ -271,6 +286,7 @@ public class EvaluationVisitor implements Visitor {
      * @return This method always throws a RuntimeException.
      * @throws RuntimeException Always thrown with the message "Error: Vars may not be evaluated".
     */
+    @Override
     public SymbolicExpression visit(Vars n) {
         throw new RuntimeException("Error: Vars may not be evaluated");
     }

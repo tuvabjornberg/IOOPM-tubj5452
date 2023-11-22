@@ -43,6 +43,7 @@ public class NamedConstantChecker implements Visitor {
      * @param a The Addition node to visit.
      * @return null
      */
+    @Override
     public SymbolicExpression visit(Addition a) {
         a.getLhs().accept(this);
         a.getRhs().accept(this);
@@ -56,6 +57,7 @@ public class NamedConstantChecker implements Visitor {
      * @param a The Assignment node to visit.
      * @return null
      */
+    @Override
     public SymbolicExpression visit(Assignment a) {
         a.getLhs().accept(this);
         a.getRhs().accept(this);
@@ -72,6 +74,7 @@ public class NamedConstantChecker implements Visitor {
      * 
      * @return null
      */
+    @Override
     public SymbolicExpression visit(Clear a) {
         return null; 
     }
@@ -81,6 +84,7 @@ public class NamedConstantChecker implements Visitor {
      * 
      * @return null
      */
+    @Override
     public SymbolicExpression visit(Constant a) {
         return null; 
     }
@@ -91,6 +95,7 @@ public class NamedConstantChecker implements Visitor {
      * @param a The Cos node to visit.
      * @return null
      */
+    @Override
     public SymbolicExpression visit(Cos a) {
         a.getArg().accept(this); 
         return null; 
@@ -102,6 +107,7 @@ public class NamedConstantChecker implements Visitor {
      * @param a The Division node to visit.
      * @return null
      */
+    @Override
     public SymbolicExpression visit(Division a) {
         a.getLhs().accept(this);
         a.getRhs().accept(this);
@@ -114,6 +120,7 @@ public class NamedConstantChecker implements Visitor {
      * @param a The Exp node to visit.
      * @return null
      */
+    @Override
     public SymbolicExpression visit(Exp a) {
         a.getArg().accept(this); 
         return null;
@@ -125,6 +132,7 @@ public class NamedConstantChecker implements Visitor {
      * @param a The Log node to visit.
      * @return null
      */
+    @Override
     public SymbolicExpression visit(Log a) {
         a.getArg().accept(this); 
         return null;
@@ -136,6 +144,7 @@ public class NamedConstantChecker implements Visitor {
      * @param a The Multiplication node to visit.
      * @return null
      */
+    @Override
     public SymbolicExpression visit(Multiplication a) {
         a.getLhs().accept(this);
         a.getRhs().accept(this);
@@ -147,6 +156,7 @@ public class NamedConstantChecker implements Visitor {
      * 
      * @return null
      */
+    @Override
     public SymbolicExpression visit(NamedConstant a) {
         return null; 
     }
@@ -157,6 +167,7 @@ public class NamedConstantChecker implements Visitor {
      * @param a The Negation node to visit.
      * @return null
      */
+    @Override
     public SymbolicExpression visit(Negation a) {
         a.getArg().accept(this); 
         return null;
@@ -167,6 +178,7 @@ public class NamedConstantChecker implements Visitor {
      * 
      * @return null
      */
+    @Override
     public SymbolicExpression visit(Quit a) {
         return null; 
     }
@@ -177,6 +189,7 @@ public class NamedConstantChecker implements Visitor {
      * @param a The Sin node to visit.
      * @return null
      */
+    @Override
     public SymbolicExpression visit(Sin a) {
         a.getArg().accept(this); 
         return null;
@@ -188,6 +201,7 @@ public class NamedConstantChecker implements Visitor {
      * @param a The Subtraction node to visit.
      * @return null
      */
+    @Override
     public SymbolicExpression visit(Subtraction a) {
         a.getLhs().accept(this);
         a.getRhs().accept(this);
@@ -199,6 +213,7 @@ public class NamedConstantChecker implements Visitor {
      * 
      * @return null
      */
+    @Override
     public SymbolicExpression visit(Variable a) {
         return null; 
     }
@@ -208,6 +223,7 @@ public class NamedConstantChecker implements Visitor {
      * 
      * @return null
      */
+    @Override
     public SymbolicExpression visit(Vars a) {
         return null; 
     }
