@@ -148,7 +148,7 @@ public class NamedConstantChecker implements Visitor {
      * @return null
      */
     public SymbolicExpression visit(NamedConstant a) {
-        return null; //TODO: ??????
+        return null; 
     }
 
     /**

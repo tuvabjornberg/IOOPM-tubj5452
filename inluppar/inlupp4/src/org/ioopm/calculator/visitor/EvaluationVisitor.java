@@ -258,7 +258,6 @@ public class EvaluationVisitor implements Visitor {
     */
     public SymbolicExpression visit(Variable n) {
         SymbolicExpression retrieved = env.get(n);
-
         if (retrieved != null) {
             return retrieved;
         } else {
