@@ -52,7 +52,7 @@ public class EvaluationVisitor implements Visitor {
         SymbolicExpression rhs = n.getRhs();
 
         env.put(new Variable(rhs.toString()), lhsEvaluated);
-
+        
         if (lhsEvaluated.isConstant()) {
             return new Constant(lhsEvaluated.getValue());
         } else {
@@ -217,10 +217,16 @@ public class EvaluationVisitor implements Visitor {
         throw new RuntimeException("Error: Quit may not be evaluated");
     }
 
-    //@Override
-    //public SymbolicExpression visit(Scope n) {
-    //    
-    //}
+    /**
+     * Visits a Scope node, and evaluates the SymbolicExpression wihtin it
+     * @param n The Scope node to visit.
+     * @return the result of the evaluated scope
+    */
+    @Override
+    public SymbolicExpression visit(Scope n) {
+        SymbolicExpression exp = n.getScope();
+        return exp.accept(this);
+    }
 
     /**
      * Visist a sine node, either performing the sine if the operand is constant,

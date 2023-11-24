@@ -13,6 +13,7 @@ import java.util.*;
  */
 public class CalculatorParser {
     private StreamTokenizer st;
+    //private ScopeStack vars;
     private Environment vars;
     private static char MULTIPLY = '*';
     private static char ADDITION = '+';
@@ -111,6 +112,7 @@ public class CalculatorParser {
     private SymbolicExpression assignment() throws IOException {
         SymbolicExpression result = expression();
         this.st.nextToken();
+
         while (this.st.ttype == ASSIGNMENT) {
             this.st.nextToken();
             if (this.st.ttype == this.st.TT_NUMBER) {
@@ -219,6 +221,14 @@ public class CalculatorParser {
             /// This captures unbalanced parentheses!
             if (this.st.nextToken() != ')') {
                 throw new SyntaxErrorException("expected ')'");
+            }
+        } else if (this.st.ttype == '{') {
+            this.st.nextToken(); 
+            //vars.pushEnvironment(); 
+            result = assignment(); 
+            /// This captures unbalanced curly brackets!
+            if (this.st.nextToken() != '}') {
+                throw new SyntaxErrorException("expected '}'");
             }
         } else if (this.st.ttype == NEGATION) {
             result = unary();

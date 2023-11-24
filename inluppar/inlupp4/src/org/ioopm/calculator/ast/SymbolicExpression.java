@@ -14,16 +14,25 @@ public abstract class SymbolicExpression {
     /**
      * Checks if the symbolic expression is a constant.
      *
-     * @return true if the expression is a constant, false otherwise.
+     * @return Always returns false. 
      */
     public boolean isConstant() {
         return false;
+    }
+
+    /**
+     * Checks if the symbolic expression is a named constant.
+     *
+     * @return Always returns false. 
+     */
+    public boolean isNamedConstant() {
+        return false; 
     }
     
     /**
      * Checks if the symbolic expression is a command.
      *
-     * @return true if the expression is a command, false otherwise.
+     * @return Always returns false. 
      */
     public boolean isCommand() {
         return false;
@@ -66,6 +75,16 @@ public abstract class SymbolicExpression {
      */
     public Variable getVariable() throws RuntimeException {
         throw new RuntimeException("getVariable() called on expression with no variable");
+    }
+
+    /**
+     * Returns the symbolix extression within a scope. 
+     *
+     * @return A RuntimeException is always thrown. 
+     * @throws RuntimeException If called on an expression not in a scope. 
+     */
+    public SymbolicExpression getScope() {
+        throw new RuntimeException("getScope() called on expression non scoped expression"); 
     }
 
     /**

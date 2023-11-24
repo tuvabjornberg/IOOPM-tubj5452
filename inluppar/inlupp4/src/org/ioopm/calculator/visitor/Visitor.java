@@ -18,6 +18,7 @@ public interface Visitor {
     public SymbolicExpression visit(NamedConstant n); 
     public SymbolicExpression visit(Negation n);
     public SymbolicExpression visit(Quit n);
+    public SymbolicExpression visit(Scope n);
     public SymbolicExpression visit(Sin n);
     public SymbolicExpression visit(Subtraction n);
     public SymbolicExpression visit(Variable n);

@@ -25,7 +25,7 @@ public class NamedConstant extends Atom {
      * @return True.
      */
     @Override
-    public boolean isConstant() {
+    public boolean isNamedConstant() {
         return true;
     }
 

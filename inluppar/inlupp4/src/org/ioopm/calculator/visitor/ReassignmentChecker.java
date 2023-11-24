@@ -199,6 +199,18 @@ public class ReassignmentChecker implements Visitor {
     }
 
     /**
+     * Visits a Scope node, and evaluates the SymbolicExpression wihtin it
+     * @param n The Scope node to visit.
+     * @return the result of the evaluated scope
+    */
+    @Override
+    public SymbolicExpression visit(Scope a) {
+        SymbolicExpression exp = a.getScope();
+        exp.accept(this);
+        return null;
+    }
+
+    /**
      * Visits a Sin node, checking its argument subexpressions.
      *
      * @param a The Sin node to visit.

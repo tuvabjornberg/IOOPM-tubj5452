@@ -62,7 +62,7 @@ public class NamedConstantChecker implements Visitor {
         a.getLhs().accept(this);
         a.getRhs().accept(this);
 
-        if (a.getRhs().isConstant()) {
+        if (a.getRhs().isNamedConstant()) {
             illegalAssignments.add(a);
         }
         
@@ -181,6 +181,18 @@ public class NamedConstantChecker implements Visitor {
     @Override
     public SymbolicExpression visit(Quit a) {
         return null; 
+    }
+
+    /**
+     * Visits a Scope node, and evaluates the SymbolicExpression wihtin it
+     * @param n The Scope node to visit.
+     * @return the result of the evaluated scope
+    */
+    @Override
+    public SymbolicExpression visit(Scope a) {
+        SymbolicExpression exp = a.getScope();
+        exp.accept(this);
+        return null;
     }
 
     /**

@@ -12,6 +12,7 @@ import org.ioopm.calculator.ast.*;
 import org.ioopm.calculator.visitor.*; 
 
 public class AstTests {
+    private Environment vars; 
     private EvaluationVisitor evaluator; 
 
     @BeforeAll
@@ -20,6 +21,7 @@ public class AstTests {
 
     @BeforeEach
     void init() {
+        vars = new Environment(); 
         evaluator = new EvaluationVisitor(); 
     }
 
@@ -512,7 +514,6 @@ public class AstTests {
 
     @Test
     void subtractionTest() {
-        Environment vars = new Environment(); 
         Subtraction s1 = new Subtraction(new Constant(1), new Constant(6)); 
 
         Exception exception1 = assertThrows(RuntimeException.class, () -> {
@@ -657,6 +658,11 @@ public class AstTests {
         Clear c = Clear.instance(); 
         assertNotEquals(v1, c);
         assertNotEquals(v2, c);
+    }
+
+    @Test
+    void scopeTest() {
+        assertFalse(true);
     }
 
     @AfterEach

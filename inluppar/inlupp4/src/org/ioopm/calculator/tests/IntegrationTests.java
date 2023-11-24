@@ -10,7 +10,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+import org.ioopm.calculator.Calculator;
 import org.ioopm.calculator.ast. *; 
 import org.ioopm.calculator.parser. *;
 import org.ioopm.calculator.visitor.EvaluationVisitor;
@@ -18,7 +18,6 @@ import org.ioopm.calculator.visitor.NamedConstantChecker;
 import org.ioopm.calculator.visitor.ReassignmentChecker; 
 
 public class IntegrationTests {
-
     private CalculatorParser parser;
     private Environment vars;  
 
@@ -220,6 +219,44 @@ public class IntegrationTests {
         NamedConstantChecker NCchecker = new NamedConstantChecker(); 
         boolean noIllegalAssignments = NCchecker.check(e1); 
         assertFalse(noIllegalAssignments);
+    }
+
+    @Test
+    void scopeTest() throws IOException {
+        EvaluationVisitor evaluator = new EvaluationVisitor(); 
+
+        SymbolicExpression e1 = parser.parse("{{1 = x} = x}", vars); 
+        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(1)));
+
+        vars = new Environment(); 
+        e1 = parser.parse("{(2 = x) + {1 = x}}", vars); 
+        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(3)));
+    
+        vars = new Environment(); 
+        e1 = parser.parse("(1 = x) + {(2 + x = x) + {3 + x = x}}", vars); 
+        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(10))); 
+    
+        vars = new Environment(); 
+        e1 = parser.parse("{{1 = x} = x} = y", vars); 
+        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(1))); 
+    
+        e1 = parser.parse("x", vars); 
+        assertTrue(evaluator.evaluate(e1, vars).equals(new Variable("x"))); 
+    
+        e1 = parser.parse("y", vars); 
+        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(1))); 
+
+        vars = new Environment(); 
+        e1 = parser.parse("{1 = x} + {1 = x}", vars); 
+        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(2)));
+        
+        vars = new Environment(); 
+        e1 = parser.parse("{1 = x} + {x}", vars); 
+        assertTrue(evaluator.evaluate(e1, vars).equals(new Addition(new Constant(1), new Variable("x")))); 
+        
+        vars = new Environment(); 
+        e1 = parser.parse("{1 = x} + {1}", vars); 
+        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(2)));  
     }
 
     @AfterEach
