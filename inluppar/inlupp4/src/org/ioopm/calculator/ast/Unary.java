@@ -31,6 +31,7 @@ public abstract class Unary extends SymbolicExpression {
      *
      * @return A string representation of the unary expression.
      */
+    @Override
     public String toString() {
         int argPriority = this.argument.getPriority();
         int currentPriority = this.getPriority();
@@ -49,6 +50,7 @@ public abstract class Unary extends SymbolicExpression {
      * @param other The object to compare for equality.
      * @return true if the objects are equal, false otherwise.
      */
+    @Override
     public boolean equals(Object other) {
         if (other instanceof Unary) {
             return this.equals((Unary) other);

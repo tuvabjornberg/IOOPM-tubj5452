@@ -42,6 +42,7 @@ public abstract class Binary extends SymbolicExpression {
      *
      * @return A string representation of the binary expression.
      */
+    @Override
     public String toString() {
         int lhsPriority = this.lhs.getPriority(); 
         int rhsPriority = this.rhs.getPriority(); 
@@ -65,6 +66,7 @@ public abstract class Binary extends SymbolicExpression {
      * @param other The object to compare for equality.
      * @return true if the objects are equal, false otherwise.
      */
+    @Override
     public boolean equals(Object other) {
         if (other instanceof Binary) {
             return this.equals((Binary) other); 
@@ -86,9 +88,9 @@ public abstract class Binary extends SymbolicExpression {
 
         String lhs1 = this.lhs.toString(); 
         String lhs2 = other.lhs.toString(); 
-
+        
         String rhs1 = this.rhs.toString(); 
-        String rhs2 = other.rhs.toString(); 
+        String rhs2 = other.rhs.toString();
         
         boolean sameToSame = lhs1.equals(lhs2) && rhs1.equals(rhs2);
         boolean sameToOposite = lhs1.equals(rhs2) && rhs1.equals(lhs2); 

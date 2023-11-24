@@ -27,6 +27,7 @@ public class Clear extends Command{
      *
      * @return The string representation of clear.
      */
+    @Override
     public String getName() {
         return "clear"; 
     }

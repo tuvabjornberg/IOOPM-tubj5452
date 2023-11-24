@@ -34,6 +34,7 @@ public class NamedConstant extends Atom {
      *
      * @return The string representation of the named constant.
      */
+    @Override
     public String toString() {
         return this.name;
     }

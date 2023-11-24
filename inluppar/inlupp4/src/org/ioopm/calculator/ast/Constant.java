@@ -42,6 +42,7 @@ public class Constant extends Atom {
      *
      * @return The string representation of the constant.
      */
+    @Override
     public String toString() {
         return String.valueOf(this.value);
     }
@@ -53,6 +54,7 @@ public class Constant extends Atom {
      * @param other The object to compare with.
      * @return True if the objects are equal, false otherwise.
      */
+    @Override
     public boolean equals(Object other) {
         if (other instanceof Constant) {
             return this.equals((Constant) other);

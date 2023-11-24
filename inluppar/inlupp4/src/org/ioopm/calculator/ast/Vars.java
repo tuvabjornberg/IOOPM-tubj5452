@@ -27,6 +27,7 @@ public class Vars extends Command {
      *
      * @return The string representation of vars.
      */
+    @Override
     public String getName() {
         return "vars"; 
     }

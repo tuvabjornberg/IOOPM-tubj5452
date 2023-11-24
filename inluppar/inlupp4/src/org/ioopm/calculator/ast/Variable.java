@@ -31,6 +31,7 @@ public class Variable extends Atom implements Comparable<Variable> {
      *
      * @return The string representation of the variable.
      */
+    @Override
     public String toString() {
         return String.valueOf(this.identifier);
     }
@@ -42,6 +43,7 @@ public class Variable extends Atom implements Comparable<Variable> {
      * @param other The object to compare with.
      * @return True if the objects are equal, false otherwise.
      */
+    @Override
     public boolean equals(Object other) {
         if (other instanceof Variable) {
             return this.equals((Variable) other);
@@ -65,6 +67,7 @@ public class Variable extends Atom implements Comparable<Variable> {
      *
      * @return The hash code value for the variable.
      */
+    @Override
     public int hashCode() {
         return this.identifier.hashCode();
     }
