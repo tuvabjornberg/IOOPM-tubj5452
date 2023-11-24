@@ -193,27 +193,33 @@ public class IntegrationTests {
         assertTrue(Rchecker.check(e1, vars)); 
         evaluator.evaluate(e1, vars); 
 
+        Rchecker = new ReassignmentChecker();
         SymbolicExpression s2 = new Assignment(new Constant(4), new Variable("x")); 
         String strS2 = s2.toString(); 
         e1 = parser.parse(strS2, vars); 
-        assertFalse(Rchecker.check(e1, vars));
+        assertTrue(Rchecker.check(e1, vars));
 
+        Rchecker = new ReassignmentChecker();
         SymbolicExpression s3 = new Addition(new Assignment(new Constant(2), new Variable("y")), new Assignment(new Constant(6), new Variable("y"))); 
         String strS3 = s3.toString(); 
         e1 = parser.parse(strS3, vars); 
         assertFalse(Rchecker.check(e1, vars));
 
+        Rchecker = new ReassignmentChecker();
         SymbolicExpression s4 = new Assignment(new Constant(4), new Variable("y")); 
         String strS4 = s4.toString(); 
         e1 = parser.parse(strS4, vars); 
         assertTrue(Rchecker.check(e1, vars));
         evaluator.evaluate(e1, vars);
 
-        vars.clear();
-        SymbolicExpression s5 = new Assignment(new Constant(10), new Variable("x")); 
+        Rchecker = new ReassignmentChecker();
+        SymbolicExpression s5 = new Addition(new Addition(new Assignment(new Constant(10), new Variable("x")), new Assignment(new Constant(4), new Variable("x"))), new Assignment(new Constant(2), new Variable("pi"))); 
         String strS5 = s5.toString(); 
         e1 = parser.parse(strS5, vars);
-        assertTrue(Rchecker.check(e1, vars)); 
+        assertFalse(Rchecker.check(e1, vars)); 
+        NamedConstantChecker NCchecker = new NamedConstantChecker(); 
+        boolean noIllegalAssignments = NCchecker.check(e1); 
+        assertFalse(noIllegalAssignments);
     }
 
     @AfterEach

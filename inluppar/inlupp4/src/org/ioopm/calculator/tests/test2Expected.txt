@@ -4,11 +4,11 @@ Please enter an expression:
 Please enter an expression: 
 6.0
 Please enter an expression: 
-Error, the variable x is reassigned
+11.0
 Please enter an expression: 
-Error, the variable x is reassigned
+22.0
 Please enter an expression: 
-6.0 / y
+22.0 / y
 Please enter an expression: 
 12.182493960703473
 Please enter an expression: 
@@ -25,13 +25,13 @@ Please enter an expression:
 Please enter an expression: 
 11.0
 Please enter an expression: 
-Error, the variable result is reassigned
+6.0
 Please enter an expression: 
-22.0
+12.0
 Please enter an expression: 
 Variables: 
-ans = 22.0
-result = 11.0
+ans = 12.0
+result = 6.0
 Please enter an expression: 
 z + y
 Please enter an expression: 
@@ -41,30 +41,30 @@ Please enter an expression:
 Please enter an expression: 
 sin (z + y)
 Please enter an expression: 
-Error, the variable r is reassigned
+5.0 + z + y
 Please enter an expression: 
 Variables: 
-ans = sin (z + y)
-r = z + y
-result = 11.0
+ans = 5.0 + z + y
+r = 5.0 + z + y
+result = 6.0
 y = 7.0
 Please enter an expression: 
-Error, the variable r is reassigned
+z + 7.0
 Please enter an expression: 
-(z + y) * 2.0
+(z + 7.0) * 2.0
 Please enter an expression: 
-sin (z + y)
+sin (z + 7.0)
 Please enter an expression: 
-Error, the variable r is reassigned
+5.0 + z + 7.0
 Please enter an expression: 
 Variables: 
-ans = sin (z + y)
-r = z + y
-result = 11.0
+ans = 5.0 + z + 7.0
+r = 5.0 + z + 7.0
+result = 6.0
 y = 7.0
 Please enter an expression: 
 
 You have quit the program
 Total entered expression(s): 27
-Successful evaluated expression(s): 17
-Expression(s) that were fully evaluated: 11
+Successful evaluated expression(s): 23
+Expression(s) that were fully evaluated: 14

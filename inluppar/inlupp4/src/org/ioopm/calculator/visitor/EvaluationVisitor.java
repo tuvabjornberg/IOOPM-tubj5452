@@ -217,6 +217,11 @@ public class EvaluationVisitor implements Visitor {
         throw new RuntimeException("Error: Quit may not be evaluated");
     }
 
+    //@Override
+    //public SymbolicExpression visit(Scope n) {
+    //    
+    //}
+
     /**
      * Visist a sine node, either performing the sine if the operand is constant,
      * or returning a new Sin expression with the evaluated operand.

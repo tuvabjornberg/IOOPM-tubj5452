@@ -1,13 +1,15 @@
 package org.ioopm.calculator.visitor;
 
 import org.ioopm.calculator.ast.*;
-import java.util.HashSet;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Visitor for checking SymbolicExpressions.
  */
 public class ReassignmentChecker implements Visitor {
-    private HashSet<Variable> currentAssignments;  
+    private List<Variable> currAssignments;    
     private boolean variableNotInUse; 
     private Variable lastReassigned;
 
@@ -16,34 +18,32 @@ public class ReassignmentChecker implements Visitor {
      * variable is in use, the last variable reassigned.
      */
     public ReassignmentChecker() {
-        this.currentAssignments = new HashSet<>(); 
+        this.currAssignments = new ArrayList<>(); 
         this.variableNotInUse = true; 
         this.lastReassigned = null; 
     }
 
     /**
-     * Gets the variable that was last reassigned. 
+     * Gets the list of reassigned variables found during checking.
      *
-     * @return The variable last reassigned. 
+     * @return The list of reassigned variables. 
      */
-    public Variable getLastReassigned() {
-        return this.lastReassigned; 
+    public List<Variable> getReassignments() {
+        return currAssignments;
     }
 
     /**
      * Checks a top-level SymbolicExpression for reassigned variables.
-     * Compares with the current environment and removes irregulatities. 
      *
      * @param topLevel The SymbolicExpression to check.
      * @return True if no reassignments are found, false otherwise.
      */
     public boolean check(SymbolicExpression topLevel, Environment vars) {
         this.variableNotInUse = true;    
-        currentAssignments.removeIf(variable -> !vars.containsKey(variable)); 
 
         topLevel.accept(this);
 
-        return this.variableNotInUse; 
+        return variableNotInUse; 
     }
 
     /**
@@ -73,13 +73,14 @@ public class ReassignmentChecker implements Visitor {
         a.getRhs().accept(this);        
 
         if (!a.getRhs().isConstant()) {
-            if (!currentAssignments.contains(a.getRhs())) {
-                currentAssignments.add(a.getRhs().getVariable()); 
+            if (!currAssignments.contains(a.getRhs())) {
+                currAssignments.add(a.getRhs().getVariable()); 
             } else {
                 this.variableNotInUse = false; 
                 this.lastReassigned = a.getRhs().getVariable(); 
             }
         }
+
         return null;
     }
 

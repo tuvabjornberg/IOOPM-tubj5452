@@ -6,7 +6,7 @@ Please enter an expression:
 Please enter an expression: 
 2.0
 Please enter an expression: 
-Error, the variable x is reassigned
+1.0
 Please enter an expression: 
 - (sin (e^ (a * a * 10.0)))
 Please enter an expression: 
@@ -18,11 +18,11 @@ Please enter an expression:
 Please enter an expression: 
 1.3112956823789244
 Please enter an expression: 
--2.0
+-1.0
 Please enter an expression: 
 b
 Please enter an expression: 
-Error, the variable a is reassigned
+1.0
 Please enter an expression: 
 1.0 + b
 Please enter an expression: 
@@ -32,18 +32,19 @@ Please enter an expression:
 Please enter an expression: 
 b + 1.0
 Please enter an expression: 
-Error, the variable y is reassigned
+2.0
 Please enter an expression: 
 Variables: 
 a = 1.0
-ans = b + 1.0
+ans = 2.0
 b = 2.0
 c = b + 1.0
-x = 2.0
+x = 1.0
 y = 2.0
+z = 4.0
 Please enter an expression: 
 
 You have quit the program
 Total entered expression(s): 18
-Successful evaluated expression(s): 14
-Expression(s) that were fully evaluated: 9
+Successful evaluated expression(s): 17
+Expression(s) that were fully evaluated: 12

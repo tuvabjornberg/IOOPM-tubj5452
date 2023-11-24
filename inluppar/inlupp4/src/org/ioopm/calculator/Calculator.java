@@ -30,7 +30,6 @@ public class Calculator {
         int fullyEvaluated = 0;
 
         Scanner sc = new Scanner(System.in);
-        ReassignmentChecker Rchecker = new ReassignmentChecker(); 
 
         while (true) {
             System.out.println("Please enter an expression: ");
@@ -60,6 +59,7 @@ public class Calculator {
                     NamedConstantChecker NCchecker = new NamedConstantChecker(); 
                     boolean noIllegalAssignments = NCchecker.check(expression); 
               
+                    ReassignmentChecker Rchecker = new ReassignmentChecker(); 
                     boolean noReassignments = Rchecker.check(expression, vars); 
 
                     if (!noIllegalAssignments) {
@@ -71,9 +71,12 @@ public class Calculator {
                             System.out.println(illegal.toString());
                         }
                     } else if (!noReassignments) {
-                        Variable variableInUse = Rchecker.getLastReassigned(); 
+                        List<Variable> reassignments = Rchecker.getReassignments(); 
                         
-                        System.out.println("Error, the variable " + variableInUse + " is reassigned");
+                        System.out.println("Error, the variables are reassigned: ");
+                        for (Variable re : reassignments) {
+                            System.out.println(re.toString());
+                        }
                     } else {
                         // Evaluate non-command expressions that passed the checks
                         SymbolicExpression evaluated = evaluator.evaluate(expression, vars); 
