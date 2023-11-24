@@ -13,8 +13,7 @@ import java.util.*;
  */
 public class CalculatorParser {
     private StreamTokenizer st;
-    //private ScopeStack vars;
-    private Environment vars;
+    private ScopeStack vars;
     private static char MULTIPLY = '*';
     private static char ADDITION = '+';
     private static char SUBTRACTION = '-';
@@ -41,7 +40,7 @@ public class CalculatorParser {
      * @return a SymbolicExpression to be evaluated
      * @throws IOException by nextToken() if it reads invalid input
      */
-    public SymbolicExpression parse(String inputString, Environment vars) throws IOException {
+    public SymbolicExpression parse(String inputString, ScopeStack vars) throws IOException {
         this.st = new StreamTokenizer(new StringReader(inputString)); // reads from inputString via stringreader.
         this.vars = vars;
         this.st.ordinaryChar('-');
@@ -124,6 +123,9 @@ public class CalculatorParser {
                     throw new SyntaxErrorException("Error: ans cannot be redefined");
                 }
                 SymbolicExpression key = identifier();
+                if (key instanceof Variable) {
+                    vars.put((Variable) key, result);
+                } 
                 result = new Assignment(result, key);
             }
             this.st.nextToken();
@@ -224,12 +226,15 @@ public class CalculatorParser {
             }
         } else if (this.st.ttype == '{') {
             this.st.nextToken(); 
-            //vars.pushEnvironment(); 
+            vars.pushEnvironment(); 
+
             result = assignment(); 
             /// This captures unbalanced curly brackets!
             if (this.st.nextToken() != '}') {
                 throw new SyntaxErrorException("expected '}'");
             }
+            result = new Scope(result);
+            vars.popEnvironment(); 
         } else if (this.st.ttype == NEGATION) {
             result = unary();
         } else if (this.st.ttype == this.st.TT_WORD) {

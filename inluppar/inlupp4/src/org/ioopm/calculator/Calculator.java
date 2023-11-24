@@ -14,7 +14,8 @@ import java.util.List;
  */
 public class Calculator {
     private static final CalculatorParser parser = new CalculatorParser();
-    private static final Environment vars = new Environment();
+    private static final Environment env = new Environment();
+    private static ScopeStack stack = new ScopeStack(env); 
     private static final EvaluationVisitor evaluator = new EvaluationVisitor(); 
 
     /**
@@ -38,14 +39,14 @@ public class Calculator {
             SymbolicExpression expression = null;
             try {
                 // Parse the input expression
-                expression = parser.parse(input, vars);
+                expression = parser.parse(input, stack);
 
                 if (expression.isCommand()) {
                     // Handle command expressions
                     if (expression == Vars.instance()) {
-                        System.out.println(vars.toString());
+                        System.out.println(stack.toString());
                     } else if (expression == Clear.instance()) {
-                        vars.clear();
+                        stack.clear();
                     } else if (expression == Quit.instance()) {
                         System.out.println("\nYou have quit the program");
                         System.out.println("Total entered expression(s): " + expressionCounter);
@@ -59,8 +60,8 @@ public class Calculator {
                     NamedConstantChecker NCchecker = new NamedConstantChecker(); 
                     boolean noIllegalAssignments = NCchecker.check(expression); 
               
-                    ReassignmentChecker Rchecker = new ReassignmentChecker(); 
-                    boolean noReassignments = Rchecker.check(expression, vars); 
+                    ReassignmentChecker Rchecker = new ReassignmentChecker(stack); 
+                    boolean noReassignments = Rchecker.check(expression); 
 
                     if (!noIllegalAssignments) {
                         List<Assignment> illegalAssignments = NCchecker.getIllegalAssignments(); 
@@ -79,10 +80,10 @@ public class Calculator {
                         }
                     } else {
                         // Evaluate non-command expressions that passed the checks
-                        SymbolicExpression evaluated = evaluator.evaluate(expression, vars); 
+                        SymbolicExpression evaluated = evaluator.evaluate(expression, stack); 
 
                         if (evaluated != null) {
-                            vars.put(new Variable("ans"), evaluated); 
+                            stack.put(new Variable("ans"), evaluated); 
                             expressionSuccessfulCounter++;
                             if (evaluated.isConstant()) {
                                 fullyEvaluated++;
@@ -90,6 +91,8 @@ public class Calculator {
                         }
                         System.out.println(evaluated);
                     }
+                    Environment env = stack.getLastEnv();
+                    stack = new ScopeStack(env);
                 }
             } catch (SyntaxErrorException e) {
                 System.out.println(e.getMessage());

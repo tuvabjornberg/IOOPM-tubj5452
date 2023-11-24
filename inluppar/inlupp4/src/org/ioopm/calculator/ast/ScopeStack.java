@@ -1,11 +1,10 @@
 package org.ioopm.calculator.ast;
 
-import org.ioopm.calculator.visitor.*;
 import java.util.Deque;
 import java.util.ArrayDeque;
 
 public class ScopeStack extends Environment {
-    Deque<Environment> stack;
+    private Deque<Environment> stack;
 
     /**
      * Constructs a stack of enviornments
@@ -13,7 +12,7 @@ public class ScopeStack extends Environment {
     public ScopeStack(Environment env){
         super();
         this.stack = new ArrayDeque<>();
-        this.stack.push(new Environment());
+        this.stack.push(env);
     }
 
     /**
@@ -59,6 +58,13 @@ public class ScopeStack extends Environment {
      */
     public void popEnvironment(){
         this.stack.removeFirst();
+    }
+
+    /**
+     * Gets the top environment from the stack
+     */
+    public Environment getLastEnv(){
+        return stack.getLast();
     }
 
 }

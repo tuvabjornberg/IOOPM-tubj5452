@@ -54,4 +54,9 @@ public class Scope extends SymbolicExpression{
     public SymbolicExpression accept(Visitor v) {
         return v.visit(this);
     }
+
+    @Override
+    public String toString(){
+        return "{" + this.exp + "}";
+    }
 }

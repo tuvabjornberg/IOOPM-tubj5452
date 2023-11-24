@@ -9,7 +9,8 @@ import java.util.List;
  * Visitor for checking SymbolicExpressions.
  */
 public class ReassignmentChecker implements Visitor {
-    private List<Variable> currAssignments;    
+    private ScopeStack stack;
+    private List<Variable> currentAssignments;
     private boolean variableNotInUse; 
     private Variable lastReassigned;
 
@@ -17,8 +18,9 @@ public class ReassignmentChecker implements Visitor {
      * Constructs a ReassignmentChecker as an array, a control if a
      * variable is in use, the last variable reassigned.
      */
-    public ReassignmentChecker() {
-        this.currAssignments = new ArrayList<>(); 
+    public ReassignmentChecker(ScopeStack stack) {
+        this.stack = stack;
+        this.currentAssignments = new ArrayList<>(); 
         this.variableNotInUse = true; 
         this.lastReassigned = null; 
     }
@@ -29,7 +31,7 @@ public class ReassignmentChecker implements Visitor {
      * @return The list of reassigned variables. 
      */
     public List<Variable> getReassignments() {
-        return currAssignments;
+        return currentAssignments;
     }
 
     /**
@@ -38,8 +40,8 @@ public class ReassignmentChecker implements Visitor {
      * @param topLevel The SymbolicExpression to check.
      * @return True if no reassignments are found, false otherwise.
      */
-    public boolean check(SymbolicExpression topLevel, Environment vars) {
-        this.variableNotInUse = true;    
+    public boolean check(SymbolicExpression topLevel) {
+        this.variableNotInUse = true;
 
         topLevel.accept(this);
 
@@ -73,8 +75,8 @@ public class ReassignmentChecker implements Visitor {
         a.getRhs().accept(this);        
 
         if (!a.getRhs().isConstant()) {
-            if (!currAssignments.contains(a.getRhs())) {
-                currAssignments.add(a.getRhs().getVariable()); 
+            if (!currentAssignments.contains(a.getRhs())) {
+                currentAssignments.add(a.getRhs().getVariable()); 
             } else {
                 this.variableNotInUse = false; 
                 this.lastReassigned = a.getRhs().getVariable(); 
@@ -205,8 +207,17 @@ public class ReassignmentChecker implements Visitor {
     */
     @Override
     public SymbolicExpression visit(Scope a) {
+        currentAssignments.clear();
+        this.variableNotInUse = true;
+        this.lastReassigned = null;
+
         SymbolicExpression exp = a.getScope();
         exp.accept(this);
+
+        currentAssignments.clear();
+        this.variableNotInUse = true;
+        this.lastReassigned = null;
+                
         return null;
     }
 

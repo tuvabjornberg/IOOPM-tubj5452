@@ -6,7 +6,8 @@ import org.ioopm.calculator.ast.*;
  * Visitor for evaluating SymbolicExpressions.
  */
 public class EvaluationVisitor implements Visitor {
-    private Environment env = null;
+    private ScopeStack stack = null;
+
 
     /**
      * Evaluates a top-level SymbolicExpression within the environment.
@@ -15,8 +16,8 @@ public class EvaluationVisitor implements Visitor {
      * @param env The environment with variable assignments.
      * @return The result of the evaluation.
      */
-    public SymbolicExpression evaluate(SymbolicExpression topLevel, Environment env) {
-        this.env = env;
+    public SymbolicExpression evaluate(SymbolicExpression topLevel, ScopeStack stack) {
+        this.stack = stack;
         return topLevel.accept(this);
     }
 
@@ -51,7 +52,7 @@ public class EvaluationVisitor implements Visitor {
         SymbolicExpression lhsEvaluated = n.getLhs().accept(this);
         SymbolicExpression rhs = n.getRhs();
 
-        env.put(new Variable(rhs.toString()), lhsEvaluated);
+        stack.put(new Variable(rhs.toString()), lhsEvaluated);
         
         if (lhsEvaluated.isConstant()) {
             return new Constant(lhsEvaluated.getValue());
@@ -224,8 +225,11 @@ public class EvaluationVisitor implements Visitor {
     */
     @Override
     public SymbolicExpression visit(Scope n) {
+        stack.pushEnvironment();
         SymbolicExpression exp = n.getScope();
-        return exp.accept(this);
+        SymbolicExpression result = exp.accept(this);
+        stack.popEnvironment();
+        return result;
     }
 
     /**
@@ -277,7 +281,7 @@ public class EvaluationVisitor implements Visitor {
     */
     @Override
     public SymbolicExpression visit(Variable n) {
-        SymbolicExpression retrieved = env.get(n);
+        SymbolicExpression retrieved = stack.get(n);
         if (retrieved != null) {
             return retrieved;
         } else {
