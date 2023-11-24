@@ -1,7 +1,6 @@
 package org.ioopm.calculator.visitor;
 
 import org.ioopm.calculator.ast.*;
-import org.ioopm.calculator.parser.IllegalExpressionException; 
 
 /**
  * Visitor for evaluating SymbolicExpressions.
