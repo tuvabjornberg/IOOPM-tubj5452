@@ -12,7 +12,7 @@ expected ')'
 Please enter an expression: 
 Error: Unexpected '+'
 Please enter an expression: 
-a + b
+1.0 + b
 Please enter an expression: 
 Error: Not a valid assignment of a variable
 Please enter an expression: 
@@ -45,14 +45,15 @@ Error, the variables are reassigned:
 x
 Please enter an expression: 
 Variables: 
-ans = 1.0 + x
-c = a + b
-d = a + b
-y = 2.0 * x
-z = 2.0 * x
+Please enter an expression: 
+Error: Expected number
+Please enter an expression: 
+Error: Expected number
+Please enter an expression: 
+expected '}'
 Please enter an expression: 
 
 You have quit the program
-Total entered expression(s): 22
+Total entered expression(s): 25
 Successful evaluated expression(s): 7
 Expression(s) that were fully evaluated: 1

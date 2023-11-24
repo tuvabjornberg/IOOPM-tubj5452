@@ -74,7 +74,7 @@ public class ReassignmentChecker implements Visitor {
         a.getLhs().accept(this);
         a.getRhs().accept(this);        
 
-        if (!a.getRhs().isConstant()) {
+        if (!a.getRhs().isNamedConstant()) {
             if (!currentAssignments.contains(a.getRhs())) {
                 currentAssignments.add(a.getRhs().getVariable()); 
             } else {

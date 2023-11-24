@@ -47,7 +47,7 @@ public class ScopeStack extends Environment {
     }
 
     /**                             
-     * Pushes the given environment to the stack
+     * Pushes a new environment to the stack
      */
     public void pushEnvironment(){
         this.stack.addFirst(new Environment());
@@ -66,5 +66,4 @@ public class ScopeStack extends Environment {
     public Environment getLastEnv(){
         return stack.getLast();
     }
-
 }

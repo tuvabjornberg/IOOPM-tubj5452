@@ -45,6 +45,17 @@ public class Scope extends SymbolicExpression{
     }
 
     /**
+     * Returns a string representation of a scope with curly
+     * brackets
+     * 
+     * @return The string representation of a scope. 
+     */
+    @Override
+    public String toString(){
+        return "{" + this.exp + "}";
+    }
+
+    /**
      * Accepts a visitor for the Visitor pattern.
      * 
      * @param v The visitor instance.
@@ -53,10 +64,5 @@ public class Scope extends SymbolicExpression{
     @Override
     public SymbolicExpression accept(Visitor v) {
         return v.visit(this);
-    }
-
-    @Override
-    public String toString(){
-        return "{" + this.exp + "}";
     }
 }

@@ -35,13 +35,6 @@ Please enter an expression:
 2.0
 Please enter an expression: 
 Variables: 
-a = 1.0
-ans = 2.0
-b = 2.0
-c = b + 1.0
-x = 1.0
-y = 2.0
-z = 4.0
 Please enter an expression: 
 
 You have quit the program

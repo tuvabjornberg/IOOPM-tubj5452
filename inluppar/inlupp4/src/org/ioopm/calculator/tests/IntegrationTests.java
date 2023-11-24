@@ -163,7 +163,7 @@ public class IntegrationTests {
     }
 
     @Test
-    void namedConstantTest() throws IOException {
+    void namedConstantCheckerTest() throws IOException {
         SymbolicExpression s1 = new Addition(new Assignment(new Constant(2), new Variable("pi")), new Assignment(new Constant(42), new Variable("L"))); 
         String strS1 = s1.toString(); 
         SymbolicExpression e1 = parser.parse(strS1, vars); 
@@ -184,7 +184,7 @@ public class IntegrationTests {
     }
 
     @Test
-    void ReassignmentTest() throws IOException {
+    void ReassignmentCheckerTest() throws IOException {
         ReassignmentChecker Rchecker = new ReassignmentChecker(vars);
         EvaluationVisitor evaluator = new EvaluationVisitor();   
         
@@ -233,29 +233,31 @@ public class IntegrationTests {
         e1 = parser.parse("{(2 = x) + {1 = x}}", vars); 
         assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(3)));
     
-        e1 = parser.parse("(1 = x) + {(2 + x = x) + {3 + x = x}}", vars); 
-        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(10))); 
-    
         e1 = parser.parse("{{1 = x} = x} = y", vars); 
         assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(1))); 
-        
+         
         e1 = parser.parse("x", vars); 
-        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(1))); 
-
-        //e1 = parser.parse("x", vars); 
-        //assertTrue(evaluator.evaluate(e1, vars).equals(new Variable("x")));
+        assertTrue(evaluator.evaluate(e1, vars).equals(new Variable("x")));
 
         e1 = parser.parse("y", vars); 
         assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(1))); 
 
         e1 = parser.parse("{1 = x} + {1 = x}", vars); 
         assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(2)));
-        
-        //e1 = parser.parse("{1 = x} + {x}", vars); 
-        //assertTrue(evaluator.evaluate(e1, vars).equals(new Addition(new Constant(1), new Variable("x")))); 
 
+        e1 = parser.parse("{1 = x} + {x}", vars); 
+        assertTrue(evaluator.evaluate(e1, vars).equals(new Addition(new Constant(1), new Variable("x"))));
+        
         e1 = parser.parse("{1 = x} + {1}", vars); 
         assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(2)));  
+
+        e1 = parser.parse("(1 = x) + {(2 + x = x) + {3 + x = x}}", vars); 
+        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(10))); 
+
+        e1 = parser.parse("x", vars); 
+        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(1))); 
+
+        
     }
 
     @AfterEach

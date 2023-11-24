@@ -53,9 +53,7 @@ public class Calculator {
                         System.out.println("Successful evaluated expression(s): " + expressionSuccessfulCounter);
                         System.out.println("Expression(s) that were fully evaluated: " + fullyEvaluated);
                         break;
-                    } else {
-                        throw new SyntaxErrorException("Invalid command operation");
-                    }
+                    } 
                 } else {
                     NamedConstantChecker NCchecker = new NamedConstantChecker(); 
                     boolean noIllegalAssignments = NCchecker.check(expression); 
