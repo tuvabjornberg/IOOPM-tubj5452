@@ -13,21 +13,28 @@ all:
 	javac -d $(OUT_DIR) -sourcepath src $(SRC_DIR)/Calculator.java
 	java -cp $(OUT_DIR) $(CLASSPATH).Calculator
 
-visitor: 
-	javac -d $(OUT_DIR) -sourcepath src $(SRC_DIR)/visitor/Visitor.java
-#java -cp $(OUT_DIR) $(CLASSPATH).Visitor
 
-astTestCompile: 
+astTestsCompile: 
 	javac -cp $(JUNIT_JAR) -d $(OUT_DIR) -sourcepath src $(SRC_DIR)/tests/AstTests.java
 
-astTests: astTestCompile
+astTestsRun:
 	java -cp $(JUNIT_JAR):$(OUT_DIR) -jar $(JUNIT_JAR) -cp $(OUT_DIR) -c $(CLASSPATH).tests.AstTests 
 
-parserTestCompile: 
+astTestsAll: 
+	javac -cp $(JUNIT_JAR) -d $(OUT_DIR) -sourcepath src $(SRC_DIR)/tests/AstTests.java
+	java -cp $(JUNIT_JAR):$(OUT_DIR) -jar $(JUNIT_JAR) -cp $(OUT_DIR) -c $(CLASSPATH).tests.AstTests 
+
+
+integrationTestsCompile: 
 	javac -cp $(JUNIT_JAR) -d $(OUT_DIR) -sourcepath src $(SRC_DIR)/tests/IntegrationTests.java
 
-parserTests: parserTestCompile
+integrationTestsRun:
 	java -cp $(JUNIT_JAR):$(OUT_DIR) -jar $(JUNIT_JAR) -cp $(OUT_DIR) -c $(CLASSPATH).tests.IntegrationTests 
+
+integrationTestsAll: 
+	javac -cp $(JUNIT_JAR) -d $(OUT_DIR) -sourcepath src $(SRC_DIR)/tests/IntegrationTests.java
+	java -cp $(JUNIT_JAR):$(OUT_DIR) -jar $(JUNIT_JAR) -cp $(OUT_DIR) -c $(CLASSPATH).tests.IntegrationTests 
+
 
 systemTests: 
 	javac -d $(OUT_DIR) -sourcepath src $(SRC_DIR)/Calculator.java
@@ -42,7 +49,11 @@ diff:
 	diff $(SRC_DIR)/tests/output/output3.txt $(SRC_DIR)/tests/test3Expected.txt
 	diff $(SRC_DIR)/tests/output/outputInvalid.txt $(SRC_DIR)/tests/invalidExpected.txt
 
+txtTestsAll: systemTests diff
+
+
 tests: astTests parserTests systemTests diff
+
 
 clean:
 	rm -rf $(OUT_DIR) 

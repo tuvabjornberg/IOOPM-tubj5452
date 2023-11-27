@@ -15,24 +15,38 @@ $ make clean
    ``` 
    $ make all
    ```
-   #### Run tests:
+   #### Build and run all tests:
    ```
    $ make tests
    ```
-   #### Run AST tests
+   #### Build and run AST tests
    ```
-   $ make astTests
+   $ make astTestsAll
+
+   or
+
+   $ make astTestsCompile
+   $ make astTestsRun
    ```
-   #### Run parser tests
+   #### Build and run integration tests
    ```
-   $ make parserTests
+   $ make integrationTestsAll
+   
+   or
+
+   $ make integrationCompile
+   $ make integrationTestsRun
    ```
-   #### Run and compare system tests
+   #### Run and compare system tests, .txt files
    ```
+   $ make txtTestsAll
+
+   or
+
    $ make systemTests
    $ make diff
    ```
 
  # Notes and error handling
 
-  - Errors and edge-cases are handled by checked exceptions mainly in the `CalculatorParser` class and `Calculator` class. Some errors are handled across the ast classes. 
+  - Errors and edge-cases are handled by checked exceptions mainly in the `CalculatorParser` class and `Calculator` class. Some errors are handled across the AST classes. 

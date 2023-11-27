@@ -14,8 +14,8 @@ import java.util.List;
  */
 public class Calculator {
     private static final CalculatorParser parser = new CalculatorParser();
-    private static final Environment env = new Environment();
-    private static ScopeStack stack = new ScopeStack(env); 
+    private static final Environment vars = new Environment();
+    private static ScopeStack stack = new ScopeStack(vars); 
     private static final EvaluationVisitor evaluator = new EvaluationVisitor(); 
 
     /**
@@ -44,9 +44,9 @@ public class Calculator {
                 if (expression.isCommand()) {
                     // Handle command expressions
                     if (expression == Vars.instance()) {
-                        System.out.println(stack.toString());
+                        System.out.println(stack.getLastEnv().toString());
                     } else if (expression == Clear.instance()) {
-                        stack.clear();
+                        stack.getLastEnv().clear();
                     } else if (expression == Quit.instance()) {
                         System.out.println("\nYou have quit the program");
                         System.out.println("Total entered expression(s): " + expressionCounter);
@@ -89,8 +89,8 @@ public class Calculator {
                         }
                         System.out.println(evaluated);
                     }
-                    Environment env = stack.getLastEnv();
-                    stack = new ScopeStack(env);
+                    Environment vars = stack.getLastEnv();
+                    stack = new ScopeStack(vars);
                 }
             } catch (SyntaxErrorException e) {
                 System.out.println(e.getMessage());
@@ -101,7 +101,7 @@ public class Calculator {
             }
             finally {
                 expressionCounter++;
-            }
+            }      
         }
     }
 }

@@ -3,14 +3,12 @@ package org.ioopm.calculator.tests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.ioopm.calculator.Calculator;
 import org.ioopm.calculator.ast.*; 
 import org.ioopm.calculator.parser.*;
 import org.ioopm.calculator.visitor.EvaluationVisitor;
@@ -256,8 +254,6 @@ public class IntegrationTests {
 
         e1 = parser.parse("x", vars); 
         assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(1))); 
-
-        
     }
 
     @AfterEach
