@@ -6,7 +6,7 @@ Please enter an expression:
 Please enter an expression: 
 11.0
 Please enter an expression: 
-((x + y) * (x - y) + 6.0) * ((x + y) * (x - y) - 6.0)
+85.0
 Please enter an expression: 
 11.180973760547916
 Please enter an expression: 
@@ -20,11 +20,18 @@ Please enter an expression:
 Please enter an expression: 
 -50.703914702569996
 Please enter an expression: 
-result / (result * result + 1.0) / (result / (result * result + 1.0) * result / (result * result + 1.0) + 1.0)
+-0.019714674622021214
 Please enter an expression: 
-result / (result * result + 1.0) / (result / (result * result + 1.0) * result / (result * result + 1.0) + 1.0) + 3.0 * (result / (result * result + 1.0) / (result / (result * result + 1.0) * result / (result * result + 1.0) + 1.0) - 2.0)
+-6.0788586984880855
 Please enter an expression: 
 Variables: 
+a = 4.0
+ans = -6.0788586984880855
+b = 4.0
+c = 5.0
+result = -0.019714674622021214
+x = 85.0
+y = 6.0
 Please enter an expression: 
 Error, assignments to named constants:
 1.0 = pi
@@ -34,4 +41,4 @@ Please enter an expression:
 You have quit the program
 Total entered expression(s): 14
 Successful evaluated expression(s): 12
-Expression(s) that were fully evaluated: 9
+Expression(s) that were fully evaluated: 12

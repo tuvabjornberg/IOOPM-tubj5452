@@ -114,6 +114,7 @@ public class CalculatorParser {
 
         while (this.st.ttype == ASSIGNMENT) {
             this.st.nextToken();
+            
             if (this.st.ttype == this.st.TT_NUMBER) {
                 throw new SyntaxErrorException("Error: Numbers cannot be used as a variable name");
             } else if (this.st.ttype != this.st.TT_WORD) {
@@ -122,11 +123,10 @@ public class CalculatorParser {
                 if (this.st.sval.equals("ans")) {
                     throw new SyntaxErrorException("Error: ans cannot be redefined");
                 }
+
                 SymbolicExpression key = identifier();
-                if (key instanceof Variable) {
-                    vars.put((Variable) key, result);
-                } 
                 result = new Assignment(result, key);
+
             }
             this.st.nextToken();
         }
@@ -226,15 +226,17 @@ public class CalculatorParser {
             }
         } else if (this.st.ttype == '{') {
             this.st.nextToken(); 
-            vars.pushEnvironment(); 
 
-            result = assignment(); 
+            vars.pushEnvironment(); 
+            result = assignment();
+            vars.popEnvironment();
+
+            result = new Scope(result); 
+
             /// This captures unbalanced curly brackets!
             if (this.st.nextToken() != '}') {
                 throw new SyntaxErrorException("expected '}'");
             }
-            result = new Scope(result);
-            vars.popEnvironment(); 
         } else if (this.st.ttype == NEGATION) {
             result = unary();
         } else if (this.st.ttype == this.st.TT_WORD) {
