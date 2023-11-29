@@ -1,6 +1,7 @@
 package org.ioopm.calculator.visitor;
 
 import org.ioopm.calculator.ast.*;
+import org.ioopm.calculator.parser.IllegalExpressionException;
 
 /**
  * Visitor for evaluating SymbolicExpressions.
@@ -51,12 +52,19 @@ public class EvaluationVisitor implements Visitor {
     public SymbolicExpression visit(Assignment n) {
         SymbolicExpression lhsEvaluated = n.getLhs().accept(this);
         SymbolicExpression rhs = n.getRhs();
-
-        stack.put(new Variable(rhs.toString()), lhsEvaluated);
         
-        if (lhsEvaluated.isConstant()) {
+        if ((rhs.toString().toLowerCase().equals("sin") || rhs.toString().toLowerCase().equals("cos") 
+            || rhs.toString().toLowerCase().equals("exp") || rhs.toString().toLowerCase().equals("quit") 
+            || rhs.toString().toLowerCase().equals("clear") || rhs.toString().toLowerCase().equals("vars") 
+            || rhs.toString().toLowerCase().equals("if") || rhs.toString().toLowerCase().equals("else"))) 
+            {
+            throw new IllegalExpressionException("Error: Right hand side is an operand");
+        }
+        else if (lhsEvaluated.isConstant()) {
+            stack.put(new Variable(rhs.toString()), lhsEvaluated);
             return new Constant(lhsEvaluated.getValue());
         } else {
+            stack.put(new Variable(rhs.toString()), lhsEvaluated);
             return lhsEvaluated;
         }
     }
@@ -70,6 +78,50 @@ public class EvaluationVisitor implements Visitor {
     @Override
     public SymbolicExpression visit(Clear n) {
         throw new RuntimeException("Error: Clear may not be evaluated");
+    }
+
+    /**
+    * Visits a Conditional node, evaluating the condition and returning the corresponding branch.
+    *
+    * @param n The Conditional node to visit.
+    * @return The result of evaluating the Conditional expression.
+    * @throws IllegalExpressionException If there are invalid identifiers as arguments for the Conditional.
+    * @throws IllegalArgumentException If the Conditional expression contains an invalid operand.
+    */
+    @Override
+    public SymbolicExpression visit(Conditional n) {
+        SymbolicExpression lhs = n.getLhs().accept(this);
+        SymbolicExpression rhs = n.getRhs().accept(this);
+        boolean result = false;
+
+        if (lhs.isConstant() && rhs.isConstant()) {
+            if (n.getName().equals("==") ) {
+                result = lhs.equals(rhs);
+
+            } else if (n.getName().equals(">")) {
+                result = lhs.getValue() > rhs.getValue();
+
+            } else if (n.getName().equals("<")) {
+                result = lhs.getValue() < rhs.getValue();
+
+            } else if (n.getName().equals(">=")) {
+                result = lhs.getValue() >= rhs.getValue();
+        
+            } else if (n.getName().equals("<=")) {
+                result = lhs.getValue() <= rhs.getValue();
+                
+            } else {
+                throw new IllegalArgumentException("Invalid operand to eval"); 
+            }
+        } else {
+            throw new IllegalExpressionException("Invalid identifiers as arguments for conditional"); 
+        }
+
+        if (result) {
+            return n.getIfBranch().accept(this); 
+        } else {
+            return n.getElseBranch().accept(this); 
+        }
     }
 
     /**

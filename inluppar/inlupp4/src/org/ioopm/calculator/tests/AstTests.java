@@ -642,7 +642,7 @@ public class AstTests {
         assertEquals(scope.getName(), "scope");
         assertEquals(scope.getPriority(), 0);
         assertEquals(scope.getScope(), s1);
-        assertEquals(scope.toString(), "{(2.0 = x) + - 4.0}");
+        assertEquals(scope.toString(), "{ (2.0 = x) + - 4.0 }");
 
         assertEquals(evaluator.evaluate(scope, stack), new Constant(-2));
     }
@@ -683,6 +683,38 @@ public class AstTests {
         stack.put(v3, s4);
 
         assertEquals(s4, stack.get(v3));
+    }
+
+    @Test
+    void conditionalTest() {
+        Conditional c1 = new Conditional("<", new Constant(3), new Constant(4), new Scope(new Constant(42)), new Scope(new Constant(4711))); 
+        assertEquals(c1.toString(), "if 3.0 < 4.0 { 42.0 } else { 4711.0 }");
+
+        //testing methods in conditional class
+        assertEquals(c1.getName(), "<");
+        assertEquals(c1.getLhs(), new Constant(3));
+        assertEquals(c1.getRhs(), new Constant(4));
+        assertEquals(c1.getIfBranch().toString(), new Scope(new Constant(42)).toString());
+        assertEquals(c1.getElseBranch().toString(), new Scope(new Constant(4711)).toString());
+
+        assertEquals(evaluator.evaluate(c1, stack), new Constant(42));
+
+        Conditional c2 = new Conditional(">", new Constant(3), new Constant(4), new Scope(new Constant(42)), new Scope(new Constant(4711))); 
+        assertEquals(evaluator.evaluate(c2, stack), new Constant(4711));
+
+        Conditional c3 = new Conditional("<=", new Constant(3), new Constant(3), new Scope(new Constant(42)), new Scope(new Constant(4711))); 
+        assertEquals(evaluator.evaluate(c3, stack), new Constant(42));
+
+        Conditional c4 = new Conditional("==", new Constant(3), new Constant(3), new Scope(new Constant(42)), new Scope(new Constant(4711))); 
+        assertEquals(evaluator.evaluate(c4, stack), new Constant(42));
+
+        SymbolicExpression a1 = new Addition(new Constant(2), new Constant(2));
+        Conditional c5 = new Conditional("==", a1, new Constant(3), new Scope(new Constant(42)), new Scope(new Constant(4711))); 
+        assertEquals(evaluator.evaluate(c5, stack), new Constant(4711));
+
+        SymbolicExpression s1 = new Sin(new Constant(2));
+        Conditional c6 = new Conditional("<", s1, new Constant(3), new Scope(new Constant(42)), new Scope(new Constant(4711))); 
+        assertEquals(evaluator.evaluate(c6, stack), new Constant(42));
     }
 
     @AfterEach

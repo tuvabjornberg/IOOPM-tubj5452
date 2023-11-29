@@ -256,6 +256,57 @@ public class IntegrationTests {
         assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(1))); 
     }
 
+    @Test
+    void conditionalTest() throws IOException{
+        EvaluationVisitor evaluator = new EvaluationVisitor(); 
+        SymbolicExpression s1 = new Assignment(new Constant(2), new Variable("x")); 
+        SymbolicExpression s2 = new Assignment(new Constant(4), new Variable("y")); 
+
+        SymbolicExpression e1 = parser.parse(s1.toString(), vars); 
+        SymbolicExpression lhsEval = evaluator.evaluate(e1, vars); 
+        assertTrue(lhsEval.equals(new Constant(2)));
+
+        e1 = parser.parse(s2.toString(), vars); 
+        SymbolicExpression rhsEval = evaluator.evaluate(e1, vars); 
+        assertTrue(rhsEval.equals(new Constant(4)));
+
+        SymbolicExpression c = new Conditional("<", lhsEval, rhsEval, new Scope(new Constant(42)), new Scope(new Constant(4711))); 
+        e1 = parser.parse(c.toString(), vars);
+        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(42)));
+
+        c = new Conditional(">", lhsEval, rhsEval, new Scope(new Constant(42)), new Scope(new Constant(4711))); 
+        e1 = parser.parse(c.toString(), vars); 
+        assertFalse(evaluator.evaluate(e1, vars).equals(new Constant(42)));
+
+        c = new Conditional(">=", lhsEval, rhsEval, new Scope(new Constant(42)), new Scope(new Constant(4711))); 
+        e1 = parser.parse(c.toString(), vars); 
+        assertFalse(evaluator.evaluate(e1, vars).equals(new Constant(42)));
+
+        SymbolicExpression s3 = new Assignment(new Constant(2), new Variable("y")); 
+        SymbolicExpression rhsEqualEval = evaluator.evaluate(parser.parse(s3.toString(), vars), vars); 
+        c = new Conditional(">=", lhsEval, rhsEqualEval, new Scope(new Constant(42)), new Scope(new Constant(4711))); 
+        e1 = parser.parse(c.toString(), vars); 
+        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(42)));
+
+        c = new Conditional("<=", lhsEval, rhsEval, new Scope(new Constant(42)), new Scope(new Constant(4711))); 
+        e1 = parser.parse(c.toString(), vars); 
+        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(42)));
+        assertFalse(evaluator.evaluate(e1, vars).equals(new Constant(4711)));
+        c = new Conditional("<=", lhsEval, rhsEqualEval, new Scope(new Constant(42)), new Scope(new Constant(4711))); 
+        e1 = parser.parse(c.toString(), vars); 
+        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(42)));
+        assertFalse(evaluator.evaluate(e1, vars).equals(new Constant(4711)));
+
+        c = new Conditional("==", lhsEval, rhsEval, new Scope(new Constant(42)), new Scope(new Constant(4711))); 
+        e1 = parser.parse(c.toString(), vars); 
+        assertFalse(evaluator.evaluate(e1, vars).equals(new Constant(42)));
+        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(4711)));
+        c = new Conditional("==", lhsEval, rhsEqualEval, new Scope(new Constant(42)), new Scope(new Constant(4711))); 
+        e1 = parser.parse(c.toString(), vars); 
+        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(42)));
+        assertFalse(evaluator.evaluate(e1, vars).equals(new Constant(4711)));
+    }
+
     @AfterEach
     void tearDown() {
 

@@ -97,6 +97,16 @@ public class ReassignmentChecker implements Visitor {
     }
 
     /**
+     * Visits a Conditional node, not checking anything
+     * 
+     * @return null
+     */
+    @Override 
+    public SymbolicExpression visit(Conditional a) {
+        return null; 
+    }
+
+    /**
      * Visits a Constant node, not checking anything
      * 
      * @return null

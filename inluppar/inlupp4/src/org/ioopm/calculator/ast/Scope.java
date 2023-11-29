@@ -52,7 +52,7 @@ public class Scope extends SymbolicExpression{
      */
     @Override
     public String toString(){
-        return "{" + this.exp + "}";
+        return "{ " + this.exp + " }";
     }
 
     /**

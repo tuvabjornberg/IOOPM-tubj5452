@@ -52,7 +52,7 @@ diff:
 txtTestsAll: systemTests diff
 
 
-tests: astTests parserTests systemTests diff
+tests: astTestsAll integrationTestsAll systemTests diff
 
 
 clean:

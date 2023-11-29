@@ -61,8 +61,22 @@ Error: Expected number
 Please enter an expression: 
 expected '}'
 Please enter an expression: 
+3.0 + r
+Please enter an expression: 
+4.0
+Please enter an expression: 
+Invalid identifiers as arguments for conditional
+Please enter an expression: 
+Invalid identifiers as arguments for conditional
+Please enter an expression: 
+Error: Unexpected '}'
+Please enter an expression: 
+Error: Unexpected '<'
+Please enter an expression: 
+Error: Expected number
+Please enter an expression: 
 
 You have quit the program
-Total entered expression(s): 26
-Successful evaluated expression(s): 7
-Expression(s) that were fully evaluated: 1
+Total entered expression(s): 33
+Successful evaluated expression(s): 9
+Expression(s) that were fully evaluated: 2

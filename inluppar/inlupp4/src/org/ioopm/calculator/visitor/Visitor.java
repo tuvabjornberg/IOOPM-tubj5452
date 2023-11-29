@@ -9,6 +9,7 @@ public interface Visitor {
     public SymbolicExpression visit(Addition n);
     public SymbolicExpression visit(Assignment n);
     public SymbolicExpression visit(Clear n);
+    public SymbolicExpression visit(Conditional n); 
     public SymbolicExpression visit(Constant n);
     public SymbolicExpression visit(Cos n);
     public SymbolicExpression visit(Division n);

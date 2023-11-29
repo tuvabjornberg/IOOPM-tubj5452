@@ -33,12 +33,22 @@ result = -0.019714674622021214
 x = 85.0
 y = 6.0
 Please enter an expression: 
-Error, assignments to named constants:
-1.0 = pi
-42.0 = L
+4711.0
+Please enter an expression: 
+42.0
+Please enter an expression: 
+yey
+Please enter an expression: 
+yey
+Please enter an expression: 
+yey
+Please enter an expression: 
+yey
+Please enter an expression: 
+right
 Please enter an expression: 
 
 You have quit the program
-Total entered expression(s): 14
-Successful evaluated expression(s): 12
-Expression(s) that were fully evaluated: 12
+Total entered expression(s): 20
+Successful evaluated expression(s): 19
+Expression(s) that were fully evaluated: 14

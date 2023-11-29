@@ -66,6 +66,8 @@ public class CalculatorParser {
         if (this.st.ttype == this.st.TT_WORD) { // vilken typ det senaste tecken vi läste in hade.
             if (this.st.sval.equals("quit") || this.st.sval.equals("vars") || this.st.sval.equals("clear")) { // sval = string Variable
                 result = command();
+            } else if (this.st.sval.equals("if")) {
+                result = conditional(); // går vidare med conditional 
             } else {
                 result = assignment(); // går vidare med uttrycket.
             }
@@ -99,6 +101,48 @@ public class CalculatorParser {
         }
     }
 
+    /**
+    * Parses and constructs a Conditional expression based on the input.
+    *
+    * @return A Conditional expression representing the parsed input.
+    * @throws IOException If there is an issue reading the next token.
+    * @throws SyntaxErrorException If the input contains an invalid operand.
+    */
+    private SymbolicExpression conditional() throws IOException {
+        this.st.nextToken();
+        SymbolicExpression lhs = expression();
+        
+        this.st.nextToken(); 
+        String operator = "";
+        if (this.st.ttype == '<' || this.st.ttype == '>' || this.st.ttype == '=') {
+            operator += (char) this.st.ttype;
+            this.st.nextToken(); 
+            if (this.st.ttype == '=') {
+                operator += "="; 
+                this.st.nextToken();
+            }
+        } else {
+            throw new SyntaxErrorException("Invalid operand"); 
+        }
+
+        SymbolicExpression rhs = expression();
+
+        this.st.nextToken();
+        SymbolicExpression ifBranch = assignment(); 
+
+        this.st.nextToken(); 
+        
+        //TODO: 
+        //if (!this.st.sval.equals("else")) {
+        //    throw new SyntaxErrorException("Missing else case");
+        //}
+        
+        this.st.nextToken();
+        SymbolicExpression elseBranch = assignment(); 
+        
+        return new Conditional(operator, lhs, rhs, ifBranch, elseBranch);
+    }
+
 
     /**
      * Checks wether the token read is an assignment between 2 expression and 
@@ -113,7 +157,7 @@ public class CalculatorParser {
         this.st.nextToken();
 
         while (this.st.ttype == ASSIGNMENT) {
-            this.st.nextToken();
+            this.st.nextToken();    
             
             if (this.st.ttype == this.st.TT_NUMBER) {
                 throw new SyntaxErrorException("Error: Numbers cannot be used as a variable name");
