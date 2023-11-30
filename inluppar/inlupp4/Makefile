@@ -54,6 +54,10 @@ txtTestsAll: systemTests diff
 
 tests: astTestsAll integrationTestsAll systemTests diff
 
+functiontest: 
+	javac -d $(OUT_DIR) -sourcepath src $(SRC_DIR)/Calculator.java
+	java  -cp $(OUT_DIR) $(CLASSPATH).Calculator < $(SRC_DIR)/tests/functiontest.txt 
+
 
 clean:
 	rm -rf $(OUT_DIR) 

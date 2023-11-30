@@ -16,7 +16,8 @@ public class Calculator {
     private static final CalculatorParser parser = new CalculatorParser();
     private static final Environment vars = new Environment();
     private static ScopeStack stack = new ScopeStack(vars); 
-    private static final EvaluationVisitor evaluator = new EvaluationVisitor(); 
+    private static final EvaluationVisitor evaluator = new EvaluationVisitor();
+    private static boolean functionMode = false;
 
     /**
      * The main method that runs the calculator interface.
@@ -53,7 +54,18 @@ public class Calculator {
                         System.out.println("Successful evaluated expression(s): " + expressionSuccessfulCounter);
                         System.out.println("Expression(s) that were fully evaluated: " + fullyEvaluated);
                         break;
-                    } 
+                    } /*else if (expression == End.instance()){
+                        functionMode = false;
+                    }*/
+                } else if (expression instanceof FunctionDeclaration) {
+                    if (functionMode == true) {
+                        System.out.println("Nested functions are not supported");
+                    } else {
+                        functionMode = true;
+                    }
+                    //TODO: lägg till i env
+                } else if (expression instanceof FunctionCall) {
+                    //TODO: evaluera function call
                 } else {
                     NamedConstantChecker NCchecker = new NamedConstantChecker(); 
                     boolean noIllegalAssignments = NCchecker.check(expression); 

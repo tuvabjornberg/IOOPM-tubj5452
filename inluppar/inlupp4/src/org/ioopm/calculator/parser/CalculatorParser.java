@@ -25,6 +25,7 @@ public class CalculatorParser {
     private static String LOG = "log";
     private static String EXP = "exp";
     private static char ASSIGNMENT = '=';
+    private boolean functionMode = false;
 
     // unallowerdVars is used to check if variabel name that we
     // want to assign new meaning to is a valid name eg 3 = Quit
@@ -68,6 +69,14 @@ public class CalculatorParser {
                 result = command();
             } else if (this.st.sval.equals("if")) {
                 result = conditional(); // går vidare med conditional 
+            } else if (this.st.sval.equals("function")) {
+                if (functionMode == true) {
+                    throw new SyntaxErrorException("Nested functions are not permitted");
+                } else {
+                    functionMode = true;
+                    ArrayList<Variable> identifierList = new ArrayList<Variable>(); 
+                    result = function(identifierList);
+                }
             } else {
                 result = assignment(); // går vidare med uttrycket.
             }
@@ -85,6 +94,48 @@ public class CalculatorParser {
         return result;
     }
 
+    private SymbolicExpression function(ArrayList<Variable> identifierList) throws IOException{
+        this.st.nextToken();
+        
+        if (this.st.ttype == this.st.TT_WORD){
+            Variable functionName = new Variable(this.st.sval); //creates function name as variable
+
+            this.st.nextToken(); 
+            if (this.st.ttype == '(') {
+                this.st.nextToken();
+                if (this.st.ttype == this.st.TT_WORD) { //checks first parameter and adds it to an array
+                    identifierList.add(new Variable((this.st.sval)));
+                } else {
+                    throw new SyntaxErrorException("Missing function argument(s)");
+                }
+
+                this.st.nextToken(); 
+
+                while (this.st.ttype == ',') { //checks if multiple parameters exists, adds to the same array
+                    this.st.nextToken();
+                    if (this.st.ttype == this.st.TT_WORD) {
+                        identifierList.add(new Variable(this.st.sval));
+                    } else {
+                        throw new SyntaxErrorException("Invalid function argument");
+                    }
+                    this.st.nextToken(); 
+                }
+
+                if (this.st.ttype != ')') {
+                    throw new SyntaxErrorException("expected ')'");
+                }
+            }
+        } else {
+            throw new SyntaxErrorException("Invalid function name");
+        }
+
+        while (this.st.sval != "end") {
+            //TODO: addera alla symbolic expressions till våran sequence i function declaration
+        }
+
+        
+        return new Constant(10000); 
+    }
 
     /**
      * Checks what kind of command that should be returned
