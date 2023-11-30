@@ -54,18 +54,31 @@ public class Calculator {
                         System.out.println("Successful evaluated expression(s): " + expressionSuccessfulCounter);
                         System.out.println("Expression(s) that were fully evaluated: " + fullyEvaluated);
                         break;
-                    } /*else if (expression == End.instance()){
-                        functionMode = false;
-                    }*/
+                    } else if (expression == End.instance()){
+
+                        System.out.println("End can not be called outside of a function declaration");
+                    }
                 } else if (expression instanceof FunctionDeclaration) {
                     if (functionMode == true) {
                         System.out.println("Nested functions are not supported");
+                        functionMode = false; 
                     } else {
                         functionMode = true;
+                        Sequence s = (Sequence) expression.getSequence();
+                        stack.getLastEnv().put(expression.getFuncName(), s);
+
+                        while (expression != End.instance()) {
+                            input = sc.nextLine(); 
+                            expression = parser.parse(input, stack);
+                            s.addExpression(expression);
+                        }
+                        functionMode = false;
                     }
-                    //TODO: lägg till i env
+                    
                 } else if (expression instanceof FunctionCall) {
-                    //TODO: evaluera function call
+                    SymbolicExpression evaluated = evaluator.evaluate(expression, stack); 
+                    System.out.println(evaluated);
+
                 } else {
                     NamedConstantChecker NCchecker = new NamedConstantChecker(); 
                     boolean noIllegalAssignments = NCchecker.check(expression); 

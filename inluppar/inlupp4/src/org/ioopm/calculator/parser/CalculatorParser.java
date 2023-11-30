@@ -13,7 +13,7 @@ import java.util.*;
  */
 public class CalculatorParser {
     private StreamTokenizer st;
-    private ScopeStack vars;
+    private ScopeStack stack;
     private static char MULTIPLY = '*';
     private static char ADDITION = '+';
     private static char SUBTRACTION = '-';
@@ -32,7 +32,8 @@ public class CalculatorParser {
     // or 10 + x = L is not allowed
     private final ArrayList < String > unallowedVars = new ArrayList < String > (Arrays.asList("quit",
         "vars",
-        "clear"));
+        "clear", 
+        "end"));
 
     /**
      * Used to parse the inputted string by the Calculator program
@@ -41,9 +42,9 @@ public class CalculatorParser {
      * @return a SymbolicExpression to be evaluated
      * @throws IOException by nextToken() if it reads invalid input
      */
-    public SymbolicExpression parse(String inputString, ScopeStack vars) throws IOException {
+    public SymbolicExpression parse(String inputString, ScopeStack stack) throws IOException {
         this.st = new StreamTokenizer(new StringReader(inputString)); // reads from inputString via stringreader.
-        this.vars = vars;
+        this.stack = stack;
         this.st.ordinaryChar('-');
         this.st.ordinaryChar('/');
         this.st.eolIsSignificant(true);
@@ -65,12 +66,13 @@ public class CalculatorParser {
         }
 
         if (this.st.ttype == this.st.TT_WORD) { // vilken typ det senaste tecken vi läste in hade.
-            if (this.st.sval.equals("quit") || this.st.sval.equals("vars") || this.st.sval.equals("clear")) { // sval = string Variable
+            if (this.st.sval.equals("quit") || this.st.sval.equals("vars") || this.st.sval.equals("clear") || this.st.sval.equals("end")) { // sval = string Variable
                 result = command();
             } else if (this.st.sval.equals("if")) {
                 result = conditional(); // går vidare med conditional 
             } else if (this.st.sval.equals("function")) {
                 if (functionMode == true) {
+                    functionMode = false; 
                     throw new SyntaxErrorException("Nested functions are not permitted");
                 } else {
                     functionMode = true;
@@ -96,9 +98,10 @@ public class CalculatorParser {
 
     private SymbolicExpression function(ArrayList<Variable> identifierList) throws IOException{
         this.st.nextToken();
+        Variable functionName;
         
         if (this.st.ttype == this.st.TT_WORD){
-            Variable functionName = new Variable(this.st.sval); //creates function name as variable
+            functionName = new Variable(this.st.sval); //creates function name as variable
 
             this.st.nextToken(); 
             if (this.st.ttype == '(') {
@@ -106,6 +109,7 @@ public class CalculatorParser {
                 if (this.st.ttype == this.st.TT_WORD) { //checks first parameter and adds it to an array
                     identifierList.add(new Variable((this.st.sval)));
                 } else {
+                    functionMode = false; 
                     throw new SyntaxErrorException("Missing function argument(s)");
                 }
 
@@ -116,25 +120,25 @@ public class CalculatorParser {
                     if (this.st.ttype == this.st.TT_WORD) {
                         identifierList.add(new Variable(this.st.sval));
                     } else {
+                        functionMode = false; 
                         throw new SyntaxErrorException("Invalid function argument");
                     }
                     this.st.nextToken(); 
                 }
 
                 if (this.st.ttype != ')') {
+                    functionMode = false; 
                     throw new SyntaxErrorException("expected ')'");
                 }
             }
         } else {
+            functionMode = false; 
             throw new SyntaxErrorException("Invalid function name");
         }
-
-        while (this.st.sval != "end") {
-            //TODO: addera alla symbolic expressions till våran sequence i function declaration
-        }
-
         
-        return new Constant(10000); 
+        Sequence s = new Sequence();
+
+        return new FunctionDeclaration(functionName, identifierList, s); 
     }
 
     /**
@@ -147,8 +151,10 @@ public class CalculatorParser {
             return Quit.instance();
         } else if (this.st.sval.equals("clear")) {
             return Clear.instance();
-        } else {
+        } else if (this.st.sval.equals("vars")){
             return Vars.instance();
+        } else {
+            return End.instance(); 
         }
     }
 
@@ -225,6 +231,54 @@ public class CalculatorParser {
             }
             this.st.nextToken();
         }
+
+
+        if (this.st.ttype == '(') {
+            if (stack.get(result) == null) {
+                throw new SyntaxErrorException("Error: Given function does not exist"); 
+            } 
+            
+            Variable funcName;
+            if (result instanceof Variable) {
+                funcName = (Variable) result;
+            } else {
+                throw new SyntaxErrorException("Invalid combination of func name and '(");
+            }
+            
+            ArrayList<Atom> identifierList = new ArrayList<>(); 
+
+            this.st.nextToken();
+            if (this.st.ttype == this.st.TT_WORD) { //checks first parameter and adds it to an array
+                identifierList.add(new Variable((this.st.sval)));
+            } else if (this.st.ttype == this.st.TT_NUMBER){
+                identifierList.add(new Constant((this.st.ttype)));
+            } else {
+                throw new SyntaxErrorException("Invalid input to function"); 
+            }
+
+            this.st.nextToken(); 
+
+            while (this.st.ttype == ',') { //checks if multiple parameters exists, adds to the same array
+                this.st.nextToken();
+                if (this.st.ttype == this.st.TT_WORD) {
+                    identifierList.add(new Variable(this.st.sval));
+                } else if (this.st.ttype == this.st.TT_NUMBER){
+                    identifierList.add(new Constant((this.st.ttype)));
+                } else {
+                    throw new SyntaxErrorException("Invalid function argument");
+                }
+                this.st.nextToken(); 
+            }
+
+            //TODO: NOT WORKING INVALID CLASS CAST
+            FunctionDeclaration func = (FunctionDeclaration) stack.get(funcName);
+            if (func.getParameters().size() == identifierList.size()){
+                result = new FunctionCall(funcName, identifierList);            
+            } else {
+                throw new SyntaxErrorException("Invalid amount of function arguments");
+            }
+        }
+
         this.st.pushBack();
         return result;
     }
@@ -322,9 +376,9 @@ public class CalculatorParser {
         } else if (this.st.ttype == '{') {
             this.st.nextToken(); 
 
-            vars.pushEnvironment(); 
+            stack.pushEnvironment(); 
             result = assignment();
-            vars.popEnvironment();
+            stack.popEnvironment();
 
             result = new Scope(result); 
 

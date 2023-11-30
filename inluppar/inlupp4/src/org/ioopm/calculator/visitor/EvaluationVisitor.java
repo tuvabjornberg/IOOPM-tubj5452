@@ -2,6 +2,7 @@ package org.ioopm.calculator.visitor;
 
 import org.ioopm.calculator.ast.*;
 import org.ioopm.calculator.parser.IllegalExpressionException;
+import java.util.ArrayList;
 
 /**
  * Visitor for evaluating SymbolicExpressions.
@@ -175,6 +176,17 @@ public class EvaluationVisitor implements Visitor {
     }
 
     /**
+     * Visits an End node, throwing a RuntimeException as commands may not be evaluated
+     * @param n The End node to visit.
+     * @return This method always throws a RuntimeException.
+     * @throws RuntimeException Always thrown with the message "Error: End may not be evaluated".
+    */
+    @Override
+    public SymbolicExpression visit(End n) {
+        throw new RuntimeException("Error: End may not be evaluated");
+    }
+
+    /**
      * Visits an exponent node, either performing the exponential operation if the argument
      * is a constant or returning an exponential expression. 
      *
@@ -192,6 +204,31 @@ public class EvaluationVisitor implements Visitor {
         }
     }
 
+    @Override
+    public SymbolicExpression visit(FunctionCall n){
+        Variable funcName = n.getFuncName();
+        ArrayList<Atom> arguments = n.getArguments();
+        
+        FunctionDeclaration func = (FunctionDeclaration) stack.get(funcName);
+        ArrayList<Variable> parameters = func.getParameters(); 
+
+        stack.pushEnvironment();
+        for (int i = 0; i < arguments.size(); i++) {
+            stack.put(parameters.get(i), arguments.get(i));
+        }
+
+        SymbolicExpression result = func.accept(this); 
+        
+        stack.popEnvironment();
+        return result;
+    }
+
+    @Override
+    public SymbolicExpression visit(FunctionDeclaration n) {
+        return n.getSequence().accept(this);
+    }
+
+
     /**
      * Visits a logarithm node, either performing the logarithm operation if the argument
      * is a constant or returning a logarithmic expression. 
@@ -208,7 +245,6 @@ public class EvaluationVisitor implements Visitor {
         } else {
             return new Log(arg);
         }
-
     }
 
     /**
@@ -283,6 +319,16 @@ public class EvaluationVisitor implements Visitor {
         stack.popEnvironment();
         return result;
     }
+
+    public SymbolicExpression visit(Sequence n){
+        SymbolicExpression result = null; 
+        
+        for(int i = 0; i < n.getSequenceSize(); i++) {
+            result = n.accept(this); 
+        }
+
+        return result;
+    } 
 
     /**
      * Visist a sine node, either performing the sine if the operand is constant,

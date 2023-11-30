@@ -1,6 +1,8 @@
 package org.ioopm.calculator.ast; 
 
 import org.ioopm.calculator.visitor.*;
+
+import java.util.ArrayList;
 /**
  * An abstract superclass representing a common interface for symbolic expressions. 
  */
@@ -78,13 +80,43 @@ public abstract class SymbolicExpression {
     }
 
     /**
-     * Returns the symbolix extression within a scope. 
+     * Returns the symbolic expression within a scope. 
      *
      * @return A RuntimeException is always thrown. 
      * @throws RuntimeException If called on an expression not in a scope. 
      */
     public SymbolicExpression getScope() {
         throw new RuntimeException("getScope() called on expression non scoped expression"); 
+    }
+
+    /**
+     * Returns the sequence within a function declaration
+     *
+     * @return A RuntimeException is always thrown. 
+     * @throws RuntimeException If called on an expression not having a sequence
+     */
+    public SymbolicExpression getSequence() {
+        throw new RuntimeException("getSequence() called on expression that is not a function"); 
+    }
+
+    /**
+     * Returns the parameters within a function call
+     *
+     * @return A RuntimeException is always thrown. 
+     * @throws RuntimeException If called on an expression not being a function call
+     */
+    public ArrayList<Variable> getParameters() {
+        throw new RuntimeException("getParameters() called on expression that is not a function"); 
+    }
+
+    /**
+     * Returns a function name 
+     *
+     * @return A RuntimeException is always thrown. 
+     * @throws RuntimeException If called on an expression not being a function 
+     */
+    public Variable getFuncName() {
+        throw new RuntimeException("getParameters() called on expression that is not a function"); 
     }
 
     /**

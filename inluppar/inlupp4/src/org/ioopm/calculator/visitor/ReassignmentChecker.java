@@ -142,6 +142,16 @@ public class ReassignmentChecker implements Visitor {
     }
 
     /**
+     * Visits an End node, not checking anything
+     * 
+     * @return null
+     */
+    @Override
+    public SymbolicExpression visit(End a) {
+        return null; 
+    }
+
+    /**
      * Visits an Exp node, checking its argument subexpressions.
      *
      * @param a The Exp node to visit.
@@ -150,6 +160,28 @@ public class ReassignmentChecker implements Visitor {
     @Override
     public SymbolicExpression visit(Exp a) {
         a.getArg().accept(this); 
+        return null;
+    }
+
+    public SymbolicExpression visit(FunctionCall a){
+        a.getFuncName().accept(this);
+
+        for (Atom argument : a.getArguments()) {
+            argument.accept(this);
+        }
+
+        return null;
+    }
+
+    public SymbolicExpression visit(FunctionDeclaration a) {
+        a.getFuncName().accept(this);
+
+        for (Variable parameter : a.getParameters()) {
+            parameter.accept(this);
+        }
+
+        a.getSequence().accept(this);
+
         return null;
     }
 
@@ -230,6 +262,15 @@ public class ReassignmentChecker implements Visitor {
                 
         return null;
     }
+
+    
+    public SymbolicExpression visit(Sequence a){
+        for (SymbolicExpression expression : a.getBody()) {
+            expression.accept(this);
+        }
+
+        return null; 
+    } 
 
     /**
      * Visits a Sin node, checking its argument subexpressions.
