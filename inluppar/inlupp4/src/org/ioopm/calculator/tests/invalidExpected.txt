@@ -75,8 +75,27 @@ Error: Unexpected '<'
 Please enter an expression: 
 Error: Expected number
 Please enter an expression: 
+expected ')'
+Please enter an expression: 
+expected ')' after function declaration
+Please enter an expression: 
+Function needs at least one parameter
+Please enter an expression: 
+Please enter an expression: 
+Cannot redefine function
+Please enter an expression: 
+Assignment in function can not have the same name as param
+Please enter an expression: 
+Missing function argument(s)
+Please enter an expression: 
+Cannot redefine function
+Please enter an expression: 
+Error: Function 'max' called with the wrong number of arguments. Expected 2, got 3
+Please enter an expression: 
+Error: Function 'max' called with the wrong number of arguments. Expected 2, got 1
+Please enter an expression: 
 
 You have quit the program
-Total entered expression(s): 33
-Successful evaluated expression(s): 9
+Total entered expression(s): 43
+Successful evaluated expression(s): 11
 Expression(s) that were fully evaluated: 2
