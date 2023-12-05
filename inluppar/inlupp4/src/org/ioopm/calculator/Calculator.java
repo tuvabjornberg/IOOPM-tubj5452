@@ -1,7 +1,6 @@
 package org.ioopm.calculator;
 
 import java.io.IOException;
-import java.util.Scanner;
 
 import org.ioopm.calculator.ast.*;
 import org.ioopm.calculator.parser.*;
@@ -75,9 +74,8 @@ public class Calculator {
                         while (expression != End.instance()) {
                             input = sc.nextLine(); 
                             
-                            expression = parser.parse(input, stack);                         
-
-                            //Checking illegal assigment in function declaration                          
+                            expression = parser.parse(input, stack);    
+                            
                             if (expression instanceof Assignment){
                                 SymbolicExpression lhs = ((Assignment)expression).getLhs();
                                 if (lhs instanceof Constant) {
