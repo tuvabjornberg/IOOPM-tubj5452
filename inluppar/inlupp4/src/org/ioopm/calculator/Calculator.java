@@ -6,7 +6,7 @@ import java.util.Scanner;
 import org.ioopm.calculator.ast.*;
 import org.ioopm.calculator.parser.*;
 import org.ioopm.calculator.visitor.*;
-import java.util.List; 
+import java.util.*; 
 
 /**
  * A simple calculator interface for parsing and evaluating expressions.
@@ -32,6 +32,8 @@ public class Calculator {
         int fullyEvaluated = 0;
 
         Scanner sc = new Scanner(System.in);
+
+        Variable funcName = null; 
 
         while (true) {
             System.out.println("Please enter an expression: ");
@@ -64,21 +66,48 @@ public class Calculator {
                         functionMode = false; 
                     } else {
                         functionMode = true;
-                        Sequence s = (Sequence) expression.getSequence();
-                        stack.getLastEnv().put(expression.getFuncName(), s);
+                        FunctionDeclaration fdExpression = expression.getFunctionDeclaration(); 
+                        funcName = expression.getFuncName(); 
+                        ArrayList<Variable> funcParam = expression.getParameters();
+
+                        stack.getLastEnv().put(funcName, fdExpression);
 
                         while (expression != End.instance()) {
                             input = sc.nextLine(); 
-                            expression = parser.parse(input, stack);
-                            s.addExpression(expression);
+                            
+                            expression = parser.parse(input, stack);                         
+
+                            //Checking illegal assigment in function declaration                          
+                            if (expression instanceof Assignment){
+                                SymbolicExpression lhs = ((Assignment)expression).getLhs();
+                                if (lhs instanceof Constant) {
+                                    SymbolicExpression rhs = ((Assignment)expression).getRhs();
+                                    if (funcParam.contains(rhs)) {
+                                        System.out.println("Assignment in function can not have the same name as param");
+                                        stack.getLastEnv().remove(funcName);
+                                        break;
+                                    }
+                                } 
+                            } 
+
+                            if (expression != End.instance()) {
+                                fdExpression.getSequence().addExpression(expression); 
+                            }
                         }
                         functionMode = false;
                     }
-                    
+                    expressionSuccessfulCounter++;                 
                 } else if (expression instanceof FunctionCall) {
                     SymbolicExpression evaluated = evaluator.evaluate(expression, stack); 
-                    System.out.println(evaluated);
+                    
+                    expressionSuccessfulCounter++;
+                    if (evaluated != null) {
+                        if (evaluated.isConstant()) {
+                            fullyEvaluated++;
+                        }
+                    }
 
+                    System.out.println(evaluated);
                 } else {
                     NamedConstantChecker NCchecker = new NamedConstantChecker(); 
                     boolean noIllegalAssignments = NCchecker.check(expression); 
@@ -125,6 +154,10 @@ public class Calculator {
                 System.out.println(e.getMessage());
             }
             finally {
+                if (functionMode) { 
+                    functionMode = false; 
+                        stack.getLastEnv().remove(funcName);
+                }
                 expressionCounter++;
             }      
         }

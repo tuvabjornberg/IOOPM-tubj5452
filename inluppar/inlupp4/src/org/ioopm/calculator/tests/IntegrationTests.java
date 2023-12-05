@@ -3,6 +3,7 @@ package org.ioopm.calculator.tests;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -18,7 +19,7 @@ import org.ioopm.calculator.visitor.ReassignmentChecker;
 public class IntegrationTests {
     private CalculatorParser parser;
     private Environment env;
-    private ScopeStack vars;  
+    private ScopeStack stack;  
 
     @BeforeAll
     static void initAll() {
@@ -27,14 +28,14 @@ public class IntegrationTests {
     @BeforeEach
     void init() {
         env = new Environment();
-        vars = new ScopeStack(env); 
+        stack = new ScopeStack(env); 
         parser = new CalculatorParser();
     }
 
     void afterParseTest(SymbolicExpression arg, String strToParse) {
         SymbolicExpression e1 = null; 
         try {
-            e1 = parser.parse(strToParse, vars); 
+            e1 = parser.parse(strToParse, stack); 
             assertTrue(e1.equals(arg)); 
         } catch (IOException e) {
             fail("Unexpected exception was thrown");
@@ -78,7 +79,7 @@ public class IntegrationTests {
         afterParseTest(v2, strV2);
 
         assertThrows(RuntimeException.class, () -> {
-            parser.parse("teststr|ngwith,symb@ls", vars); 
+            parser.parse("teststr|ngwith,symb@ls", stack); 
         });
     }
 
@@ -133,7 +134,7 @@ public class IntegrationTests {
         afterParseTest(a1, strS1);
 
         assertThrows(RuntimeException.class, () -> {
-            parser.parse("(x", vars); 
+            parser.parse("(x", stack); 
         });
     }
 
@@ -164,7 +165,7 @@ public class IntegrationTests {
     void namedConstantCheckerTest() throws IOException {
         SymbolicExpression s1 = new Addition(new Assignment(new Constant(2), new Variable("pi")), new Assignment(new Constant(42), new Variable("L"))); 
         String strS1 = s1.toString(); 
-        SymbolicExpression e1 = parser.parse(strS1, vars); 
+        SymbolicExpression e1 = parser.parse(strS1, stack); 
         assertTrue(e1.equals(s1)); 
 
         NamedConstantChecker NCchecker1 = new NamedConstantChecker(); 
@@ -173,7 +174,7 @@ public class IntegrationTests {
        
         SymbolicExpression s2 = new Addition(new Assignment(new Constant(2), new Variable("x")), new Constant(7)); 
         String strS2 = s2.toString(); 
-        e1 = parser.parse(strS2, vars); 
+        e1 = parser.parse(strS2, stack); 
         assertTrue(e1.equals(s2)); 
 
         NamedConstantChecker NCchecker2 = new NamedConstantChecker(); 
@@ -183,38 +184,38 @@ public class IntegrationTests {
 
     @Test
     void ReassignmentCheckerTest() throws IOException {
-        ReassignmentChecker Rchecker = new ReassignmentChecker(vars);
+        ReassignmentChecker Rchecker = new ReassignmentChecker(stack);
         EvaluationVisitor evaluator = new EvaluationVisitor();   
         
         SymbolicExpression s1 = new Assignment(new Constant(2), new Variable("x")); 
         String strS1 = s1.toString(); 
-        SymbolicExpression e1 = parser.parse(strS1, vars);
+        SymbolicExpression e1 = parser.parse(strS1, stack);
         assertTrue(Rchecker.check(e1)); 
-        evaluator.evaluate(e1, vars);
+        evaluator.evaluate(e1, stack);
 
-        Rchecker = new ReassignmentChecker(vars);
+        Rchecker = new ReassignmentChecker(stack);
         SymbolicExpression s2 = new Assignment(new Constant(4), new Variable("x")); 
         String strS2 = s2.toString(); 
-        e1 = parser.parse(strS2, vars); 
+        e1 = parser.parse(strS2, stack); 
         assertTrue(Rchecker.check(e1));
 
-        Rchecker = new ReassignmentChecker(vars);
+        Rchecker = new ReassignmentChecker(stack);
         SymbolicExpression s3 = new Addition(new Assignment(new Constant(2), new Variable("y")), new Assignment(new Constant(6), new Variable("y"))); 
         String strS3 = s3.toString(); 
-        e1 = parser.parse(strS3, vars); 
+        e1 = parser.parse(strS3, stack); 
         assertFalse(Rchecker.check(e1));
 
-        Rchecker = new ReassignmentChecker(vars);
+        Rchecker = new ReassignmentChecker(stack);
         SymbolicExpression s4 = new Assignment(new Constant(4), new Variable("y")); 
         String strS4 = s4.toString(); 
-        e1 = parser.parse(strS4, vars); 
+        e1 = parser.parse(strS4, stack); 
         assertTrue(Rchecker.check(e1));
-        evaluator.evaluate(e1, vars);
+        evaluator.evaluate(e1, stack);
 
-        Rchecker = new ReassignmentChecker(vars);
+        Rchecker = new ReassignmentChecker(stack);
         SymbolicExpression s5 = new Addition(new Assignment(new Constant(10), new Variable("x")), new Assignment(new Constant(4), new Variable("x"))); 
         String strS5 = s5.toString(); 
-        e1 = parser.parse(strS5, vars);
+        e1 = parser.parse(strS5, stack);
         assertFalse(Rchecker.check(e1)); 
         NamedConstantChecker NCchecker = new NamedConstantChecker(); 
         boolean noIllegalAssignments = NCchecker.check(e1); 
@@ -225,35 +226,35 @@ public class IntegrationTests {
     void scopeTest() throws IOException {
         EvaluationVisitor evaluator = new EvaluationVisitor(); 
 
-        SymbolicExpression e1 = parser.parse("{{1 = x} = x}", vars); 
-        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(1)));
+        SymbolicExpression e1 = parser.parse("{{1 = x} = x}", stack); 
+        assertTrue(evaluator.evaluate(e1, stack).equals(new Constant(1)));
 
-        e1 = parser.parse("{(2 = x) + {1 = x}}", vars); 
-        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(3)));
+        e1 = parser.parse("{(2 = x) + {1 = x}}", stack); 
+        assertTrue(evaluator.evaluate(e1, stack).equals(new Constant(3)));
     
-        e1 = parser.parse("{{1 = x} = x} = y", vars); 
-        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(1))); 
+        e1 = parser.parse("{{1 = x} = x} = y", stack); 
+        assertTrue(evaluator.evaluate(e1, stack).equals(new Constant(1))); 
          
-        e1 = parser.parse("x", vars); 
-        assertTrue(evaluator.evaluate(e1, vars).equals(new Variable("x")));
+        e1 = parser.parse("x", stack); 
+        assertTrue(evaluator.evaluate(e1, stack).equals(new Variable("x")));
 
-        e1 = parser.parse("y", vars); 
-        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(1))); 
+        e1 = parser.parse("y", stack); 
+        assertTrue(evaluator.evaluate(e1, stack).equals(new Constant(1))); 
 
-        e1 = parser.parse("{1 = x} + {1 = x}", vars); 
-        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(2)));
+        e1 = parser.parse("{1 = x} + {1 = x}", stack); 
+        assertTrue(evaluator.evaluate(e1, stack).equals(new Constant(2)));
 
-        e1 = parser.parse("{1 = x} + {x}", vars); 
-        assertTrue(evaluator.evaluate(e1, vars).equals(new Addition(new Constant(1), new Variable("x"))));
+        e1 = parser.parse("{1 = x} + {x}", stack); 
+        assertTrue(evaluator.evaluate(e1, stack).equals(new Addition(new Constant(1), new Variable("x"))));
         
-        e1 = parser.parse("{1 = x} + {1}", vars); 
-        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(2)));  
+        e1 = parser.parse("{1 = x} + {1}", stack); 
+        assertTrue(evaluator.evaluate(e1, stack).equals(new Constant(2)));  
 
-        e1 = parser.parse("(1 = x) + {(2 + x = x) + {3 + x = x}}", vars); 
-        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(10))); 
+        e1 = parser.parse("(1 = x) + {(2 + x = x) + {3 + x = x}}", stack); 
+        assertTrue(evaluator.evaluate(e1, stack).equals(new Constant(10))); 
 
-        e1 = parser.parse("x", vars); 
-        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(1))); 
+        e1 = parser.parse("x", stack); 
+        assertTrue(evaluator.evaluate(e1, stack).equals(new Constant(1))); 
     }
 
     @Test
@@ -262,49 +263,91 @@ public class IntegrationTests {
         SymbolicExpression s1 = new Assignment(new Constant(2), new Variable("x")); 
         SymbolicExpression s2 = new Assignment(new Constant(4), new Variable("y")); 
 
-        SymbolicExpression e1 = parser.parse(s1.toString(), vars); 
-        SymbolicExpression lhsEval = evaluator.evaluate(e1, vars); 
+        SymbolicExpression e1 = parser.parse(s1.toString(), stack); 
+        SymbolicExpression lhsEval = evaluator.evaluate(e1, stack); 
         assertTrue(lhsEval.equals(new Constant(2)));
 
-        e1 = parser.parse(s2.toString(), vars); 
-        SymbolicExpression rhsEval = evaluator.evaluate(e1, vars); 
+        e1 = parser.parse(s2.toString(), stack); 
+        SymbolicExpression rhsEval = evaluator.evaluate(e1, stack); 
         assertTrue(rhsEval.equals(new Constant(4)));
 
         SymbolicExpression c = new Conditional("<", lhsEval, rhsEval, new Scope(new Constant(42)), new Scope(new Constant(4711))); 
-        e1 = parser.parse(c.toString(), vars);
-        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(42)));
+        e1 = parser.parse(c.toString(), stack);
+        assertTrue(evaluator.evaluate(e1, stack).equals(new Constant(42)));
 
         c = new Conditional(">", lhsEval, rhsEval, new Scope(new Constant(42)), new Scope(new Constant(4711))); 
-        e1 = parser.parse(c.toString(), vars); 
-        assertFalse(evaluator.evaluate(e1, vars).equals(new Constant(42)));
+        e1 = parser.parse(c.toString(), stack); 
+        assertFalse(evaluator.evaluate(e1, stack).equals(new Constant(42)));
 
         c = new Conditional(">=", lhsEval, rhsEval, new Scope(new Constant(42)), new Scope(new Constant(4711))); 
-        e1 = parser.parse(c.toString(), vars); 
-        assertFalse(evaluator.evaluate(e1, vars).equals(new Constant(42)));
+        e1 = parser.parse(c.toString(), stack); 
+        assertFalse(evaluator.evaluate(e1, stack).equals(new Constant(42)));
 
         SymbolicExpression s3 = new Assignment(new Constant(2), new Variable("y")); 
-        SymbolicExpression rhsEqualEval = evaluator.evaluate(parser.parse(s3.toString(), vars), vars); 
+        SymbolicExpression rhsEqualEval = evaluator.evaluate(parser.parse(s3.toString(), stack), stack); 
         c = new Conditional(">=", lhsEval, rhsEqualEval, new Scope(new Constant(42)), new Scope(new Constant(4711))); 
-        e1 = parser.parse(c.toString(), vars); 
-        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(42)));
+        e1 = parser.parse(c.toString(), stack); 
+        assertTrue(evaluator.evaluate(e1, stack).equals(new Constant(42)));
 
         c = new Conditional("<=", lhsEval, rhsEval, new Scope(new Constant(42)), new Scope(new Constant(4711))); 
-        e1 = parser.parse(c.toString(), vars); 
-        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(42)));
-        assertFalse(evaluator.evaluate(e1, vars).equals(new Constant(4711)));
+        e1 = parser.parse(c.toString(), stack); 
+        assertTrue(evaluator.evaluate(e1, stack).equals(new Constant(42)));
+        assertFalse(evaluator.evaluate(e1, stack).equals(new Constant(4711)));
         c = new Conditional("<=", lhsEval, rhsEqualEval, new Scope(new Constant(42)), new Scope(new Constant(4711))); 
-        e1 = parser.parse(c.toString(), vars); 
-        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(42)));
-        assertFalse(evaluator.evaluate(e1, vars).equals(new Constant(4711)));
+        e1 = parser.parse(c.toString(), stack); 
+        assertTrue(evaluator.evaluate(e1, stack).equals(new Constant(42)));
+        assertFalse(evaluator.evaluate(e1, stack).equals(new Constant(4711)));
 
         c = new Conditional("==", lhsEval, rhsEval, new Scope(new Constant(42)), new Scope(new Constant(4711))); 
-        e1 = parser.parse(c.toString(), vars); 
-        assertFalse(evaluator.evaluate(e1, vars).equals(new Constant(42)));
-        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(4711)));
+        e1 = parser.parse(c.toString(), stack); 
+        assertFalse(evaluator.evaluate(e1, stack).equals(new Constant(42)));
+        assertTrue(evaluator.evaluate(e1, stack).equals(new Constant(4711)));
         c = new Conditional("==", lhsEval, rhsEqualEval, new Scope(new Constant(42)), new Scope(new Constant(4711))); 
-        e1 = parser.parse(c.toString(), vars); 
-        assertTrue(evaluator.evaluate(e1, vars).equals(new Constant(42)));
-        assertFalse(evaluator.evaluate(e1, vars).equals(new Constant(4711)));
+        e1 = parser.parse(c.toString(), stack); 
+        assertTrue(evaluator.evaluate(e1, stack).equals(new Constant(42)));
+        assertFalse(evaluator.evaluate(e1, stack).equals(new Constant(4711)));
+    }
+
+    @Test
+    void functionTest() throws IOException {
+        EvaluationVisitor evaluator = new EvaluationVisitor(); 
+
+        SymbolicExpression fd1 = parser.parse("function max(x, y)", stack);
+        FunctionDeclaration fdExpression = fd1.getFunctionDeclaration(); 
+        Variable funcName = fd1.getFuncName(); 
+
+        stack.getLastEnv().put(funcName, fdExpression);
+        fd1 = parser.parse("if x < y { y } else { x }", stack); 
+        fdExpression.getSequence().addExpression(fd1); 
+        
+        ArrayList<Atom> arguments =  new ArrayList<>();
+        arguments.add(new Constant(4));
+        arguments.add(new Constant(1)); 
+        SymbolicExpression fc1 = new FunctionCall(new Variable("max"), arguments); 
+        
+        SymbolicExpression fcEval1 = parser.parse("max(1, 4)", stack); 
+
+        SymbolicExpression max_result = evaluator.evaluate(fcEval1, stack); 
+       
+        assertTrue(max_result.equals(new Constant(4)));
+
+        ArrayList<Variable> paramaters = new ArrayList<>(); 
+        paramaters.add(new Variable("x")); 
+        Sequence body = new Sequence(); 
+        body.addExpression(new Assignment(new Multiplication(new Variable("x"), new Constant(3)), new Variable("y")));
+        body.addExpression(new Addition(new Variable("x"), new Variable("y"))); 
+        FunctionDeclaration fd2 = new FunctionDeclaration(new Variable("timesthree"), paramaters, body); 
+        
+        stack.getLastEnv().put(new Variable("timesthree"), fd2);
+
+        ArrayList<Atom> argument =  new ArrayList<>();
+        argument.add(new Constant(4));
+        FunctionCall fc2 = new FunctionCall(new Variable("timesthree"), argument); 
+
+        SymbolicExpression fcParsed = parser.parse(fc2.toString(), stack); 
+        
+        SymbolicExpression fcEval2 = evaluator.evaluate(fcParsed, stack); 
+        assertTrue(fcEval2.equals(new Constant(16))); 
     }
 
     @AfterEach

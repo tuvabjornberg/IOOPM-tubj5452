@@ -10,7 +10,6 @@ import java.util.ArrayList;
 public class EvaluationVisitor implements Visitor {
     private ScopeStack stack = null;
 
-
     /**
      * Evaluates a top-level SymbolicExpression within the environment.
      *
@@ -53,15 +52,8 @@ public class EvaluationVisitor implements Visitor {
     public SymbolicExpression visit(Assignment n) {
         SymbolicExpression lhsEvaluated = n.getLhs().accept(this);
         SymbolicExpression rhs = n.getRhs();
-        
-        if ((rhs.toString().toLowerCase().equals("sin") || rhs.toString().toLowerCase().equals("cos") 
-            || rhs.toString().toLowerCase().equals("exp") || rhs.toString().toLowerCase().equals("quit") 
-            || rhs.toString().toLowerCase().equals("clear") || rhs.toString().toLowerCase().equals("vars") 
-            || rhs.toString().toLowerCase().equals("if") || rhs.toString().toLowerCase().equals("else"))) 
-            {
-            throw new IllegalExpressionException("Error: Right hand side is an operand");
-        }
-        else if (lhsEvaluated.isConstant()) {
+
+        if (lhsEvaluated.isConstant()) {
             stack.put(new Variable(rhs.toString()), lhsEvaluated);
             return new Constant(lhsEvaluated.getValue());
         } else {
@@ -86,8 +78,8 @@ public class EvaluationVisitor implements Visitor {
     *
     * @param n The Conditional node to visit.
     * @return The result of evaluating the Conditional expression.
-    * @throws IllegalExpressionException If there are invalid identifiers as arguments for the Conditional.
-    * @throws IllegalArgumentException If the Conditional expression contains an invalid operand.
+    * @throws IllegalExpressionException If there are invalid identifiers as arguments for the Conditional
+    * or if the Conditional expression contains an invalid operand.
     */
     @Override
     public SymbolicExpression visit(Conditional n) {
@@ -112,7 +104,7 @@ public class EvaluationVisitor implements Visitor {
                 result = lhs.getValue() <= rhs.getValue();
                 
             } else {
-                throw new IllegalArgumentException("Invalid operand to eval"); 
+                throw new IllegalExpressionException("Invalid operand to eval"); 
             }
         } else {
             throw new IllegalExpressionException("Invalid identifiers as arguments for conditional"); 
@@ -152,7 +144,6 @@ public class EvaluationVisitor implements Visitor {
         } else {
             return new Cos(arg);
         }
-
     }
 
     /**
@@ -204,17 +195,24 @@ public class EvaluationVisitor implements Visitor {
         }
     }
 
+    /**
+     * Visits a FunctionCall node, evaluates the function call, and returns the result.
+     *
+     * @param n The FunctionCall node to visit.
+     * @return The result of evaluating the function call.
+    */
     @Override
     public SymbolicExpression visit(FunctionCall n){
         Variable funcName = n.getFuncName();
         ArrayList<Atom> arguments = n.getArguments();
-        
+
         FunctionDeclaration func = (FunctionDeclaration) stack.get(funcName);
+
         ArrayList<Variable> parameters = func.getParameters(); 
 
         stack.pushEnvironment();
         for (int i = 0; i < arguments.size(); i++) {
-            stack.put(parameters.get(i), arguments.get(i));
+            stack.put(parameters.get(i), arguments.get(i).accept(this));
         }
 
         SymbolicExpression result = func.accept(this); 
@@ -223,11 +221,16 @@ public class EvaluationVisitor implements Visitor {
         return result;
     }
 
+    /**
+     * Visits a FunctionDeclaration node and returns the result of evaluating its sequence.
+     *
+     * @param n The FunctionDeclaration node to visit.
+     * @return The result of evaluating the function declaration.
+     */
     @Override
     public SymbolicExpression visit(FunctionDeclaration n) {
         return n.getSequence().accept(this);
     }
-
 
     /**
      * Visits a logarithm node, either performing the logarithm operation if the argument
@@ -314,17 +317,26 @@ public class EvaluationVisitor implements Visitor {
     @Override
     public SymbolicExpression visit(Scope n) {
         stack.pushEnvironment();
+
         SymbolicExpression exp = n.getScope();
         SymbolicExpression result = exp.accept(this);
+
         stack.popEnvironment();
+
         return result;
     }
 
+    /**
+     * Visits a Sequence node and evaluates each expression in the sequence.
+     *
+     * @param n The Sequence node to visit.
+     * @return The result of evaluating the last expression in the sequence.
+     */
     public SymbolicExpression visit(Sequence n){
         SymbolicExpression result = null; 
         
         for(int i = 0; i < n.getSequenceSize(); i++) {
-            result = n.accept(this); 
+            result = n.getExpression(i).accept(this); 
         }
 
         return result;
@@ -346,7 +358,6 @@ public class EvaluationVisitor implements Visitor {
         } else {
             return new Sin(arg);
         }
-
     }
 
     /**
@@ -367,7 +378,6 @@ public class EvaluationVisitor implements Visitor {
         } else {
             return new Subtraction(lhsEvaluated, rhsEvaluated);
         }
-
     }
 
     /**

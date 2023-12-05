@@ -16,6 +16,22 @@ public class ScopeStack extends Environment {
     }
 
     /**
+     * Returns a string representation of a scope stack 
+     * 
+     * @return The string representation of a stack. 
+     */
+    @Override
+    public String toString() {
+        String s = ""; 
+        int envNumber = 0; 
+        for (Environment e : stack) { 
+            s += "Env " + envNumber + ": " + e.toString() + "\n"; 
+            envNumber++; 
+        } 
+        return s; 
+    }
+
+    /**
      * Returns the variable if it exists in the stack scope
      *
      * @param k The variable to look for

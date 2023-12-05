@@ -1,1 +1,16 @@
-function max(x, y) if x < y { y } else { x } end
+if (r < t) { t } else { r } - detta ej ok
+function timesThree(x) 
+3*x
+end
+timesThree(3)
+function max(x, y)
+if x < y { y } else { x }
+end
+max(5, 7)
+function factorial(n)
+n-1=m
+if n > 1 { factorial(m) * n } else { 1 }
+end
+vars
+factorial(4)
+quit

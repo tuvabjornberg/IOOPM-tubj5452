@@ -120,6 +120,16 @@ public abstract class SymbolicExpression {
     }
 
     /**
+     * Returns a function declaration 
+     *
+     * @return A RuntimeException is always thrown. 
+     * @throws RuntimeException If called on an expression not being a function declaration
+     */
+    public FunctionDeclaration getFunctionDeclaration() {
+        throw new RuntimeException("getFunctionDeclaration() not called on function declaration"); 
+    }
+
+    /**
      * Accepts a visitor for the Visitor pattern.
      * 
      * @param v The visitor instance.

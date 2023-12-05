@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import org.ioopm.calculator.ast.*; 
 import org.ioopm.calculator.visitor.*; 
+import java.util.*;
 
 public class AstTests {
     private ScopeStack stack; 
@@ -690,7 +691,6 @@ public class AstTests {
         Conditional c1 = new Conditional("<", new Constant(3), new Constant(4), new Scope(new Constant(42)), new Scope(new Constant(4711))); 
         assertEquals(c1.toString(), "if 3.0 < 4.0 { 42.0 } else { 4711.0 }");
 
-        //testing methods in conditional class
         assertEquals(c1.getName(), "<");
         assertEquals(c1.getLhs(), new Constant(3));
         assertEquals(c1.getRhs(), new Constant(4));
@@ -715,6 +715,64 @@ public class AstTests {
         SymbolicExpression s1 = new Sin(new Constant(2));
         Conditional c6 = new Conditional("<", s1, new Constant(3), new Scope(new Constant(42)), new Scope(new Constant(4711))); 
         assertEquals(evaluator.evaluate(c6, stack), new Constant(42));
+    }
+
+    @Test 
+    void functionDeclarationTest() {
+        ArrayList<Variable> identifierList =  new ArrayList<>();
+        identifierList.add(new Variable("x"));
+        identifierList.add(new Variable("y"));
+
+        Sequence s = new Sequence();
+        Conditional c1 = new Conditional("<", new Variable("x"), new Variable("y"),
+                                         new Scope(new Constant(42)), 
+                                         new Scope(new Constant(4711))); 
+
+        s.addExpression(c1);
+        
+        FunctionDeclaration f1 = new FunctionDeclaration(new Variable("max"), identifierList, s);
+        s.addExpression(new Addition(new Constant(2), new Constant(4)));
+        FunctionDeclaration f2 = new FunctionDeclaration(new Variable("max"), identifierList, s);
+
+        assertEquals(f1.toString(), new FunctionDeclaration(new Variable("max"), identifierList, s).toString());
+        assertTrue(f1.equals(new FunctionDeclaration(new Variable("max"), identifierList, s)));
+        
+        assertTrue(f1.getFuncName().equals(new Variable("max")));
+        assertTrue(f1.getSequence().equals(s));
+        assertTrue(f1.getFunctionDeclaration().equals(f1));
+    }
+
+    @Test
+    void sequenceTest() {
+        Sequence s = new Sequence(); 
+        assertEquals(s.getSequenceSize(), 0);
+
+        s.addExpression(new Multiplication(new Constant(3), new Variable("x")));
+
+        assertTrue(s.getExpression(0).equals(new Multiplication(new Constant(3), new Variable("x"))));
+        
+        assertEquals(s.getSequenceSize(), 1);
+        s.addExpression(new Subtraction(new Constant(9), new Variable("x")));
+        assertEquals(s.getSequenceSize(), 2);
+
+        assertTrue(s.getExpression(1).equals(new Subtraction(new Constant(9), new Variable("x"))));
+
+        System.out.println(s.toString());
+        assertTrue(s.toString().equals("3.0 * x\n9.0 - x\n"));
+        assertEquals("3.0 * x\n9.0 - x\n", s.toString());
+    }
+
+    @Test
+    void functionCallTest() {
+        ArrayList<Atom> arguments = new ArrayList<>(); 
+        arguments.add(new Constant(3)); 
+        arguments.add(new Constant(4));
+
+        FunctionCall f1 = new FunctionCall(new Variable("max"), arguments); 
+
+        assertTrue(f1.getArguments().equals(arguments));
+        assertTrue(f1.getFuncName().equals(new Variable("max")));
+        assertEquals(f1.toString(), "max(3.0, 4.0)");
     }
 
     @AfterEach
