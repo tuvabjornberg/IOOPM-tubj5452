@@ -98,7 +98,7 @@ public class CalculatorParser {
     *         such as a missing function name, invalid parameter names, or mismatched
     *         parentheses.
     */
-    private SymbolicExpression function(ArrayList<Variable> identifierList) throws IOException{
+    private SymbolicExpression function (ArrayList<Variable> identifierList) throws IOException {
         this.st.nextToken();
         Variable functionName;
         
