@@ -5,13 +5,31 @@ import java.util.Scanner;
 public class Trebuchet {
     private static final String FILE_NAME = "calibration.input"; 
 
+    //automatteori
 
+    private static char getDigitAt(String line, int i) {
+        String suffix = line.substring(i); 
+
+        if (line.charAt(i) == '0' || suffix.startsWith("zero"))   return '0'; 
+        if (line.charAt(i) == '1' || suffix.startsWith("one"))    return '1'; 
+        if (line.charAt(i) == '2' || suffix.startsWith("two"))    return '2'; 
+        if (line.charAt(i) == '3' || suffix.startsWith("three"))  return '3'; 
+        if (line.charAt(i) == '4' || suffix.startsWith("four"))   return '4'; 
+        if (line.charAt(i) == '5' || suffix.startsWith("five"))   return '5'; 
+        if (line.charAt(i) == '6' || suffix.startsWith("six"))    return '6'; 
+        if (line.charAt(i) == '7' || suffix.startsWith("seven"))  return '7'; 
+        if (line.charAt(i) == '8' || suffix.startsWith("eight"))  return '8'; 
+        if (line.charAt(i) == '9' || suffix.startsWith("nine"))   return '9'; 
+        return '\0'; 
+    }
 
     private static String getFirstAndLastDigit(String line) {
         char firstDigit = '\0'; 
         char lastDigit = '\0'; 
 
-        for (char c : line.toCharArray()) {
+        for (int i = 0; i < line.length(); i++) {
+            char c = getDigitAt(line, i); 
+
             if (Character.isDigit(c)) {
                 if (firstDigit == '\0') {
                     firstDigit = c; 
