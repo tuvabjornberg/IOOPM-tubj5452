@@ -92,8 +92,10 @@ Error: Function 'max' called with the wrong number of arguments. Expected 2, got
 Please enter an expression: 
 Assignment in function can not have the same name as param
 Please enter an expression: 
+Function body cannot be empty
+Please enter an expression: 
 
 You have quit the program
-Total entered expression(s): 42
-Successful evaluated expression(s): 11
+Total entered expression(s): 43
+Successful evaluated expression(s): 12
 Expression(s) that were fully evaluated: 2

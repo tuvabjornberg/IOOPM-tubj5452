@@ -43,4 +43,6 @@ max(1, 2, 3)
 max(1)
 function m(g)
 2=g
+function r(g)
+end
 quit
