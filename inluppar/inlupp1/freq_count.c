@@ -6,6 +6,7 @@
 #include "linked_list.h"
 #include "common.h"
 #include "iterator.h"
+#include <assert.h>
 
 #define Delimiters "+-#@()[]{}.,:;!? \t\n\r"
 
@@ -124,7 +125,8 @@ int main(int argc, char *argv[])
         for (int i = 0; i < ht_size; i++)
         {
             option_t *lookup_result = ioopm_hash_table_lookup(ht, (elem_t) {.string = keys[i]}); 
-            
+            //assert(lookup_result->success); 
+
             int freq = lookup_result->value.integer;        
             printf("%s: %d\n", keys[i], freq);
             free(lookup_result); 
