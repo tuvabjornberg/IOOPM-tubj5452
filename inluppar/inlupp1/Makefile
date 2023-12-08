@@ -51,8 +51,8 @@ prof: freq_count_prof.out
 	./freq_count_prof.out 16k-words.txt
 	gprof freq_count_prof.out gmon.out > 16k-words.profiling
 
-	./freq_count_prof.out 640k-words.txt
-	gprof freq_count_prof.out gmon.out > 640k-words.profiling
+	./freq_count_prof.out 1.3m-words.txt
+	gprof freq_count_prof.out gmon.out > 1.3m-words.profiling
 
 clean:
 	rm -f *.o *.out *.profiling *.gcno *gcda *.gcov 
