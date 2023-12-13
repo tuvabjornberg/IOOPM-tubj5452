@@ -428,6 +428,22 @@ void test_ht_apply_to_all()
     ioopm_hash_table_destroy(ht); 
 }
 
+void boundary_test() 
+{
+    ioopm_hash_table_t *ht = ioopm_hash_table_create(hash_fun_key_int, bool_eq_fun);
+
+    for (int i = 0; i < 1000; i++) 
+    {
+        ioopm_hash_table_insert(ht, int_elem(1), str_elem("value1")); 
+    }
+
+    for (int i = 0; i < 1000; i++) 
+    {
+        ioopm_hash_table_remove(ht, int_elem(1)); 
+    }
+    ioopm_hash_table_destroy(ht); 
+}
+
 int main()
 {
     // First we try to set up CUnit, and exit if we fail
@@ -463,7 +479,8 @@ int main()
          CU_add_test(my_test_suite, "If hash table has value", test_ht_has_value) == NULL ||
          CU_add_test(my_test_suite, "Predicate function that satisfies any antry", test_ht_has_any) == NULL ||
          CU_add_test(my_test_suite, "Predicate function that satisfies all entries", test_ht_has_all) == NULL ||
-         CU_add_test(my_test_suite, "Apply function on all entries", test_ht_apply_to_all) == NULL
+         CU_add_test(my_test_suite, "Apply function on all entries", test_ht_apply_to_all) == NULL ||
+         CU_add_test(my_test_suite, "Boundary test", boundary_test) == NULL
         )
        )
     {
