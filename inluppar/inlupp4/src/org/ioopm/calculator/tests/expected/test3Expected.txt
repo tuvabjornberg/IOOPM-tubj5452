@@ -47,8 +47,14 @@ yey
 Please enter an expression: 
 right
 Please enter an expression: 
+Please enter an expression: 
+7.0
+Please enter an expression: 
+Please enter an expression: 
+10.0
+Please enter an expression: 
 
 You have quit the program
-Total entered expression(s): 20
-Successful evaluated expression(s): 19
-Expression(s) that were fully evaluated: 14
+Total entered expression(s): 24
+Successful evaluated expression(s): 23
+Expression(s) that were fully evaluated: 16

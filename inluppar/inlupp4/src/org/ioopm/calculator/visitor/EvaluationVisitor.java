@@ -211,8 +211,10 @@ public class EvaluationVisitor implements Visitor {
         ArrayList<Variable> parameters = func.getParameters(); 
 
         stack.pushEnvironment();
+
         for (int i = 0; i < arguments.size(); i++) {
-            stack.put(parameters.get(i), arguments.get(i).accept(this));
+            SymbolicExpression arg = arguments.get(i).accept(this); 
+            stack.put(parameters.get(i), arg);
         }
 
         SymbolicExpression result = func.accept(this); 

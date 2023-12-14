@@ -5,7 +5,6 @@ import org.ioopm.calculator.ast.*;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.io.IOException;
-
 import java.util.*;
 
 /**
@@ -99,7 +98,7 @@ public class CalculatorParser {
     *         such as a missing function name, invalid parameter names, or mismatched
     *         parentheses.
     */
-    private SymbolicExpression function(ArrayList<Variable> identifierList) throws IOException{
+    private SymbolicExpression function (ArrayList<Variable> identifierList) throws IOException {
         this.st.nextToken();
         Variable functionName;
         
@@ -366,7 +365,7 @@ public class CalculatorParser {
 
                     Variable funcName;
                     if (result instanceof Variable) {
-                        funcName = (Variable) result; 
+                        funcName = (Variable) result;                         
                     } else {    
                         throw new SyntaxErrorException("Invalid combination of func name and '(");
                     }
@@ -376,7 +375,7 @@ public class CalculatorParser {
                     this.st.nextToken();
 
                     if (this.st.ttype == this.st.TT_WORD) { //checks first parameter and adds it to an array
-                        identifierList.add(new Variable((this.st.sval)));
+                        identifierList.add((Atom) identifier());
                     } else if (this.st.ttype == this.st.TT_NUMBER){
                         identifierList.add(new Constant((this.st.nval)));
                     } else {
@@ -388,7 +387,7 @@ public class CalculatorParser {
                     while (this.st.ttype == ',') { //checks if multiple parameters exists and adds to the same array
                         this.st.nextToken();
                         if (this.st.ttype == this.st.TT_WORD) {
-                            identifierList.add(new Variable(this.st.sval));
+                            identifierList.add((Atom) identifier());
                         } else if (this.st.ttype == this.st.TT_NUMBER){
                             identifierList.add(new Constant((this.st.nval)));
                         } else {

@@ -38,10 +38,11 @@ function max(x, y)
 3*x
 end
 function max(x, y)
-function m(x)
-2=x
-function m(1)
 function max(a, b)
 max(1, 2, 3)
 max(1)
+function m(g)
+2=g
+function r(g)
+end
 quit

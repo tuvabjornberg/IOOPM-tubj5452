@@ -46,6 +46,10 @@ $ make clean
    $ make systemTests
    $ make diff
    ```
+   #### Run and compare ultimate tests (factorial/gcd)
+   ```
+   $ make ultimatetests
+   ```
 
  # Notes and error handling
 

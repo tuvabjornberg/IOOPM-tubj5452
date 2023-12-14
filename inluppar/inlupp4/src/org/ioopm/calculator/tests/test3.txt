@@ -27,12 +27,4 @@ function timesthree(a)
 b+1
 end
 timesthree(3)
-function fibonacci(n)
-if n <= 1 { n } else { fibonacci(n - 1) + fibonacci(n - 2) }
-end
-fibonacci(4)
-function power(base, exponent)
-if exponent == 0 { 1 } else { base * power(base, exponent - 1) }
-end
-power(2,4)
 quit

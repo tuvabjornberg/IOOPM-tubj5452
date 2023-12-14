@@ -1,0 +1,23 @@
+function factorial(n)
+  n - 1 = m
+  if n > 1 { factorial(m) * n } else { 1 }
+end
+factorial(0)
+factorial(1)
+factorial(2)
+factorial(3)
+factorial(4)
+factorial(5)
+factorial(50)
+function gcd(a, b)
+  b - a = ba
+  a - b = ab
+  if a == b { a } else { if a < b { gcd(a, ba) } else { gcd (ab, b) } }
+end
+gcd(1, 2)
+gcd(2, 2)
+gcd(2, 4)
+gcd(10, 100)
+gcd(6, 5)
+gcd(13, 2)
+quit

@@ -1,0 +1,35 @@
+Welcome to the parser!
+Please enter an expression: 
+Please enter an expression: 
+1.0
+Please enter an expression: 
+1.0
+Please enter an expression: 
+2.0
+Please enter an expression: 
+6.0
+Please enter an expression: 
+24.0
+Please enter an expression: 
+120.0
+Please enter an expression: 
+3.0414093201713376E64
+Please enter an expression: 
+Please enter an expression: 
+1.0
+Please enter an expression: 
+2.0
+Please enter an expression: 
+2.0
+Please enter an expression: 
+10.0
+Please enter an expression: 
+1.0
+Please enter an expression: 
+1.0
+Please enter an expression: 
+
+You have quit the program
+Total entered expression(s): 15
+Successful evaluated expression(s): 15
+Expression(s) that were fully evaluated: 13
