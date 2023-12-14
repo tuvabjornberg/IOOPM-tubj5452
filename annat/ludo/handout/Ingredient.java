@@ -37,17 +37,23 @@ class Pumpkin extends Ingredient {
 /** A CherryBomb can be worth one, two or three points. It additionally adds its
  * score as volatility. */
 class CherryBomb extends Ingredient {
-    // TODO: Implement this class
-    private int score; 
+    private int score;
 
     public CherryBomb(int score) {
         super(score); 
 
         if (score > 0 && score < 4) {
             this.score = score; 
+            
         } else {
             throw new InvalidIngredientException("Invalid score"); 
-        }// TODO: Replace this constructor
+        }
+    }
+
+    @Override
+    public void interact(Cauldron cauldron) {
+        cauldron.addToScore(this.score); 
+        cauldron.addToVolatility(this.score); 
     }
 
 }
@@ -56,7 +62,6 @@ class CherryBomb extends Ingredient {
  * added to contains one or two Pumpkins, it is worth one additional point. If
  * it contains more than two Pumpkins, it is worth two additional points. */
 class Toadstool extends Ingredient {
-    // TODO: Implement this class
     private int score; 
 
     public Toadstool(int score) {
@@ -66,7 +71,25 @@ class Toadstool extends Ingredient {
             this.score = score; 
         } else {
             throw new InvalidIngredientException("Invalid score"); 
-        }// TODO: Replace this constructor
+        }
+    }
+
+    @Override
+    public void interact(Cauldron cauldron) {
+        int pumpAmount = 0; 
+        for (Ingredient ingredient : cauldron) {
+            if (ingredient instanceof Pumpkin) {
+                pumpAmount++; 
+            }
+        }
+
+        if (pumpAmount == 1 || pumpAmount == 2) {
+            cauldron.addToScore(this.score + 1); 
+        } else if (pumpAmount > 2) {
+            cauldron.addToScore(this.score + 2); 
+        } else {
+            cauldron.addToScore(this.score); 
+        }
     }
 }
 
@@ -74,7 +97,6 @@ class Toadstool extends Ingredient {
  * a CherryBomb, the volatility of that CherryBomb is negated (its score still
  * applies). */
 class Mandrake extends Ingredient {
-    // TODO: Implement this class
     private int score; 
 
     public Mandrake(int score) {
@@ -84,6 +106,23 @@ class Mandrake extends Ingredient {
             this.score = score; 
         } else {
             throw new InvalidIngredientException("Invalid score"); 
-        }// TODO: Replace this constructor    
+        } 
+    }
+
+    @Override
+    public void interact(Cauldron cauldron) {
+        Boolean c = false; 
+        int cV = 0; 
+        for (Ingredient ingredient : cauldron) {
+            if (ingredient instanceof CherryBomb) {
+                c = true; 
+                cV = ingredient.getScore();
+            } else {
+                c = false;
+                cV = 0;  
+            }
+        }
+        cauldron.addToVolatility(-cV); 
+        cauldron.addToScore(this.score); 
     }
 }
